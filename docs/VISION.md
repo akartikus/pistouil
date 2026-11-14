@@ -63,6 +63,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 | Le lieu d’un indice est celui du fait qu’il prouve | Évite une donnée en double |
 | SvelteKit (statique) + TypeScript + Vitest + Capacitor | Un seul code pour web et mobile |
 | Suivi du projet avec OpenSpec, un brief par grande étape | Garder le fil et des décisions traçables |
+| CI/CD GitHub Actions : tests sur chaque changement, builds mobiles à la demande et sur `master` seulement | Valider chaque changement sans consommer le cloud (dépôt privé, runner macOS coûteux) |
 | Nom du jeu : Pistouil | Jeu de mots « piste » + « fouille », court, sans accent, plus facile à protéger qu’un mot courant |
 
 ## 7. Feuille de route
@@ -76,6 +77,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 | 4. Carte et identité visuelle | `briefs/04-map.md` | ☐ |
 | 5. Boucle de jeu complète | `briefs/05-game-loop.md` | ☐ |
 | 6. Hors-ligne et application mobile | `briefs/06-offline-mobile.md` | ☐ |
+| 7. CI/CD : tests (partie A, dès maintenant), builds mobiles (partie B, après l’étape 6) | `briefs/07-ci-cd.md` | ☐ |
 
 Jalon de validation après l’étape 5 : **une enquête jouable de bout en bout à Fuveau**, testée par 3 à 5 personnes. Question à trancher : le cœur du jeu est-il amusant ?
 
