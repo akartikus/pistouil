@@ -2,7 +2,7 @@
 
 **Objectif** : afficher, pour n’importe quelle commune choisie, une carte vectorielle à l’identité du jeu, avec tous les lieux reconnus et une distinction nette entre lieux de l’enquête et lieux de décor.
 **Dépend de** : brief 02 (lieux et index des communes) ; brief 03 pour l’affichage des trajets.
-**À lire** : `docs/VISION.md` §4 et §6 ; `docs/reference/DATA-MODEL.md` §2 (rôles des lieux).
+**À lire** : `docs/VISION.md` §4 et §6 (dont la direction artistique et les croquis des écrans, à produire avant ce brief : voir §7) ; `docs/reference/DATA-MODEL.md` §2 (rôles des lieux).
 
 ## Périmètre
 
@@ -60,7 +60,7 @@
 ## Points à trancher pendant la proposition
 
 - Schéma de tuiles : Protomaps ou OpenMapTiles (vérifier licence et attribution).
-- Direction artistique : « carnet de détective » (papier, encre, hachures) ou style épuré et coloré.
+- Direction artistique : « carnet de détective » (papier, encre, hachures) ou style épuré et coloré. À trancher avant le brief (phase de design, `VISION.md` §7) ; ici on l'applique, et on ne la rouvre que si elle s'avère infaisable.
 - Intégration MapLibre directe ou via une bibliothèque Svelte.
 
 ## Consigne pour OpenSpec

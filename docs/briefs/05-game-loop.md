@@ -2,7 +2,7 @@
 
 **Objectif** : une enquête jouable de bout en bout, du choix du lieu à la révélation finale, en reliant le moteur, les données et la carte.
 **Dépend de** : briefs 01 à 04.
-**À lire** : `docs/VISION.md` §2 et §5 ; `docs/reference/DATA-MODEL.md` §4 et §5.
+**À lire** : `docs/VISION.md` §2, §5 et §6 (direction artistique) ; croquis des écrans carte, carnet et suspects (phase de design, `VISION.md` §7) ; `docs/reference/DATA-MODEL.md` §4 et §5.
 
 ## Périmètre
 
@@ -52,7 +52,7 @@
 
 ## Critères d’acceptation
 
-- [ ] Une enquête à Fuveau se joue du début à la fin, avec les trois écrans de la maquette.
+- [ ] Une enquête à Fuveau se joue du début à la fin, conformes aux croquis des trois écrans (carte, carnet, suspects).
 - [ ] Test de jeu avec 3 à 5 personnes : temps de résolution, points de blocage et plaisir notés dans un compte rendu.
 - [ ] Aucune donnée cachée n’est lisible dans l’état de l’interface (vérification dans les outils de développement).
 

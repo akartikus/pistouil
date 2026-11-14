@@ -79,6 +79,8 @@ Aucun jeu connu ne réunit les trois à la fois :
 | 6. Hors-ligne et application mobile | `briefs/06-offline-mobile.md` | ☐ |
 | 7. CI/CD : tests (partie A, dès maintenant), builds mobiles (partie B, après l’étape 6) | `briefs/07-ci-cd.md` | ☐ |
 
+**Phase de design, avant l’étape 4** (avec `/openspec-explore`, sans changement OpenSpec) : direction artistique (palette, police, ton), croquis des trois écrans (carte, carnet, suspects) et premières icônes. Les décisions vont au §6 ; les croquis sont un lien Figma ou des images dans `docs/design/`.
+
 Jalon de validation après l’étape 5 : **une enquête jouable de bout en bout à Fuveau**, testée par 3 à 5 personnes. Question à trancher : le cœur du jeu est-il amusant ?
 
 ## 8. Glossaire
