@@ -2,7 +2,7 @@
 
 **Objectif** : une enquête jouable de bout en bout, du choix du lieu à la révélation finale, en reliant le moteur, les données et la carte.
 **Dépend de** : briefs 01 à 04.
-**À lire** : `docs/VISION.md` §2 et §5 ; `docs/reference/MODELE-DONNEES.md` §4 et §5.
+**À lire** : `docs/VISION.md` §2 et §5 ; `docs/reference/DATA-MODEL.md` §4 et §5.
 
 ## Périmètre
 
@@ -63,4 +63,4 @@
 
 ## Consigne pour OpenSpec
 
-> Crée un nouveau changement OpenSpec nommé `ajouter-boucle-de-jeu` à partir de ce brief. L’état visible par l’interface doit être une projection de l’enquête qui exclut les données cachées. Termine `tasks.md` par une session de test de jeu et la mise à jour de `docs/VISION.md` avec ses conclusions.
+> Crée un nouveau changement OpenSpec nommé `add-game-loop` à partir de ce brief. L’état visible par l’interface doit être une projection de l’enquête qui exclut les données cachées. Termine `tasks.md` par une session de test de jeu et la mise à jour de `docs/VISION.md` avec ses conclusions.

@@ -2,13 +2,13 @@
 
 **Objectif** : à partir d’une liste de lieux, d’une matrice de temps de marche, du catalogue et d’une graine, produire une enquête valide, vérifiée par le solveur.
 **Dépend de** : étape 0 (projet initialisé).
-**À lire** : `docs/VISION.md` §4 ; `docs/reference/MODELE-DONNEES.md` en entier.
+**À lire** : `docs/VISION.md` §4 ; `docs/reference/DATA-MODEL.md` en entier.
 
 ## Périmètre
 
 **Inclus**
 - Types TypeScript du modèle (catalogue, lieux, enquête, faits, sources, segments, trajets, progression).
-- Un catalogue de départ en JSON (`catalogue/`) : types de lieux et rôles, types d’indices, compatibilités, 3 modèles de scénario absurdes et positifs.
+- Un catalogue de départ en JSON (`catalog/`) : types de lieux et rôles, types d’indices, compatibilités, 3 modèles de scénario absurdes et positifs.
 - Le générateur : choix de la scène, de l’heure, des suspects et de l’auteur ; simulation de la vraie soirée ; dérivation des témoignages, du mensonge et des indices ; liens « débloqué par ».
 - Le solveur, tel que décrit dans la référence §7.
 - La vérification de toutes les règles de cohérence (référence §6).
@@ -74,4 +74,4 @@
 
 ## Consigne pour OpenSpec
 
-> Crée un nouveau changement OpenSpec nommé `ajouter-moteur-generation` à partir de ce brief. Respecte strictement le périmètre « Inclus / Exclu », reprends chaque exigence comme exigence de spécification avec ses scénarios, et découpe `tasks.md` de façon à écrire les tests de l’exemple de référence avant le solveur. Appuie-toi sur `docs/reference/MODELE-DONNEES.md` pour les types et les règles, sans les redéfinir.
+> Crée un nouveau changement OpenSpec nommé `add-generation-engine` à partir de ce brief. Respecte strictement le périmètre « Inclus / Exclu », reprends chaque exigence comme exigence de spécification avec ses scénarios, et découpe `tasks.md` de façon à écrire les tests de l’exemple de référence avant le solveur. Appuie-toi sur `docs/reference/DATA-MODEL.md` pour les types et les règles, sans les redéfinir.

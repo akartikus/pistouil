@@ -2,18 +2,18 @@
 
 **Objectif** : transformer un extrait OpenStreetMap en petits fichiers statiques de lieux, découpés en cases, plus un index des communes, utilisables par le jeu sans aucune API externe.
 **Dépend de** : brief 01 (catalogue et types `Lieu`, `TypeLieu`).
-**À lire** : `docs/VISION.md` §4 et §6 ; `docs/reference/MODELE-DONNEES.md` §2 et §3.
+**À lire** : `docs/VISION.md` §4 et §6 ; `docs/reference/DATA-MODEL.md` §2 et §3.
 
 ## Périmètre
 
 **Inclus**
-- Un script Python (`outils/preparation-donnees/`) lancé à la main, une fois par mois.
+- Un script Python (`tools/data-preparation/`) lancé à la main, une fois par mois.
 - Entrée : un extrait Geofabrik `.osm.pbf` (pour commencer, Provence-Alpes-Côte d’Azur).
 - Filtrage avec osmium sur les tags utiles au catalogue (commerces, cafés, restaurants, pharmacies, fontaines, bancs, marchés, parcs, places, arrêts de bus, œuvres d’art, et les types `exclu` pour le décor).
 - Correspondance tags OSM → `TypeLieu`, à partir des `tagsOSM` du catalogue (jamais codée en dur dans le script).
 - Point représentatif pour les surfaces (un parc devient un point).
 - Lecture de `opening_hours` quand il existe.
-- Application d’une liste de retrait (`catalogue/lieux-retires.json`, identifiants OSM).
+- Application d’une liste de retrait (`catalog/removed-places.json`, identifiants OSM).
 - Sortie : un fichier JSON compact par case de grille, plus un index des communes (nom, code INSEE, centre, rectangle englobant, contour simplifié).
 - Un manifeste avec la date et la source de l’extrait.
 
@@ -75,4 +75,4 @@ Coordonnées arrondies à 5 décimales (environ 1 m). Nom et valeurs ci-dessus i
 
 ## Consigne pour OpenSpec
 
-> Crée un nouveau changement OpenSpec nommé `ajouter-preparation-donnees-osm` à partir de ce brief. Le script doit lire les correspondances de tags dans le catalogue existant, pas les coder en dur. Prévois dans `tasks.md` un premier passage sur un petit extrait autour de Fuveau avant l’extrait régional complet.
+> Crée un nouveau changement OpenSpec nommé `add-osm-data-preparation` à partir de ce brief. Le script doit lire les correspondances de tags dans le catalogue existant, pas les coder en dur. Prévois dans `tasks.md` un premier passage sur un petit extrait autour de Fuveau avant l’extrait régional complet.

@@ -2,7 +2,7 @@
 
 **Objectif** : calculer sur l’appareil les vrais trajets à pied entre les lieux d’une enquête (durée, distance, tracé), à partir du réseau de rues OSM préparé hors ligne.
 **Dépend de** : briefs 01 et 02.
-**À lire** : `docs/VISION.md` §6 (décisions sur les trajets) ; `docs/reference/MODELE-DONNEES.md` §5.
+**À lire** : `docs/VISION.md` §6 (décisions sur les trajets) ; `docs/reference/DATA-MODEL.md` §5.
 
 ## Périmètre
 
@@ -58,4 +58,4 @@
 
 ## Consigne pour OpenSpec
 
-> Crée un nouveau changement OpenSpec nommé `ajouter-trajets-pietons` à partir de ce brief. Sépare clairement la partie préparation (script Python) et la partie calcul (TypeScript, dans `src/lib/moteur/`). Le module de calcul doit rester pur et testable avec de petits graphes construits à la main.
+> Crée un nouveau changement OpenSpec nommé `add-pedestrian-routes` à partir de ce brief. Sépare clairement la partie préparation (script Python) et la partie calcul (TypeScript, dans `src/lib/engine/`). Le module de calcul doit rester pur et testable avec de petits graphes construits à la main.

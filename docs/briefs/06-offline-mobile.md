@@ -10,7 +10,7 @@
 - **Téléchargement d’une zone** : fichiers de lieux et de graphe des cases concernées, tuiles du rectangle de la zone, en une action avec indicateur de progression.
 - **Cache des tuiles** : une source PMTiles personnalisée qui enregistre les morceaux lus et les relit hors connexion ; préchargement des tuiles du rectangle de la zone.
 - **Stockage** : `@capacitor/filesystem` dans l’application, IndexedDB sur le web, derrière une même interface.
-- Style, polices et icônes embarqués (déjà dans `static/carte/`).
+- Style, polices et icônes embarqués (déjà dans `static/map/`).
 - **PWA** : Service Worker pour l’application elle-même, installation sur l’écran d’accueil.
 - **Capacitor** : plateformes Android et iOS, géolocalisation (`@capacitor/geolocation`) avec permissions et textes d’explication, réglages (`@capacitor/preferences`).
 - Gestion des zones téléchargées : liste, taille, suppression.
@@ -42,7 +42,7 @@
 - ALORS la recherche de commune reste disponible.
 
 ### Une base de code
-- Le même code SvelteKit produit la PWA et les applications natives ; les différences de plateforme sont isolées dans `src/lib/donnees/`.
+- Le même code SvelteKit produit la PWA et les applications natives ; les différences de plateforme sont isolées dans `src/lib/data/`.
 
 ## Critères d’acceptation
 
@@ -58,4 +58,4 @@
 
 ## Consigne pour OpenSpec
 
-> Crée un nouveau changement OpenSpec nommé `ajouter-hors-ligne-mobile` à partir de ce brief. Isole toutes les différences web / natif derrière une interface de stockage unique dans `src/lib/donnees/`. Inclus dans `tasks.md` un test manuel en mode avion sur chaque plateforme.
+> Crée un nouveau changement OpenSpec nommé `add-offline-mobile` à partir de ce brief. Isole toutes les différences web / natif derrière une interface de stockage unique dans `src/lib/data/`. Inclus dans `tasks.md` un test manuel en mode avion sur chaque plateforme.

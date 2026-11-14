@@ -69,13 +69,13 @@ Aucun jeu connu ne réunit les trois à la fois :
 
 | Étape | Brief | État |
 | --- | --- | --- |
-| 0. Initialisation du projet | `GUIDE-INITIALISATION.md` | ☐ |
-| 1. Moteur : génération et solveur | `briefs/01-moteur-generation.md` | ☐ |
-| 2. Préparation des données OSM | `briefs/02-donnees-osm.md` | ☐ |
-| 3. Réseau piéton et trajets | `briefs/03-trajets.md` | ☐ |
-| 4. Carte et identité visuelle | `briefs/04-carte.md` | ☐ |
-| 5. Boucle de jeu complète | `briefs/05-boucle-de-jeu.md` | ☐ |
-| 6. Hors-ligne et application mobile | `briefs/06-hors-ligne-mobile.md` | ☐ |
+| 0. Initialisation du projet | — | ☑ |
+| 1. Moteur : génération et solveur | `briefs/01-generation-engine.md` | ☐ |
+| 2. Préparation des données OSM | `briefs/02-osm-data.md` | ☐ |
+| 3. Réseau piéton et trajets | `briefs/03-routes.md` | ☐ |
+| 4. Carte et identité visuelle | `briefs/04-map.md` | ☐ |
+| 5. Boucle de jeu complète | `briefs/05-game-loop.md` | ☐ |
+| 6. Hors-ligne et application mobile | `briefs/06-offline-mobile.md` | ☐ |
 
 Jalon de validation après l’étape 5 : **une enquête jouable de bout en bout à Fuveau**, testée par 3 à 5 personnes. Question à trancher : le cœur du jeu est-il amusant ?
 
@@ -99,7 +99,7 @@ Jalon de validation après l’étape 5 : **une enquête jouable de bout en bout
 | Fichier | Rôle |
 | --- | --- |
 | `docs/VISION.md` | Ce fichier : le cap, à relire avant chaque étape |
-| `docs/GUIDE-INITIALISATION.md` | Mise en place du projet et méthode de travail avec OpenSpec |
-| `docs/reference/MODELE-DONNEES.md` | Modèle de données complet, règles de cohérence, algorithme du solveur |
+| `docs/reference/DATA-MODEL.md` | Modèle de données complet, règles de cohérence, algorithme du solveur |
 | `docs/briefs/NN-*.md` | Un brief par étape, à donner à OpenSpec pour créer la proposition de changement |
-| `openspec/project.md` | Contexte permanent du projet pour OpenSpec |
+| `openspec/config.yaml` | Contexte permanent du projet pour OpenSpec |
+| `AGENTS.md` | Règles courtes pour les assistants de code (`CLAUDE.md` l’importe) |

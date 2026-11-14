@@ -2,14 +2,14 @@
 
 **Objectif** : afficher, pour n’importe quelle commune choisie, une carte vectorielle à l’identité du jeu, avec tous les lieux reconnus et une distinction nette entre lieux de l’enquête et lieux de décor.
 **Dépend de** : brief 02 (lieux et index des communes) ; brief 03 pour l’affichage des trajets.
-**À lire** : `docs/VISION.md` §4 et §6 ; `docs/reference/MODELE-DONNEES.md` §2 (rôles des lieux).
+**À lire** : `docs/VISION.md` §4 et §6 ; `docs/reference/DATA-MODEL.md` §2 (rôles des lieux).
 
 ## Périmètre
 
 **Inclus**
 - Composant de carte Svelte avec MapLibre GL JS et le protocole `pmtiles`, lisant un fichier PMTiles régional hébergé en statique.
 - Un style MapLibre maison (édité avec Maputnik), une palette de 3 à 4 couleurs, une police libre, une planche d’icônes génériques par type de lieu.
-- Style, polices et icônes embarqués dans `static/carte/`.
+- Style, polices et icônes embarqués dans `static/map/`.
 - Couches du jeu au-dessus du fond : lieux de décor, lieux de l’enquête, tracés de trajets, masque hors commune.
 - Centrage sur une commune choisie ou sur la position du joueur, et limitation du déplacement à la zone.
 - Attributions OSM et schéma de tuiles toujours visibles.
@@ -65,4 +65,4 @@
 
 ## Consigne pour OpenSpec
 
-> Crée un nouveau changement OpenSpec nommé `ajouter-carte-identite` à partir de ce brief. Le style doit être un fichier séparé dans `static/carte/`, jamais généré dans le code. Les couches du jeu sont ajoutées par le code au-dessus du fond. Prévois une tâche de validation visuelle sur trois communes de densités différentes.
+> Crée un nouveau changement OpenSpec nommé `add-map-identity` à partir de ce brief. Le style doit être un fichier séparé dans `static/map/`, jamais généré dans le code. Les couches du jeu sont ajoutées par le code au-dessus du fond. Prévois une tâche de validation visuelle sur trois communes de densités différentes.
