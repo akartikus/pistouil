@@ -61,3 +61,4 @@ Développeur senior : le strict minimum, et l'existant d'abord.
 - Code simple et lisible plutôt que malin. Tester le comportement, pas l'implémentation ; tests à côté du code, en `*.spec.ts`.
 - En cas de doute sur le périmètre, s'en tenir au brief et à la spec du changement ; si un besoin dépasse, le signaler et attendre.
 - Ne jamais commiter ni pousser sans demande explicite.
+- Ne jamais ajouter Claude (ni aucune IA) en co-auteur : pas de ligne `Co-Authored-By` ni de mention de génération dans les commits et pull requests.
