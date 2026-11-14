@@ -1,0 +1,105 @@
+# Pistouil — référence principale
+
+> À relire avant chaque nouvelle étape. Si une décision contredit ce fichier, on met d’abord ce fichier à jour, puis on avance.
+> Nom du jeu : **Pistouil** (« piste » + « fouille », prononcé « pistouille »). Vérifier sa disponibilité (INPI, EUIPO, stores, nom de domaine) avant tout dépôt ou publication.
+
+## 1. L’objectif final
+
+Un jeu mobile et web d’enquête **en solo**, dont chaque mystère est **généré automatiquement à partir des vrais lieux** autour du joueur (ou d’une commune qu’il choisit). Le joueur résout l’énigme **par déduction**, en confrontant des alibis aux **vrais temps de marche** entre les lieux, sans avoir à se déplacer.
+
+Le ton est **absurde et positif** : pas de crimes, mais des mystères loufoques (« Qui a tricoté une écharpe à toutes les statues du parc ? »). La logique, elle, reste implacable.
+
+## 2. L’expérience du joueur
+
+1. Il se localise ou choisit une commune (ex. Fuveau).
+2. Le jeu génère un mystère avec les lieux réels du coin : une scène dans l’espace public, des commerces comme lieux d’alibi.
+3. Il explore la carte : chaque lieu de l’enquête révèle des faits (ticket de caisse, serveur, témoignages).
+4. Il mesure les trajets à pied entre les lieux et repère l’alibi impossible.
+5. Il désigne l’auteur, une seule fois.
+6. La carte rejoue la vraie soirée, et l’on découvre pourquoi l’auteur a menti (une surprise, de la modestie, une maladresse).
+
+## 3. Ce qui nous différencie
+
+Aucun jeu connu ne réunit les trois à la fois :
+
+- **des enquêtes générées pour n’importe quel lieu**, sans écriture manuelle par ville ;
+- **une vraie déduction logique**, fondée sur la géographie réelle ;
+- **un jeu depuis le canapé**, sans déplacement obligatoire.
+
+## 4. Principes non négociables
+
+1. **La vérité d’abord.** On simule la vraie soirée, puis on en dérive témoignages et indices. Une enquête n’est jamais écrite « à l’envers ».
+2. **Solution unique et atteignable.** Le solveur valide chaque enquête : un seul suspect possible, et tous les faits nécessaires peuvent être découverts. Sinon, l’enquête est rejetée.
+3. **Seul l’auteur ment**, sur un point, et pour une bonne raison révélée à la fin.
+4. **Mystères uniquement dans l’espace public.** Commerces et établissements ne servent que d’alibis, avec des faits neutres ou positifs. Les lieux sensibles sont exclus.
+5. **Personnages toujours fictifs**, jamais le personnel réel d’un lieu.
+6. **Aucune dépendance réseau pendant le jeu.** Données préparées hors ligne, calculs sur le téléphone, jeu jouable hors connexion une fois la zone chargée.
+7. **Garde-fous légaux** : mention de fiction visible, pas de logos de marques, pas de photos de bâtiments, carte stylisée, attribution OpenStreetMap, droit de retrait d’un lieu sur demande.
+8. **Le moteur est du code pur** (aucune dépendance à l’interface), testé et reproductible à partir d’une graine.
+
+## 5. Périmètre
+
+| Version 1 | Plus tard |
+| --- | --- |
+| Mode solo, enquête à la demande | Partage de résultat façon Wordle, envoi d’une enquête par sa graine |
+| Exploration libre des lieux | Limite de visites ou temps d’enquête fictif |
+| Textes à trous | Textes réécrits par IA, une fois par enquête |
+| Suspects identifiés par leur nom | Témoins qui décrivent sans reconnaître (« manteau rouge ») |
+| Déduction par alibis et trajets | Mobiles et relations entre personnages |
+| PWA, puis application Capacitor | — |
+
+## 6. Décisions prises
+
+| Décision | Raison |
+| --- | --- |
+| Solo, une enquête par joueur, générée à la demande | Pas de masse critique nécessaire, jeu possible partout |
+| Zone = centre (position ou commune) + rayon adaptatif | S’adapte aux villes denses comme aux villages |
+| Données OSM préparées hors ligne (Geofabrik + osmium), pas d’Overpass | Coût nul, aucune dépendance externe |
+| Trajets calculés sur le téléphone (Dijkstra sur le réseau piéton OSM) | Pas de serveur de routage, léger à l’échelle d’une zone |
+| Trajets uniquement entre lieux de l’enquête, calculés à la génération | Le solveur en a besoin ; affichage instantané |
+| Tous les lieux visibles sur la carte, deux niveaux (enquête / décor) | Carte vivante, jouable même avec peu de données |
+| Fond de carte vectoriel (PMTiles) stylé par nos soins (MapLibre) | Identité visuelle propre, appliquée à toute commune |
+| PNJ (serveur, gardien) = sources d’indices, pas des personnages | Modèle plus simple, PNJ toujours fiables |
+| Le lieu d’un indice est celui du fait qu’il prouve | Évite une donnée en double |
+| SvelteKit (statique) + TypeScript + Vitest + Capacitor | Un seul code pour web et mobile |
+| Suivi du projet avec OpenSpec, un brief par grande étape | Garder le fil et des décisions traçables |
+| Nom du jeu : Pistouil | Jeu de mots « piste » + « fouille », court, sans accent, plus facile à protéger qu’un mot courant |
+
+## 7. Feuille de route
+
+| Étape | Brief | État |
+| --- | --- | --- |
+| 0. Initialisation du projet | `GUIDE-INITIALISATION.md` | ☐ |
+| 1. Moteur : génération et solveur | `briefs/01-moteur-generation.md` | ☐ |
+| 2. Préparation des données OSM | `briefs/02-donnees-osm.md` | ☐ |
+| 3. Réseau piéton et trajets | `briefs/03-trajets.md` | ☐ |
+| 4. Carte et identité visuelle | `briefs/04-carte.md` | ☐ |
+| 5. Boucle de jeu complète | `briefs/05-boucle-de-jeu.md` | ☐ |
+| 6. Hors-ligne et application mobile | `briefs/06-hors-ligne-mobile.md` | ☐ |
+
+Jalon de validation après l’étape 5 : **une enquête jouable de bout en bout à Fuveau**, testée par 3 à 5 personnes. Question à trancher : le cœur du jeu est-il amusant ?
+
+## 8. Glossaire
+
+| Terme | Sens |
+| --- | --- |
+| Mystère | L’événement absurde à élucider, à un lieu et une heure précis |
+| Auteur | Le suspect responsable du mystère ; le seul qui ment |
+| Scène | Le lieu public où s’est produit le mystère |
+| Lieu d’alibi | Un commerce ou établissement où l’on peut prouver une présence |
+| Lieu de décor | Un lieu visible sur la carte mais sans rôle dans l’enquête |
+| Vraie soirée | Les déplacements réels de chaque suspect (segments), cachés au joueur |
+| Fait | « Telle personne, à tel lieu, entre telle et telle heure », avec sa source |
+| Indice | Source toujours fiable : preuve (ticket) ou PNJ (serveur) |
+| Témoignage | Parole d’un suspect, fiable seulement s’il est innocenté |
+| Graine | Valeur qui permet de régénérer une enquête à l’identique |
+
+## 9. Carte des documents
+
+| Fichier | Rôle |
+| --- | --- |
+| `docs/VISION.md` | Ce fichier : le cap, à relire avant chaque étape |
+| `docs/GUIDE-INITIALISATION.md` | Mise en place du projet et méthode de travail avec OpenSpec |
+| `docs/reference/MODELE-DONNEES.md` | Modèle de données complet, règles de cohérence, algorithme du solveur |
+| `docs/briefs/NN-*.md` | Un brief par étape, à donner à OpenSpec pour créer la proposition de changement |
+| `openspec/project.md` | Contexte permanent du projet pour OpenSpec |
