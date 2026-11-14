@@ -2,13 +2,14 @@
 
 **Objectif** : à partir d’une liste de lieux, d’une matrice de temps de marche, du catalogue et d’une graine, produire une enquête valide, vérifiée par le solveur.
 **Dépend de** : étape 0 (projet initialisé).
-**À lire** : `docs/VISION.md` §4 ; `docs/reference/DATA-MODEL.md` en entier.
+**À lire** : `docs/VISION.md` §4 et §6 (ton et règles de rédaction, issus de la phase de rédaction, §7) ; `docs/reference/DATA-MODEL.md` en entier.
 
 ## Périmètre
 
 **Inclus**
 - Types TypeScript du modèle (catalogue, lieux, enquête, faits, sources, segments, trajets, progression).
-- Un catalogue de départ en JSON (`catalog/`) : types de lieux et rôles, types d’indices, compatibilités, 3 modèles de scénario absurdes et positifs.
+- Un catalogue de départ en JSON (`catalog/`) : types de lieux et rôles, types d’indices avec leurs gabarits, compatibilités, 3 modèles de scénario absurdes et positifs (avec les textes de révélation par motif), liste de prénoms, gabarits de témoignage. Le contenu vient des notes de la phase de rédaction.
+- Le rendu des textes : le moteur remplit les gabarits et produit `texteRendu` pour chaque indice et chaque témoignage.
 - Le générateur : choix de la scène, de l’heure, des suspects et de l’auteur ; simulation de la vraie soirée ; dérivation des témoignages, du mensonge et des indices ; liens « débloqué par ».
 - Le solveur, tel que décrit dans la référence §7.
 - La vérification de toutes les règles de cohérence (référence §6).
@@ -36,6 +37,12 @@
 - QUAND une enquête est générée
 - ALORS l’auteur fait exactement un témoignage mensonger, sur l’heure ou le lieu où il se trouvait au moment du mystère,
 - ET ce témoignage porte un motif parmi `surprise`, `modestie`, `maladresse`.
+
+### Textes rendus par le moteur
+- QUAND une enquête est générée
+- ALORS chaque indice et chaque témoignage a un `texteRendu` sans variable non résolue,
+- ET deux personnages n'ont jamais le même prénom,
+- ET aucun `texteRendu` ne signale qu'un témoignage est un mensonge.
 
 ### Rôles des lieux respectés
 - QUAND le générateur choisit la scène
@@ -65,6 +72,7 @@
 - [ ] L’exemple de référence et sa variante invalide sont des tests permanents.
 - [ ] Sur 500 graines et un jeu de lieux fictif de 8 lieux, 100 % des enquêtes produites sont valides et respectent toutes les règles de cohérence.
 - [ ] Même graine, même enquête (test dédié).
+- [ ] Sur les 500 graines, aucun texte avec variable non résolue et aucun prénom en double.
 - [ ] Génération d’une enquête en moins de 200 ms sur un ordinateur de bureau.
 
 ## Points à trancher pendant la proposition

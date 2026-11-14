@@ -14,7 +14,7 @@
 - **Curseur horaire** : place chaque suspect là où il affirme être, selon les faits découverts, et signale les contradictions.
 - Écran **Carnet** : chronologie des faits découverts, incohérences repérées, notes libres, annotations attachées à des lieux.
 - Écran **Suspects** : fiches, statut d’alibi (vérifié, douteux, à vérifier), accusation unique.
-- **Révélation** : la carte rejoue la vraie soirée le long des trajets, et le motif du mensonge s’affiche.
+- **Révélation** : la carte rejoue la vraie soirée le long des trajets, et le texte de révélation du motif du mensonge (fourni par le catalogue) s’affiche.
 - Progression sauvegardée localement (graine + faits découverts + annotations + notes + accusation).
 - Mention de fiction visible.
 
@@ -49,6 +49,7 @@
 
 ### Rien n’est révélé avant l’heure
 - L’interface n’affiche jamais l’auteur, les mensonges ni la vraie soirée avant l’accusation.
+- Le texte de révélation du catalogue n’entre dans l’état de l’interface qu’après l’accusation.
 
 ## Critères d’acceptation
 
@@ -59,7 +60,7 @@
 ## Points à trancher pendant la proposition
 
 - Forme exacte du signalement des contradictions sur le curseur horaire.
-- Textes à trous : liste des gabarits par type de fait.
+- Textes de l’interface (boutons, libellés, messages) : seuls textes rédigés dans ce brief. Les textes des faits viennent du moteur (`texteRendu`, brief 01).
 
 ## Consigne pour OpenSpec
 

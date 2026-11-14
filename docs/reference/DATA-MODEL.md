@@ -6,7 +6,7 @@
 
 | Couche | Contenu | Écrite par | Change quand |
 | --- | --- | --- | --- |
-| Catalogue | TypeLieu, TypeIndice, compatibilités, ModèleScénario | Nous, à la main (fichiers JSON versionnés) | Ajout de contenu |
+| Catalogue | TypeLieu, TypeIndice, compatibilités, ModèleScénario, prénoms, gabarits de témoignage | Nous, à la main (fichiers JSON versionnés) | Ajout de contenu |
 | Enquête | Lieux retenus, personnages, vraie soirée, faits, trajets, progression | Le générateur, puis le joueur | À chaque nouvelle enquête |
 
 Ajouter une ligne au catalogue enrichit toutes les enquêtes futures sans toucher au code.
@@ -37,6 +37,12 @@ classDiagram
     situation
     plageHoraire
     motifsMensonge
+    revelations
+  }
+  class GabaritTemoignage {
+    id
+    precision : ponctuel | intervalle | depart
+    gabaritTexte
   }
   TypeLieu "*" -- "*" TypeIndice : compatible
   ModeleScenario "*" --> "*" TypeLieu : scènes possibles
@@ -63,7 +69,14 @@ Précisions : les établissements publics sont en alibi (un mystère sur place s
 
 ### Motifs du mensonge
 
-L’auteur ment pour une bonne raison, révélée à la fin : `surprise`, `modestie` ou `maladresse`.
+L’auteur ment pour une bonne raison, révélée à la fin : `surprise`, `modestie` ou `maladresse`. Chaque `ModeleScenario` porte, pour chacun de ses motifs possibles, le texte de révélation (`revelations`) affiché à la fin.
+
+### Prénoms et textes
+
+- **Prénoms** : une liste du catalogue, d’au moins 12 prénoms (largement plus que le nombre maximal de suspects). Les suspects en reçoivent des prénoms distincts, tirés avec la graine.
+- **Gabarits** : textes à trous du catalogue, avec des variables (prénom, lieu, heures). `TypeIndice.gabaritTexte` pour les indices, `GabaritTemoignage` (selon la précision du fait) pour les témoignages, `ModeleScenario.situation` pour le mystère.
+- **Rendu** : le moteur remplit les gabarits à la génération et stocke le résultat dans `texteRendu` de chaque source ; l’interface n’affiche que ce texte. Rendu pur et déterministe.
+- **Accords** : les gabarits évitent les accords de genre, pour qu’un prénom n’ait pas besoin de genre (ex. « départ de {prenom} du {lieu} à {heure} », pas « {prenom} est parti(e) »).
 
 ## 3. Lieux
 
@@ -106,10 +119,9 @@ classDiagram
   }
   class Source {
     <<abstract>>
-  }
-  class Indice {
     texteRendu
   }
+  class Indice
   class Temoignage {
     -mensonge
     -motif
@@ -130,7 +142,7 @@ classDiagram
 | --- | --- | --- |
 | Indice de nature preuve | Toujours vraie | Ticket de Paul, boulangerie, 21h03 |
 | Indice de nature PNJ | Toujours vrai | Le serveur : Inès au café de 20h30 à 21h20 |
-| Témoignage d’un suspect | Fiable seulement une fois ce suspect innocenté | Inès : Lucie est partie à 20h50 |
+| Témoignage d’un suspect | Fiable seulement une fois ce suspect innocenté | Inès : départ de Lucie du café à 20h50 |
 
 - Seuls les **suspects** sont des `Personnage`. Les PNJ n’existent qu’à travers les indices de nature PNJ.
 - Les **segments** forment la vraie soirée : cachés au joueur, ils servent à générer les faits et à la révélation finale.
@@ -138,6 +150,7 @@ classDiagram
 - Le lieu d’un indice est celui du fait qu’il prouve.
 - `depart` : la personne était au lieu à cet instant et l’a quitté juste après (fait ponctuel, `de = a`).
 - Les attributs privés (`auteur`, `mensonge`, `motif`) ne sont **jamais** lus par le solveur.
+- `texteRendu` est visible du joueur pour toutes les sources, y compris le témoignage mensonger : il ne doit rien révéler du mensonge.
 
 ## 5. Enquête, trajets et progression
 
@@ -194,6 +207,8 @@ Garanties par construction, vérifiées à la fin ; une enquête qui en viole un
 | Trajets réalistes | Entre deux segments d’un personnage, le temps écoulé couvre le trajet |
 | Faits vrais dérivés de la vérité | Tout fait non mensonger est inclus dans un segment |
 | Seul l’auteur ment | Tout témoignage mensonger est prononcé par l’auteur |
+| Prénoms distincts | Deux personnages d’une enquête n’ont jamais le même prénom |
+| Textes complets | Chaque source a un `texteRendu` sans variable non résolue |
 | Solution unique | Le solveur laisse exactement un suspect possible : l’auteur |
 | Solution atteignable | Tous les faits nécessaires à la solution peuvent être débloqués |
 
