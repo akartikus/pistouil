@@ -1,32 +1,30 @@
 schema: spec-driven
 
-# Project context (optional)
-# Add only constraints that should guide OpenSpec artifacts and workflows.
-# Include constraints an agent cannot infer by reading the code.
-# Keep general project documentation and discoverable codebase facts out.
-# Example:
-#   context: |
-#     Designs and tasks must cover Windows, macOS, and Linux
-#     Write all artifacts in Spanish
+context: |
+  Pistouil : jeu d'enquête solo, mobile et web. Chaque mystère est généré à partir des vrais lieux
+  OpenStreetMap autour du joueur ; le joueur le résout par déduction (alibis contre temps de marche réels).
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always state what is out of scope
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  Les artefacts ne doivent jamais contredire les principes non négociables de docs/VISION.md §4.
+  Contraintes de code et architecture : AGENTS.md.
 
-# Per-operation guidance (optional)
-# Add advisory guidance for how apply and archive work should be conducted.
-# This is separate from artifact rules above.
-# Example:
-#   operations:
-#     apply:
-#       guidance:
-#         - Keep test summaries concise
-#     archive:
-#       guidance:
-#         - Summarize the archive outcome before finishing
+  Langue : artefacts rédigés en français ; mots-clés structurels d'OpenSpec en anglais
+  (Requirement, Scenario, SHALL/MUST, WHEN/THEN/AND). Noms des changements et des capabilities :
+  anglais, kebab-case (ex. add-generation-engine). Identifiants du modèle métier : français sans accents,
+  comme dans docs/reference/DATA-MODEL.md (ex. genererEnquete, graine, TypeLieu).
+
+  Documents de référence : ne lire que ce que la tâche exige.
+  - docs/VISION.md : décision touchant au cap, au périmètre ou aux principes
+  - docs/reference/DATA-MODEL.md : types, règles de cohérence, solveur
+  - docs/briefs/NN-*.md : uniquement le brief de l'étape en cours
+
+rules:
+  proposal:
+    - Citer le brief source (docs/briefs/NN-*.md) et reprendre son périmètre Inclus / Exclu sans l'étendre
+    - Un brief = un changement ; tout imprévu fait l'objet d'un nouveau brief
+  specs:
+    - Chaque exigence du brief devient une exigence avec ses scénarios
+    - Exigences avec SHALL ou MUST ; scénarios avec WHEN / THEN / AND (les QUAND / ALORS / ET des briefs se traduisent ainsi)
+    - Renvoyer à docs/reference/DATA-MODEL.md pour les types et règles, sans les redéfinir
+  tasks:
+    - Tâches petites et ordonnées ; les tests avant le code qu'ils vérifient
+    - Terminer par une tâche de mise à jour de docs/VISION.md (feuille de route §7, décisions §6)
