@@ -7,3 +7,10 @@ bun.lockb
 
 # Miscellaneous
 /static/
+
+# Documentation and OpenSpec (hand-written Markdown/YAML)
+*.md
+/docs/
+/openspec/
+/.agents/
+/.claude/
