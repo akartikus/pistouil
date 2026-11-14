@@ -1,5 +1,7 @@
 # Pistouil
 
+<!-- PROJECT-SPECIFIC: rewrite for each project. -->
+
 Jeu d'enquête solo (mobile + web) : chaque mystère est généré à partir des vrais lieux OpenStreetMap, résolu par déduction (alibis contre temps de marche). Cap complet : `docs/VISION.md`.
 
 ## Stack
@@ -17,21 +19,6 @@ SvelteKit statique (adapter-static, `ssr = false`), TypeScript strict, Vitest, M
 
 - Fichiers et dossiers en anglais ; identifiants du modèle métier en français sans accents (voir `docs/reference/DATA-MODEL.md`) ; textes du jeu et documents en français.
 - Un brief = un changement OpenSpec. Si une décision contredit `docs/VISION.md`, mettre ce fichier à jour d'abord.
-
-## Style de code
-
-Développeur senior : le strict minimum, et l'existant d'abord.
-
-- Faire uniquement ce que la tâche demande : pas de fonctionnalité, d'option ni d'abstraction « au cas où ».
-- Avant d'écrire, chercher dans le dépôt, puis dans les dépendances déjà installées (`maplibre-gl`, `pmtiles`, `@capacitor/*`, `vitest`), puis dans la plateforme. Réutiliser ou étendre ; n'inventer qu'en dernier recours.
-- Avant d'utiliser l'API d'une bibliothèque (SvelteKit, Svelte 5, MapLibre, pmtiles, Capacitor, Vitest), consulter sa documentation à jour via le MCP `context7` (`.mcp.json`) plutôt que de se fier à la mémoire.
-- Ne pas ajouter de dépendance sans nécessité claire ; la signaler et la justifier.
-- Petites modifications, localisées : ne pas refactorer, reformater ni renommer en dehors du périmètre.
-- Suivre les conventions et le style des fichiers voisins. Commenter uniquement les passages complexes ou non évidents, en anglais, en phrases simples et aussi courtes que possible ; jamais de commentaire qui répète le code.
-- Pas de gestion d'erreur ni de validation pour des cas impossibles ; valider aux frontières (données OSM, stockage, saisie).
-- Code simple et lisible plutôt que malin. Tester le comportement, pas l'implémentation ; tests à côté du code, en `*.spec.ts`.
-- En cas de doute sur le périmètre, s'en tenir au brief et à la spec du changement ; si un besoin dépasse, le signaler et attendre.
-- Ne jamais commiter ni pousser sans demande explicite.
 
 ## Structure
 
@@ -55,3 +42,22 @@ Développeur senior : le strict minimum, et l'existant d'abord.
 
 Les changements passent par les skills OpenSpec de `.agents/skills/` (propose → apply → archive). Ne lire que ce que la tâche exige :
 `docs/VISION.md` (cap, périmètre), `docs/reference/DATA-MODEL.md` (types, cohérence, solveur), et uniquement le brief en cours dans `docs/briefs/`. Procédure : `README.md`.
+
+Pour comprendre l'existant sans tout lire : `openspec list --specs`, puis la spec de la capability concernée dans `openspec/specs/`, puis uniquement les fichiers cités par le changement. Chercher avec grep avant d'ouvrir un fichier entier.
+
+<!-- GENERIC: reusable as is. -->
+
+## Style de code
+
+Développeur senior : le strict minimum, et l'existant d'abord.
+
+- Faire uniquement ce que la tâche demande : pas de fonctionnalité, d'option ni d'abstraction « au cas où ».
+- Avant d'écrire, chercher dans le dépôt, puis dans les dépendances déjà installées (`package.json`), puis dans la plateforme. Réutiliser ou étendre ; n'inventer qu'en dernier recours.
+- Avant d'utiliser l'API d'une bibliothèque, consulter sa documentation à jour via le MCP `context7` (`.mcp.json`) plutôt que de se fier à la mémoire.
+- Ne pas ajouter de dépendance sans nécessité claire ; la signaler et la justifier.
+- Petites modifications, localisées : ne pas refactorer, reformater ni renommer en dehors du périmètre.
+- Suivre les conventions et le style des fichiers voisins. Commenter uniquement les passages complexes ou non évidents, en anglais, en phrases simples et aussi courtes que possible ; jamais de commentaire qui répète le code.
+- Pas de gestion d'erreur ni de validation pour des cas impossibles ; valider aux frontières (entrées externes, stockage, saisie).
+- Code simple et lisible plutôt que malin. Tester le comportement, pas l'implémentation ; tests à côté du code, en `*.spec.ts`.
+- En cas de doute sur le périmètre, s'en tenir au brief et à la spec du changement ; si un besoin dépasse, le signaler et attendre.
+- Ne jamais commiter ni pousser sans demande explicite.

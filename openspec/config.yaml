@@ -1,30 +1,34 @@
 schema: spec-driven
 
+# PROJECT-SPECIFIC: rewrite for each project.
 context: |
   Pistouil : jeu d'enquête solo, mobile et web. Chaque mystère est généré à partir des vrais lieux
   OpenStreetMap autour du joueur ; le joueur le résout par déduction (alibis contre temps de marche réels).
 
-  Les artefacts ne doivent jamais contredire les principes non négociables de docs/VISION.md §4.
-  Contraintes de code et architecture : AGENTS.md.
+  Documents de référence (ne lire que ce que la tâche exige) :
+  - Cap : docs/VISION.md (principes non négociables §4, feuille de route §7, décisions §6). Les artefacts ne doivent jamais les contredire.
+  - Modèle : docs/reference/DATA-MODEL.md (types, règles de cohérence, solveur)
+  - Brief : docs/briefs/NN-*.md, uniquement celui de l'étape en cours
+  - Code : AGENTS.md (contraintes de code et architecture)
 
   Langue : artefacts rédigés en français ; mots-clés structurels d'OpenSpec en anglais
   (Requirement, Scenario, SHALL/MUST, WHEN/THEN/AND). Noms des changements et des capabilities :
   anglais, kebab-case (ex. add-generation-engine). Identifiants du modèle métier : français sans accents,
-  comme dans docs/reference/DATA-MODEL.md (ex. genererEnquete, graine, TypeLieu).
+  comme dans le modèle (ex. genererEnquete, graine, TypeLieu).
 
-  Documents de référence : ne lire que ce que la tâche exige.
-  - docs/VISION.md : décision touchant au cap, au périmètre ou aux principes
-  - docs/reference/DATA-MODEL.md : types, règles de cohérence, solveur
-  - docs/briefs/NN-*.md : uniquement le brief de l'étape en cours
-
+# GENERIC: reusable as is. "Brief", "cap" and "modèle" are defined in the context above.
 rules:
   proposal:
-    - Citer le brief source (docs/briefs/NN-*.md) et reprendre son périmètre Inclus / Exclu sans l'étendre
+    - Citer le brief source et reprendre son périmètre Inclus / Exclu sans l'étendre
     - Un brief = un changement ; tout imprévu fait l'objet d'un nouveau brief
+    - Section Impact, nommer les dossiers et modules concernés, pas tout le dépôt
+    - Capabilities, une par comportement cohérent, spec petite et ciblée ; pas de capability fourre-tout
   specs:
     - Chaque exigence du brief devient une exigence avec ses scénarios
     - Exigences avec SHALL ou MUST ; scénarios avec WHEN / THEN / AND (les QUAND / ALORS / ET des briefs se traduisent ainsi)
-    - Renvoyer à docs/reference/DATA-MODEL.md pour les types et règles, sans les redéfinir
+    - Renvoyer au modèle pour les types et règles, sans les redéfinir
+  design:
+    - Si design.md est créé, citer dans Context les capabilities existantes (openspec/specs/) dont le changement dépend, pour que l'agent lise leur spec plutôt que le code
   tasks:
     - Tâches petites et ordonnées ; les tests avant le code qu'ils vérifient
-    - Terminer par une tâche de mise à jour de docs/VISION.md (feuille de route §7, décisions §6)
+    - Terminer par une tâche de mise à jour du cap (feuille de route, décisions)
