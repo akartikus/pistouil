@@ -62,6 +62,8 @@ classDiagram
 
 Précisions : un fait placé à la scène (PNJ ou témoin) n’innocente personne : le solveur l’ignore (§7) ; une farce inoffensive ne nuit pas à la réputation d’un lieu public (le droit de retrait `removed` reste là pour qui s’y oppose) ; un lieu sensible n’accueille jamais de farce ; un marché peut être une scène sans jamais nommer un étal.
 
+Dans le catalogue JSON, les scènes possibles d’un `ScenarioModel` sont la liste `sceneTypeIds`, et les compatibilités forment une table « type de lieu → types d’indices ».
+
 ### Compatibilités (exemples de départ)
 
 | PlaceType | ClueType compatibles |
@@ -153,6 +155,7 @@ classDiagram
 - Tout fait vrai pointe vers un segment ; seul le mensonge de l’auteur ne pointe vers rien.
 - Le lieu d’un indice est celui du fait qu’il prouve.
 - `departure` : la personne était au lieu à cet instant et l’a quitté juste après (fait ponctuel, `from = to`).
+- Une **preuve** (indice `proof`) est un fait `departure` daté de la fin du séjour (`from = to` = fin du segment) : un ticket, une addition ou un titre de transport prouve un achat ou un passage après lequel la personne part. Les indices PNJ n’ont pas cette contrainte.
 - Les attributs privés (`author`, `lie`, `motive`) ne sont **jamais** lus par le solveur.
 - `renderedText` est visible du joueur pour toutes les sources, y compris le témoignage mensonger : il ne doit rien révéler du mensonge.
 
@@ -193,13 +196,13 @@ classDiagram
   Fact "*" --> "0..1" Fact : débloqué par
 ```
 
-- **Centre et rayon** (`center`, `radius`) : position du joueur ou commune choisie ; le rayon s’élargit jusqu’à réunir assez de lieux (par défaut au moins 6 lieux utilisables, de rôle `scene` ou `alibi`, dont au moins 2 de rôle `scene`).
+- **Centre et rayon** (`center`, `radius`) : position du joueur ou commune choisie, fixés par la construction de la zone (brief 05), pas par le moteur de génération ; le rayon s’élargit jusqu’à réunir assez de lieux (par défaut au moins 6 lieux utilisables, de rôle `scene` ou `alibi`, dont au moins 2 de rôle `scene`).
 - **Textes du mystère** : `situationText` (affiché) et `revelationText` (privé, affiché après l’accusation) sont rendus par le moteur à la génération, comme les autres textes.
 - **Seed** (`seed`) : régénère l’enquête à l’identique (reprise de partie, reproduction de bug).
 - **Difficulté** (`difficulty`) : nombre d’étapes de déduction, de 1 à 3, choisi avant la génération et vérifié par le solveur.
 - **Suspects** : `difficulty + 2`, soit 3, 4 ou 5. Chaque étape a besoin d’au moins un innocent de plus (un par tour), plus l’auteur ; les prénoms (≥ 12) suffisent largement.
 - **Débloqué par** : un fait sans lien est visible dès le départ ; les autres apparaissent quand le fait qui les débloque est découvert.
-- **Trajet** (`Route`) : uniquement entre deux lieux de l’enquête ; calculé à la génération ; vitesse 5 km/h. La matrice est **complète** : un `Route` pour chaque paire de lieux fournis au moteur, symétrique (`temps(A, B) = temps(B, A)`), `minutes ≥ 1`.
+- **Trajet** (`Route`, ses deux lieux sont `placeA` et `placeB`) : uniquement entre deux lieux de l’enquête ; calculé à la génération ; vitesse 5 km/h. La matrice est **complète** : un `Route` pour chaque paire de lieux fournis au moteur, symétrique (`temps(A, B) = temps(B, A)`), `minutes ≥ 1`.
 - **Progression** (`Progress`) : stockée localement sur l’appareil ; les annotations sont attachées à des lieux.
 
 ## 6. Règles de cohérence
@@ -222,6 +225,7 @@ Garanties par construction, vérifiées à la fin ; une enquête qui en viole un
 | Nombre de suspects | `difficulty + 2` personnages, difficulté de 1 à 3 |
 | Déblocage sans cycle | Le graphe « débloqué par » est sans cycle ; toute chaîne finit par un fait visible dès le départ |
 | Solution atteignable | Le solveur, appliqué aux seuls faits atteignables depuis les faits visibles au départ, donne le même résultat (un seul suspect, l’auteur) |
+| Preuve datée du départ | Toute preuve est un fait `departure` dont l’heure est la fin du segment qu’elle concerne |
 | Mensonge démasquable | Le témoignage mensonger est contredit (§7) par au moins un fait fiable à la fin de la résolution, qui n’est pas de l’auteur |
 | Vérités jamais contredites | Aucun fait vrai n’est contredit par un fait fiable |
 
@@ -252,16 +256,16 @@ Un témoignage est **contredit** s’il contredit au moins un fait fiable à la 
 | Suspect | Vraie soirée |
 | --- | --- |
 | Lucie | Café 20h30–20h50, parc 21h02–21h07 |
-| Paul | Boulangerie 20h40–21h15 |
+| Paul | Boulangerie 20h40–21h03 |
 | Inès | Café 20h30–21h20 |
 
 | Fait | Source |
 | --- | --- |
 | Lucie au café 20h30–21h00 | Testimony de Lucie (mensonge) |
-| Paul à la boulangerie 20h40–21h15 | Testimony de Paul |
+| Paul à la boulangerie 20h40–21h03 | Testimony de Paul |
 | Inès au café 20h30–21h20 | Testimony d’Inès |
 | Lucie quitte le café à 20h50 | Testimony d’Inès |
-| Paul à la boulangerie à 21h03 | Clue `proof` : ticket de caisse |
+| Paul quitte la boulangerie à 21h03 | Clue `proof` : ticket de caisse (départ) |
 | Inès au café 20h30–21h20 | Clue `npc` : le serveur |
 
 **Résultat attendu** : au tour 1, Paul (écart 2 < 4) et Inès (écart 0 < 12) sont innocentés. Leurs témoignages deviennent fiables ; celui d’Inès place Lucie au café à 20h50, soit un écart de 15 ≥ 12 : il ne l’innocente pas. Le tour 2 ne change rien. Lucie est seule possible : enquête valide, difficulté 1. Pour le joueur, le témoignage d’Inès sert à démasquer le mensonge de Lucie (21h00 annoncé, 20h50 en réalité) : le départ à 20h50 contredit « café 20h30–21h00 » (même lieu, `20h30 ≤ 20h50 < 21h00`), le témoignage de Lucie est donc contredit et le mensonge démasquable.
