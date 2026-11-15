@@ -1,7 +1,7 @@
 # Brief 02 — Préparation des données OSM
 
 **Objectif** : transformer un extrait OpenStreetMap en petits fichiers statiques de lieux, découpés en cases, plus un index des communes, utilisables par le jeu sans aucune API externe.
-**Dépend de** : brief 01 (catalogue et types `Lieu`, `TypeLieu`).
+**Dépend de** : brief 01 (catalogue et types `Place`, `PlaceType`).
 **À lire** : `docs/VISION.md` §4 et §6 ; `docs/reference/DATA-MODEL.md` §2 et §3.
 
 ## Périmètre
@@ -9,8 +9,8 @@
 **Inclus**
 - Un script Python (`tools/data-preparation/`) lancé à la main, une fois par mois.
 - Entrée : un extrait Geofabrik `.osm.pbf` (pour commencer, Provence-Alpes-Côte d’Azur).
-- Filtrage avec osmium sur les tags utiles au catalogue (commerces, cafés, restaurants, pharmacies, fontaines, bancs, marchés, parcs, places, arrêts de bus, œuvres d’art, et les types `exclu` pour le décor).
-- Correspondance tags OSM → `TypeLieu`, à partir des `tagsOSM` du catalogue (jamais codée en dur dans le script).
+- Filtrage avec osmium sur les tags utiles au catalogue (commerces, cafés, restaurants, pharmacies, fontaines, bancs, marchés, parcs, places, arrêts de bus, œuvres d’art, et les lieux sensibles `alibi` ou `excluded` pour le décor).
+- Correspondance tags OSM → `PlaceType`, à partir des `osmTags` du catalogue (jamais codée en dur dans le script).
 - Point représentatif pour les surfaces (un parc devient un point).
 - Lecture de `opening_hours` quand il existe.
 - Application d’une liste de retrait (`catalog/removed-places.json`, identifiants OSM).
@@ -25,17 +25,17 @@
 ## Exigences
 
 ### Pilotage par le catalogue
-- QUAND on ajoute un `TypeLieu` avec ses `tagsOSM` au catalogue et qu’on relance le script
+- QUAND on ajoute un `PlaceType` avec ses `osmTags` au catalogue et qu’on relance le script
 - ALORS les lieux correspondants apparaissent dans les fichiers, sans modification du script.
 
 ### Lieux exploitables seulement
-- QUAND un objet OSM n’a pas de nom ou ne correspond à aucun `TypeLieu`
+- QUAND un objet OSM n’a pas de nom ou ne correspond à aucun `PlaceType`
 - ALORS il est écarté.
-- Les lieux de rôle `exclu` sont conservés, marqués comme tels, pour l’affichage en décor.
+- Les lieux de rôle `excluded` sont conservés, marqués comme tels, pour l’affichage en décor.
 
 ### Retrait sur demande
 - QUAND un identifiant OSM figure dans la liste de retrait
-- ALORS le lieu est marqué `retire` et ne pourra jamais être retenu dans une enquête.
+- ALORS le lieu est marqué `removed` et ne pourra jamais être retenu dans une enquête.
 
 ### Découpage en cases
 - QUAND le script s’exécute
@@ -53,8 +53,8 @@
 ## Format de sortie (proposition)
 
 ```json
-{ "osm": "n123456789", "nom": "Boulangerie du Cours", "type": "boulangerie",
-  "lat": 43.4531, "lon": 5.5612, "horaires": "Mo-Sa 07:00-19:30" }
+{ "osmId": "n123456789", "name": "Boulangerie du Cours", "type": "bakery",
+  "lat": 43.4531, "lon": 5.5612, "openingHours": "Mo-Sa 07:00-19:30" }
 ```
 
 Coordonnées arrondies à 5 décimales (environ 1 m). Nom et valeurs ci-dessus inventés pour l’exemple.
@@ -63,7 +63,7 @@ Coordonnées arrondies à 5 décimales (environ 1 m). Nom et valeurs ci-dessus i
 
 - [ ] Le script traite l’extrait PACA sur un ordinateur portable ordinaire.
 - [ ] Les fichiers de Fuveau sont produits ; une vérification manuelle sur openstreetmap.org confirme les principaux lieux du centre.
-- [ ] Un rapport indique, par commune, le nombre de lieux `scene`, `alibi` et `exclu`.
+- [ ] Un rapport indique, par commune, le nombre de lieux `scene`, `alibi` et `excluded`.
 - [ ] Deux exécutions successives donnent des fichiers identiques.
 - [ ] La mention de licence ODbL figure dans le manifeste.
 

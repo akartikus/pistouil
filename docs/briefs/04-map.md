@@ -29,7 +29,7 @@
 - QUAND la carte affiche une enquête
 - ALORS les lieux de l’enquête sont mis en évidence (pastille de couleur, contour, numéro),
 - ET les autres lieux reconnus apparaissent avec une icône générique par type et leur nom OSM.
-- Les lieux `exclu` peuvent apparaître en décor neutre, jamais mis en évidence.
+- Les lieux `excluded` peuvent apparaître en décor neutre, jamais mis en évidence.
 
 ### Clic sur un lieu de décor
 - QUAND le joueur touche un lieu de décor

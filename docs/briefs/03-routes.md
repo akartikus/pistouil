@@ -11,7 +11,7 @@
 - Voies retenues : rues résidentielles, voies de desserte, rues piétonnes, chemins, sentiers, escaliers, routes secondaires et tertiaires. Voies écartées : autoroutes, voies rapides, `foot=no`, `access=private`. Les sens uniques sont ignorés.
 - Accrochage de chaque lieu au nœud de rue le plus proche, avec la distance d’accès.
 - **Sur l’appareil** : assemblage du graphe de la zone à partir des cases, puis Dijkstra depuis chaque lieu de l’enquête, arrêté dès que tous les autres lieux sont atteints.
-- Sortie : un `Trajet` par paire de lieux (`distanceM`, `minutes` à 5 km/h, `geometrie`).
+- Sortie : un `Route` par paire de lieux (`distanceM`, `minutes` à 5 km/h, `geometry`).
 - Une approximation de secours (vol d’oiseau × 1,3) quand deux lieux ne sont pas reliés par le réseau.
 
 **Exclu**

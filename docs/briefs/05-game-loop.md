@@ -60,7 +60,7 @@
 ## Points à trancher pendant la proposition
 
 - Forme exacte du signalement des contradictions sur le curseur horaire.
-- Textes de l’interface (boutons, libellés, messages) : seuls textes rédigés dans ce brief. Les textes des faits viennent du moteur (`texteRendu`, brief 01).
+- Textes de l’interface (boutons, libellés, messages) : seuls textes rédigés dans ce brief. Les textes des faits viennent du moteur (`renderedText`, brief 01).
 
 ## Consigne pour OpenSpec
 
