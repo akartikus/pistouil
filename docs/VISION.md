@@ -66,6 +66,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 | CI/CD GitHub Actions : tests sur chaque changement, builds mobiles à la demande et sur `master` seulement | Valider chaque changement sans consommer le cloud (dépôt privé, runner macOS coûteux) |
 | Textes rendus par le moteur à la génération (indices et témoignages), gabarits dans le catalogue, sans accord de genre | Moteur pur et déterministe, interface qui n’affiche que du texte, point d’entrée unique pour une réécriture par IA ultérieure |
 | Générateur pseudo-aléatoire mulberry32 ; génération retournée en `{ ok, investigation }` ou `{ ok: false, reason }` ; texte de révélation rendu à la génération (`revelationText`, caché jusqu’à l’accusation) | Quelques lignes sans dépendance, reproductible ; l’échec (difficulté inatteignable) est un cas normal, pas une exception ; même principe que les autres textes rendus |
+| Scénarios composés : une farce générique écrite à la main, complétée par des objets tirés d’une réserve du catalogue (étiquettes, formes avec article) | Beaucoup de farces à partir de peu de textes, sans moteur de grammaire ; ajouter un objet enrichit toutes les enquêtes |
 | Nom du jeu : Pistouil | Jeu de mots « piste » + « fouille », court, sans accent, plus facile à protéger qu’un mot courant |
 
 ## 7. Feuille de route
@@ -100,6 +101,7 @@ Jalon de validation après l’étape 5 : **une enquête jouable de bout en bout
 | Fait | « Telle personne, à tel lieu, entre telle et telle heure », avec sa source |
 | Indice | Source toujours fiable : preuve (ticket) ou PNJ (serveur) |
 | Témoignage | Parole d’un suspect, fiable seulement s’il est innocenté |
+| Objet | Un détail interchangeable d’une farce (perruque, canards en plastique…), tiré dans le catalogue |
 | Seed | Valeur qui permet de régénérer une enquête à l’identique |
 
 ## 9. Carte des documents

@@ -7,7 +7,7 @@
 
 | Couche | Contenu | Écrite par | Change quand |
 | --- | --- | --- | --- |
-| Catalogue | PlaceType, ClueType, compatibilités, ScenarioModel, prénoms, gabarits de témoignage | Nous, à la main (fichiers JSON versionnés) | Ajout de contenu |
+| Catalogue | PlaceType, ClueType, compatibilités, ScenarioModel, objets (ItemType), prénoms, gabarits de témoignage | Nous, à la main (fichiers JSON versionnés) | Ajout de contenu |
 | Enquête | Lieux retenus, personnages, vraie soirée, faits, trajets, progression | Le générateur, puis le joueur | À chaque nouvelle enquête |
 
 Ajouter une ligne au catalogue enrichit toutes les enquêtes futures sans toucher au code.
@@ -39,8 +39,16 @@ classDiagram
     title
     situation
     timeRange
+    itemTags
+    itemCount : min, max
     lieMotives
     revelations
+  }
+  class ItemType {
+    id
+    tags
+    indefinite
+    definite
   }
   class TestimonyTemplate {
     id
@@ -50,6 +58,7 @@ classDiagram
   }
   PlaceType "*" -- "*" ClueType : compatible
   ScenarioModel "*" --> "*" PlaceType : scènes possibles
+  ScenarioModel "*" --> "*" ItemType : objets acceptés (par étiquette)
 ```
 
 ### Rôle des lieux
@@ -73,6 +82,12 @@ Dans le catalogue JSON, les scènes possibles d’un `ScenarioModel` sont la lis
 | arrêt de bus | chauffeur, titre de transport |
 | parc | gardien, joggeur |
 
+### Objets et scénarios composables
+
+Un scénario est une farce générique écrite à la main ; ses détails viennent d’**objets** tirés d’une réserve. Un `ItemType` porte des étiquettes (`wearable`, `linen`, `floating`, `tableware`, `welcome`…) et deux formes écrites avec leur article : indéfinie (« une perruque rose ») et définie (« la perruque »). Un `ScenarioModel` déclare les étiquettes qu’il accepte (`itemTags`) et le nombre d’objets à tirer (`itemCount`, de `min` à `max` ; `0` et `0` pour un scénario sans objet).
+
+Le moteur tire les objets avec la seed, tous différents, et les garde dans l’enquête (`itemIds`). Exemple : « La statue relookée » accepte 1 à 2 objets `wearable`, et donne « la statue porte des lunettes de soleil et une perruque rose » ou « la statue porte du rouge à lèvres éclatant ».
+
 ### Motifs du mensonge
 
 L’auteur ment pour une raison bienveillante, révélée à la fin : `surprise` (farce ou cadeau gardé secret), `modesty` (ne veut pas de mérite), `clumsiness` (maladresse), `misunderstanding` (malentendu) ou `mistake` (erreur de jugement ou de lieu). Le mystère peut être une farce, mais l’explication n’en est pas forcément une. Chaque `ScenarioModel` porte, pour chacun de ses motifs possibles (`lieMotives`), le texte de révélation (`revelations`) affiché à la fin.
@@ -82,7 +97,8 @@ L’auteur ment pour une raison bienveillante, révélée à la fin : `surprise`
 - **Prénoms** : une liste du catalogue, d’au moins 12 prénoms (largement plus que le nombre maximal de suspects). Les suspects en reçoivent des prénoms distincts, tirés avec la seed.
 - **Gabarits** : textes à trous du catalogue, avec des variables (`{firstName}`, `{place}`, `{time}`, `{speaker}` pour celui qui témoigne…). `ClueType.textTemplate` pour les indices, `TestimonyTemplate` (selon la précision du fait et son `subject` : le témoin parle de lui-même, `self`, ou d’un autre suspect, `other`) pour les témoignages, `ScenarioModel.situation` pour le mystère.
 - **Rendu** : le moteur remplit les gabarits à la génération et stocke le résultat dans `renderedText` de chaque source ; l’interface n’affiche que ce texte. Rendu pur et déterministe.
-- **Accords** : les gabarits évitent les accords de genre, pour qu’un prénom n’ait pas besoin de genre (ex. « départ de {firstName} du {place} à {time} », pas « {firstName} est parti(e) »).
+- **Accords** : les gabarits évitent les accords de genre, pour qu’un prénom n’ait pas besoin de genre (ex. « {firstName} a quitté {place} à {time} », pas « {firstName} est parti(e) »). `{place}` est utilisé tel quel, avec « à », « près de » ou « devant » : un nom réel porte déjà son nom commun (« Statue du Poète »), on n’écrit donc jamais « la statue de {place} ».
+- **Objets dans les textes** : la situation liste les objets avec `{items}` (formes indéfinies jointes : « a », « a et b », « a, b et c ») ; une révélation cite au plus un objet avec `{item}` (forme définie du premier objet tiré). Pour se passer de grammaire : un objet n’est jamais sujet d’un verbe (« on y a étendu {items} », pas « {items} sèchent »), jamais juste après « de » ou « à » (le chargement du catalogue le refuse), et aucun pronom ni participe ne s’accorde avec lui.
 
 ## 3. Lieux
 
@@ -170,6 +186,7 @@ classDiagram
     radius
     mysteryTime
     difficulty
+    itemIds
     situationText
     -revelationText
   }
@@ -197,6 +214,7 @@ classDiagram
 ```
 
 - **Centre et rayon** (`center`, `radius`) : position du joueur ou commune choisie, fixés par la construction de la zone (brief 05), pas par le moteur de génération ; le rayon s’élargit jusqu’à réunir assez de lieux (par défaut au moins 6 lieux utilisables, de rôle `scene` ou `alibi`, dont au moins 2 de rôle `scene`).
+- **Objets** (`itemIds`) : les objets tirés pour le scénario, dans l’ordre de la situation ; visibles du joueur.
 - **Textes du mystère** : `situationText` (affiché) et `revelationText` (privé, affiché après l’accusation) sont rendus par le moteur à la génération, comme les autres textes.
 - **Seed** (`seed`) : régénère l’enquête à l’identique (reprise de partie, reproduction de bug).
 - **Difficulté** (`difficulty`) : nombre d’étapes de déduction, de 1 à 3, choisi avant la génération et vérifié par le solveur.
@@ -225,6 +243,7 @@ Garanties par construction, vérifiées à la fin ; une enquête qui en viole un
 | Nombre de suspects | `difficulty + 2` personnages, difficulté de 1 à 3 |
 | Déblocage sans cycle | Le graphe « débloqué par » est sans cycle ; toute chaîne finit par un fait visible dès le départ |
 | Solution atteignable | Le solveur, appliqué aux seuls faits atteignables depuis les faits visibles au départ, donne le même résultat (un seul suspect, l’auteur) |
+| Objets compatibles avec le scénario | Les objets de l’enquête existent, sont tous différents, portent une étiquette acceptée par le scénario, en nombre permis |
 | Heure du mystère ronde | L’heure du mystère est un multiple de 5 minutes |
 | Preuve datée du départ | Toute preuve est un fait `departure` dont l’heure est la fin du segment qu’elle concerne |
 | Mensonge démasquable | Le témoignage mensonger est contredit (§7) par au moins un fait fiable à la fin de la résolution, qui n’est pas de l’auteur |

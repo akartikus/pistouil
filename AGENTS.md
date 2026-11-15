@@ -29,7 +29,7 @@ SvelteKit statique (adapter-static, `ssr = false`), TypeScript strict, Vitest, M
 | `src/lib/map` | Composants de carte |
 | `src/lib/game` | État de partie et progression |
 | `src/lib/playground` | Logique de la page de test du moteur (`/playground`, développement seulement) |
-| `catalog/` | Catalogue JSON (types de lieux, indices, scénarios) |
+| `catalog/` | Catalogue JSON (types de lieux, indices, scénarios, objets) |
 | `tools/data-preparation/` | Scripts Python OSM |
 | `static/map/` | Style, polices, icônes |
 | `docs/` | Vision, référence, briefs |
