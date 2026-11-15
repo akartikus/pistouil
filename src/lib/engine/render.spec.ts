@@ -63,7 +63,8 @@ describe('scenario texts', () => {
 			makeover,
 			[item('sunglasses'), item('pink_wig')],
 			'Statue du Poète',
-			615
+			615,
+			'weekday'
 		);
 		expect(text).toContain('des lunettes de soleil et une perruque rose');
 		expect(text).toContain('10h15');
@@ -97,7 +98,7 @@ describe('scenario texts', () => {
 						});
 			for (const items of lists) {
 				const texts = [
-					renderSituation(scenario, items, 'Place des Tilleuls', 615),
+					renderSituation(scenario, items, 'Place des Tilleuls', 615, 'weekend'),
 					...scenario.lieMotives.map((motive) =>
 						renderRevelation(scenario, motive, items, 'Lucie', 'Place des Tilleuls')
 					)
@@ -111,5 +112,25 @@ describe('scenario texts', () => {
 			}
 		}
 		expect(rendered).toBeGreaterThan(150);
+	});
+});
+
+describe('the day in the situation', () => {
+	const catalog = validateCatalog(structuredClone(rawStarterCatalog));
+	const scenario = catalog.scenarios.find((s) => s.id === 'library_swap')!;
+
+	it('starts with « En semaine, à » on a weekday', () => {
+		const text = renderSituation(scenario, [], 'Bibliothèque municipale', 615, 'weekday');
+		expect(text.startsWith('En semaine, à 10h15,')).toBe(true);
+	});
+
+	it('starts with « Le week-end, à » on a weekend', () => {
+		const text = renderSituation(scenario, [], 'Bibliothèque municipale', 615, 'weekend');
+		expect(text.startsWith('Le week-end, à 10h15,')).toBe(true);
+	});
+
+	it('is said by every scenario of the starter catalog', () => {
+		for (const s of catalog.scenarios)
+			expect(s.situation.startsWith('{day}, à {time},')).toBe(true);
 	});
 });

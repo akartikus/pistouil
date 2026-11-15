@@ -1,4 +1,4 @@
-import type { ItemType, LieMotive, ScenarioModel } from './types';
+import type { DayType, ItemType, LieMotive, ScenarioModel } from './types';
 
 // Pure template rendering: fills {variable} slots, never reads clock or randomness.
 
@@ -27,14 +27,21 @@ export function joinList(parts: string[]): string {
 	return `${parts.slice(0, -1).join(', ')} et ${parts[parts.length - 1]}`;
 }
 
-// The situation lists the drawn items with their indefinite forms.
+const DAY_LABELS: Record<DayType, string> = {
+	weekday: 'En semaine',
+	weekend: 'Le week-end'
+};
+
+// The situation says the day and lists the drawn items with their indefinite forms.
 export function renderSituation(
 	scenario: ScenarioModel,
 	items: ItemType[],
 	place: string,
-	time: number
+	time: number,
+	dayType: DayType
 ): string {
 	return renderTemplate(scenario.situation, {
+		day: DAY_LABELS[dayType],
 		place,
 		time: formatTime(time),
 		items: joinList(items.map((item) => item.indefinite))
