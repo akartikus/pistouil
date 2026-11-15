@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { validateCatalog } from '#lib/engine/catalog.js';
-	import { fixturePlaces, fixtureRoutes, rawStarterCatalog } from '#lib/engine/fixtures.js';
+	import { rawStarterCatalog, richPlaces, richRoutes } from '#lib/engine/fixtures.js';
 	import { LIE_MOTIVES, type Difficulty, type LieMotive } from '#lib/engine/types.js';
 	import {
 		checkAccusation,
@@ -17,7 +17,7 @@
 	let difficulty = $state<Difficulty>(2);
 	let scenarioId = $state('');
 	let motive = $state('');
-	let activePlaceIds = $state(fixturePlaces.map((place) => place.osmId));
+	let activePlaceIds = $state(richPlaces.map((place) => place.osmId));
 	let tab = $state<'simulation' | 'snapshot'>('simulation');
 	let reveal = $state(false);
 	let opened = $state<string[]>([]);
@@ -28,7 +28,7 @@
 	);
 
 	const run = $derived(
-		runPlayground(fixturePlaces, fixtureRoutes, catalog, {
+		runPlayground(richPlaces, richRoutes, catalog, {
 			seed: Number(seed) || 0,
 			difficulty,
 			scenarioId: scenarioId || null,
@@ -108,7 +108,7 @@
 
 	<fieldset>
 		<legend>Lieux actifs</legend>
-		{#each fixturePlaces as place (place.osmId)}
+		{#each richPlaces as place (place.osmId)}
 			<label class="place">
 				<input type="checkbox" bind:group={activePlaceIds} value={place.osmId} />
 				{place.name} <small>({place.typeId}{place.removed ? ', retiré' : ''})</small>
@@ -319,7 +319,7 @@
 			{#if !run.ok}
 				<p class="error">Génération échouée : <code>{run.reason}</code></p>
 			{:else}
-				{@const snapshot = describeSnapshot(run.investigation, fixturePlaces)}
+				{@const snapshot = describeSnapshot(run.investigation, richPlaces)}
 				<h3>Choix</h3>
 				<table>
 					<tbody>
