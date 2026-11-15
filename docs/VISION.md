@@ -65,6 +65,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 | Suivi du projet avec OpenSpec, un brief par grande étape | Garder le fil et des décisions traçables |
 | CI/CD GitHub Actions : tests sur chaque changement, builds mobiles à la demande et sur `master` seulement | Valider chaque changement sans consommer le cloud (dépôt privé, runner macOS coûteux) |
 | Textes rendus par le moteur à la génération (indices et témoignages), gabarits dans le catalogue, sans accord de genre | Moteur pur et déterministe, interface qui n’affiche que du texte, point d’entrée unique pour une réécriture par IA ultérieure |
+| Générateur pseudo-aléatoire mulberry32 ; génération retournée en `{ ok, investigation }` ou `{ ok: false, reason }` ; texte de révélation rendu à la génération (`revelationText`, caché jusqu’à l’accusation) | Quelques lignes sans dépendance, reproductible ; l’échec (difficulté inatteignable) est un cas normal, pas une exception ; même principe que les autres textes rendus |
 | Nom du jeu : Pistouil | Jeu de mots « piste » + « fouille », court, sans accent, plus facile à protéger qu’un mot courant |
 
 ## 7. Feuille de route
@@ -72,7 +73,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 | Étape | Brief | État |
 | --- | --- | --- |
 | 0. Initialisation du projet | — | ☑ |
-| 1. Moteur : génération et solveur | `briefs/01-generation-engine.md` | ☐ |
+| 1. Moteur : génération et solveur | `briefs/01-generation-engine.md` | ☑ |
 | 2. Préparation des données OSM | `briefs/02-osm-data.md` | ☐ |
 | 3. Réseau piéton et trajets | `briefs/03-routes.md` | ☐ |
 | 4. Carte et identité visuelle | `briefs/04-map.md` | ☐ |
@@ -80,7 +81,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 | 6. Hors-ligne et application mobile | `briefs/06-offline-mobile.md` | ☐ |
 | 7. CI/CD : tests (partie A, dès maintenant), builds mobiles (partie B, après l’étape 6) | `briefs/07-ci-cd.md` | ☐ |
 
-**Phase de rédaction, avant l’étape 1** (avec `/openspec-explore`, sans changement OpenSpec) : ton, 3 scénarios (situation, scène, motifs et textes de révélation), liste d’au moins 12 prénoms, exemples de gabarits d’indices et de témoignages, règles d’écriture (pas d’accord de genre). Contenu en prose dans `docs/writing/` (à supprimer une fois encodé en JSON au brief 01, dont le format dépend des types) ; décisions au §6.
+**Phase de rédaction, avant l’étape 1** (avec `/openspec-explore`, sans changement OpenSpec) : ton, 3 scénarios (situation, scène, motifs et textes de révélation), liste d’au moins 12 prénoms, exemples de gabarits d’indices et de témoignages, règles d’écriture (pas d’accord de genre). Contenu encodé en JSON dans `catalog/` au brief 01 (les notes en prose ont été supprimées) ; décisions au §6.
 
 **Phase de design, avant l’étape 4** (avec `/openspec-explore`, sans changement OpenSpec) : direction artistique (palette, police, ton), croquis des trois écrans (carte, carnet, suspects) et premières icônes. Les décisions vont au §6 ; les croquis sont un lien Figma ou des images dans `docs/design/`.
 

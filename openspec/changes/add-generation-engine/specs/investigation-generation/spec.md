@@ -73,7 +73,7 @@ L’enquête produite SHALL avoir exactement la difficulté demandée (de 1 à 3
 - **THEN** la génération retourne un résultat d’échec avec la raison
 
 ### Requirement: Réparation ou rejet
-Quand une enquête générée n’est pas valide, le générateur SHALL ajouter ou retirer un indice et revérifier dans une limite de tentatives, puis recommencer avec une graine dérivée de façon déterministe.
+Quand une enquête générée n’est pas valide, le générateur SHALL ajouter un indice qui innocente un suspect resté possible et revérifier ; si la réparation échoue, il SHALL recommencer avec une graine dérivée de façon déterministe, dans une limite de tentatives.
 
 #### Scenario: Réparation par un indice
 - **WHEN** une enquête candidate a deux suspects possibles

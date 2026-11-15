@@ -167,6 +167,8 @@ classDiagram
     radius
     mysteryTime
     difficulty
+    situationText
+    -revelationText
   }
   class Route {
     distanceM
@@ -192,6 +194,7 @@ classDiagram
 ```
 
 - **Centre et rayon** (`center`, `radius`) : position du joueur ou commune choisie ; le rayon s’élargit jusqu’à réunir assez de lieux (par défaut au moins 6 lieux utilisables, de rôle `scene` ou `alibi`, dont au moins 2 de rôle `scene`).
+- **Textes du mystère** : `situationText` (affiché) et `revelationText` (privé, affiché après l’accusation) sont rendus par le moteur à la génération, comme les autres textes.
 - **Graine** (`seed`) : régénère l’enquête à l’identique (reprise de partie, reproduction de bug).
 - **Difficulté** (`difficulty`) : nombre d’étapes de déduction, de 1 à 3, choisi avant la génération et vérifié par le solveur.
 - **Suspects** : `difficulty + 2`, soit 3, 4 ou 5. Chaque étape a besoin d’au moins un innocent de plus (un par tour), plus l’auteur ; les prénoms (≥ 12) suffisent largement.

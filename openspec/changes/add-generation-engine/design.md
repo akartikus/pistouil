@@ -35,7 +35,7 @@ Aucune capability existante (`openspec/specs/` est vide). Le moteur vit dans `sr
 4. Chaîne de déduction pour la difficulté `d` : les innocents du tour 1 reçoivent un indice (preuve ou PNJ) ; l’innocent du tour `k > 1` n’est couvert que par le témoignage d’un innocent du tour `k − 1`. Ce témoignage est débloqué par un fait du tour `k − 1`.
 5. Dériver témoignages vrais, indices, et le mensonge de l’auteur : un intervalle ou instant faux sur son lieu `A` à `T`, tel qu’un fait fiable le contredit (départ témoigné par un innocent).
 6. Rendre tous les textes (`renderedText`), puis lancer le solveur et les règles de cohérence.
-7. Si invalide : ajouter ou retirer un indice et revérifier, jusqu’à N tentatives ; sinon recommencer avec une graine dérivée, jusqu’à M graines ; sinon retourner l’échec.
+7. Si invalide : ajouter un indice pour chaque suspect resté possible et revérifier ; sinon recommencer avec une graine dérivée (60 tentatives au plus) ; sinon retourner l’échec. Retirer un indice n’a jamais été nécessaire : la construction ne produit pas d’indice en trop.
 
 **Contradiction implémentée une seule fois** (`solver.ts`) et réutilisée par les règles de cohérence.
 
