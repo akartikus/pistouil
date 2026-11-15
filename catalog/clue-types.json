@@ -70,5 +70,23 @@
 		"nature": "npc",
 		"precision": "interval",
 		"textTemplate": "Une personne qui promenait son chien : « {firstName} était là de {from} à {to}. »"
+	},
+	{
+		"id": "postal_receipt",
+		"nature": "proof",
+		"precision": "instant",
+		"textTemplate": "Un reçu de dépôt de {place} daté de {time}, au nom de {firstName}."
+	},
+	{
+		"id": "clerk",
+		"nature": "npc",
+		"precision": "interval",
+		"textTemplate": "Au guichet de {place}, on se souvient : « {firstName} était là de {from} à {to}. »"
+	},
+	{
+		"id": "usher",
+		"nature": "npc",
+		"precision": "interval",
+		"textTemplate": "Le personnel de la salle de {place} : « {firstName} était là de {from} à {to}. »"
 	}
 ]

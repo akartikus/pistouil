@@ -11,5 +11,20 @@
 	"laundromat": ["receipt", "shopkeeper"],
 	"library": ["loan_slip", "librarian"],
 	"bus_stop": ["bus_driver", "transport_ticket"],
-	"train_station": ["transport_ticket", "station_agent"]
+	"train_station": ["transport_ticket", "station_agent"],
+	"bar": ["bill", "waiter"],
+	"post_office": ["postal_receipt", "clerk"],
+	"cinema": ["usher"],
+	"performance_hall": ["usher"],
+	"museum": ["clerk"],
+	"town_hall": ["clerk"],
+	"gym": ["clerk"],
+	"butcher": ["receipt", "shopkeeper"],
+	"greengrocer": ["receipt", "shopkeeper"],
+	"florist": ["receipt", "shopkeeper"],
+	"bookshop": ["receipt", "shopkeeper"],
+	"clothes_shop": ["receipt", "shopkeeper"],
+	"hairdresser": ["receipt", "shopkeeper"],
+	"tobacconist": ["receipt", "shopkeeper"],
+	"supermarket": ["receipt", "shopkeeper"]
 }

@@ -108,7 +108,7 @@
 	{
 		"id": "shop",
 		"role": "scene",
-		"osmTags": [["shop=convenience"], ["shop=florist"], ["shop=books"]],
+		"osmTags": [["shop=convenience"], ["shop=gift"]],
 		"typicalHours": [
 			{
 				"from": 540,
@@ -156,6 +156,171 @@
 		]
 	},
 	{
+		"id": "bar",
+		"role": "scene",
+		"osmTags": [["amenity=bar"], ["amenity=pub"]],
+		"typicalHours": [
+			{
+				"from": 660,
+				"to": 1440
+			}
+		]
+	},
+	{
+		"id": "post_office",
+		"role": "scene",
+		"osmTags": [["amenity=post_office"]],
+		"typicalHours": [
+			{
+				"from": 540,
+				"to": 1080
+			}
+		]
+	},
+	{
+		"id": "cinema",
+		"role": "scene",
+		"osmTags": [["amenity=cinema"]],
+		"typicalHours": [
+			{
+				"from": 600,
+				"to": 1440
+			}
+		]
+	},
+	{
+		"id": "performance_hall",
+		"role": "scene",
+		"osmTags": [["amenity=theatre"], ["amenity=arts_centre"], ["amenity=music_venue"]],
+		"typicalHours": [
+			{
+				"from": 840,
+				"to": 1440
+			}
+		]
+	},
+	{
+		"id": "museum",
+		"role": "scene",
+		"osmTags": [["tourism=museum"]],
+		"typicalHours": [
+			{
+				"from": 600,
+				"to": 1080
+			}
+		]
+	},
+	{
+		"id": "town_hall",
+		"role": "scene",
+		"osmTags": [["amenity=townhall"]],
+		"typicalHours": [
+			{
+				"from": 510,
+				"to": 1020
+			}
+		]
+	},
+	{
+		"id": "gym",
+		"role": "scene",
+		"osmTags": [["leisure=fitness_centre"]],
+		"typicalHours": [
+			{
+				"from": 420,
+				"to": 1320
+			}
+		]
+	},
+	{
+		"id": "butcher",
+		"role": "scene",
+		"osmTags": [["shop=butcher"]],
+		"typicalHours": [
+			{
+				"from": 480,
+				"to": 1170
+			}
+		]
+	},
+	{
+		"id": "greengrocer",
+		"role": "scene",
+		"osmTags": [["shop=greengrocer"]],
+		"typicalHours": [
+			{
+				"from": 480,
+				"to": 1170
+			}
+		]
+	},
+	{
+		"id": "florist",
+		"role": "scene",
+		"osmTags": [["shop=florist"]],
+		"typicalHours": [
+			{
+				"from": 540,
+				"to": 1140
+			}
+		]
+	},
+	{
+		"id": "bookshop",
+		"role": "scene",
+		"osmTags": [["shop=books"]],
+		"typicalHours": [
+			{
+				"from": 600,
+				"to": 1140
+			}
+		]
+	},
+	{
+		"id": "clothes_shop",
+		"role": "scene",
+		"osmTags": [["shop=clothes"]],
+		"typicalHours": [
+			{
+				"from": 600,
+				"to": 1140
+			}
+		]
+	},
+	{
+		"id": "hairdresser",
+		"role": "scene",
+		"osmTags": [["shop=hairdresser"]],
+		"typicalHours": [
+			{
+				"from": 540,
+				"to": 1140
+			}
+		]
+	},
+	{
+		"id": "tobacconist",
+		"role": "scene",
+		"osmTags": [["shop=tobacco"]],
+		"typicalHours": [
+			{
+				"from": 420,
+				"to": 1200
+			}
+		]
+	},
+	{
+		"id": "supermarket",
+		"role": "scene",
+		"osmTags": [["shop=supermarket"]],
+		"typicalHours": [
+			{
+				"from": 510,
+				"to": 1230
+			}
+		]
+	},
+	{
 		"id": "school",
 		"role": "alibi",
 		"osmTags": [["amenity=school"]],
@@ -199,6 +364,17 @@
 		"role": "alibi",
 		"osmTags": [["historic=memorial", "memorial=war_memorial"]],
 		"typicalHours": null
+	},
+	{
+		"id": "music_school",
+		"role": "alibi",
+		"osmTags": [["amenity=music_school"]],
+		"typicalHours": [
+			{
+				"from": 540,
+				"to": 1260
+			}
+		]
 	},
 	{
 		"id": "playground",

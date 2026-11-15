@@ -75,7 +75,7 @@
 		"id": "library_swap",
 		"title": "Le mélange des genres",
 		"situation": "À {time}, deux étiquettes de rayon ont été échangées dans {place} : « Cuisine » sur les romans policiers et « Policier » sur les livres de recettes. Un petit mot : « Mélange des genres, bonne lecture ».",
-		"sceneTypeIds": ["library", "shop"],
+		"sceneTypeIds": ["library", "shop", "bookshop"],
 		"timeRange": {
 			"from": 600,
 			"to": 1050
@@ -111,7 +111,21 @@
 		"id": "red_carpet",
 		"title": "Le tapis rouge",
 		"situation": "À {time}, un petit tapis rouge est déroulé devant {place}, avec une pancarte : « Entrée des artistes ».",
-		"sceneTypeIds": ["bus_stop", "bakery", "cafe", "shop", "train_station"],
+		"sceneTypeIds": [
+			"bus_stop",
+			"bakery",
+			"cafe",
+			"shop",
+			"train_station",
+			"bar",
+			"post_office",
+			"cinema",
+			"performance_hall",
+			"bookshop",
+			"clothes_shop",
+			"florist",
+			"hairdresser"
+		],
 		"timeRange": {
 			"from": 480,
 			"to": 1200
