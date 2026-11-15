@@ -13,8 +13,8 @@ context: |
 
   Langue : artefacts rédigés en français ; mots-clés structurels d'OpenSpec en anglais
   (Requirement, Scenario, SHALL/MUST, WHEN/THEN/AND). Noms des changements et des capabilities :
-  anglais, kebab-case (ex. add-generation-engine). Identifiants du modèle métier : français sans accents,
-  comme dans le modèle (ex. genererEnquete, graine, TypeLieu).
+  anglais, kebab-case (ex. add-generation-engine). Identifiants du modèle métier : anglais,
+  comme dans le modèle (ex. generateInvestigation, seed, PlaceType).
 
 # GENERIC: reusable as is. "Brief", "cap" and "modèle" are defined in the context above.
 rules:

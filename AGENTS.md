@@ -11,13 +11,13 @@ SvelteKit statique (adapter-static, `ssr = false`), TypeScript strict, Vitest, M
 ## Règles à ne jamais enfreindre
 
 - Aucune requête réseau pendant une partie.
-- Mystères uniquement sur des lieux de rôle `scene` ; personnages toujours fictifs ; seul l'auteur ment.
+- Mystères uniquement sur des lieux de rôle `scene` (publics, non sensibles) ; personnages toujours fictifs ; seul l'auteur ment.
 - Pas de logos ni de photos de bâtiments.
 - `src/lib/engine` est du code pur : ni Svelte, ni DOM, ni carte, ni réseau, ni `Math.random`.
 
 ## Conventions
 
-- Fichiers et dossiers en anglais ; identifiants du modèle métier en français sans accents (voir `docs/reference/DATA-MODEL.md`) ; textes du jeu et documents en français.
+- Fichiers et dossiers en anglais ; identifiants du modèle métier en anglais (voir `docs/reference/DATA-MODEL.md`) ; textes du jeu et documents en français.
 - Un brief = un changement OpenSpec. Si une décision contredit `docs/VISION.md`, mettre ce fichier à jour d'abord.
 
 ## Structure
