@@ -32,6 +32,8 @@ export type GenerationResult =
 	{ ok: true; investigation: Investigation } | { ok: false; reason: GenerationFailure };
 
 const MAX_ATTEMPTS = 60;
+// The mystery time is a multiple of this many minutes.
+const MYSTERY_STEP = 5;
 
 interface Context {
 	places: Place[];
@@ -86,16 +88,17 @@ function chooseSetting(ctx: Context, rng: Random): Setting | null {
 			(place) => ctx.typeOf(place).role === 'scene' && scenario.sceneTypeIds.includes(place.typeId)
 		);
 		for (const scene of rng.shuffle(scenes)) {
+			// The mystery time is a multiple of 5 minutes: keep the multiples inside each window.
 			const slots = ctx
 				.hoursOf(scene)
 				.map((hours) => ({
-					from: Math.max(hours.from, scenario.timeRange.from),
-					to: Math.min(hours.to, scenario.timeRange.to)
+					from: Math.ceil(Math.max(hours.from, scenario.timeRange.from) / MYSTERY_STEP),
+					to: Math.floor(Math.min(hours.to, scenario.timeRange.to) / MYSTERY_STEP)
 				}))
 				.filter((slot) => slot.from <= slot.to);
 			if (slots.length > 0) {
 				const slot = rng.pick(slots);
-				return { scenario, scene, time: rng.int(slot.from, slot.to) };
+				return { scenario, scene, time: rng.int(slot.from, slot.to) * MYSTERY_STEP };
 			}
 		}
 	}

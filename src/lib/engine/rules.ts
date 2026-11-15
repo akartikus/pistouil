@@ -19,6 +19,7 @@ export type RuleName =
 	| 'complete-route-matrix'
 	| 'suspect-count'
 	| 'unlock-acyclic'
+	| 'mystery-time-rounded'
 	| 'proof-at-departure'
 	| 'lie-detectable'
 	| 'truths-uncontradicted';
@@ -199,6 +200,9 @@ export function checkRules(investigation: Investigation, context: RuleContext): 
 		reliableIds = [];
 	}
 	const reliable: SolverFact[] = solverInput.facts.filter((fact) => reliableIds.includes(fact.id));
+
+	// A mystery happens at 10h15 or 8h05, never at 7h57.
+	check('mystery-time-rounded', () => investigation.mysteryTime % 5 === 0);
 
 	// A proof (receipt, bill, ticket) is bought or validated on the way out.
 	check('proof-at-departure', () =>

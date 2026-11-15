@@ -132,6 +132,54 @@ describe('generateInvestigation', () => {
 	});
 });
 
+describe('mystery time', () => {
+	const hoursOf = (placeId: string, places: typeof fixturePlaces) => {
+		const place = places.find((p) => p.osmId === placeId)!;
+		const type = catalog.placeTypes.find((t) => t.id === place.typeId)!;
+		return place.actualHours ?? type.typicalHours ?? [{ from: 0, to: 1440 }];
+	};
+
+	const check = (places: typeof fixturePlaces, routes: typeof fixtureRoutes) => {
+		for (const difficulty of difficulties) {
+			for (let seed = 1; seed <= 100; seed++) {
+				const result = generateInvestigation(places, routes, catalog, { seed, difficulty });
+				if (!result.ok) throw new Error(`seed ${seed}, difficulty ${difficulty}: ${result.reason}`);
+				const { mysteryTime, scenarioId, sceneId } = result.investigation;
+				expect(mysteryTime % 5).toBe(0);
+				const range = catalog.scenarios.find((s) => s.id === scenarioId)!.timeRange;
+				expect(mysteryTime).toBeGreaterThanOrEqual(range.from);
+				expect(mysteryTime).toBeLessThanOrEqual(range.to);
+				expect(
+					hoursOf(sceneId, places).some((h) => h.from <= mysteryTime && mysteryTime <= h.to)
+				).toBe(true);
+			}
+		}
+	};
+
+	it('is a multiple of 5 minutes, in the scenario range and the scene hours', () => {
+		check(fixturePlaces, fixtureRoutes);
+	});
+
+	it('stays round on the rich places', () => {
+		check(richPlaces, richRoutes);
+	});
+
+	it('skips a scenario whose range holds no multiple of 5 minutes', () => {
+		const narrow = { ...catalog.scenarios[0], timeRange: { from: 601, to: 604 } };
+		const only = { ...catalog, scenarios: [narrow] };
+		const none = generateInvestigation(richPlaces, richRoutes, only, { seed: 1, difficulty: 1 });
+		expect(none).toEqual({ ok: false, reason: 'no-scene' });
+
+		const mixed = { ...catalog, scenarios: [narrow, catalog.scenarios[1]] };
+		for (let seed = 1; seed <= 30; seed++) {
+			const result = generateInvestigation(richPlaces, richRoutes, mixed, { seed, difficulty: 1 });
+			if (!result.ok) throw new Error(result.reason);
+			expect(result.investigation.scenarioId).toBe(catalog.scenarios[1].id);
+			expect(result.investigation.mysteryTime % 5).toBe(0);
+		}
+	});
+});
+
 describe('proofs', () => {
 	it('are dated at the end of the stay they concern', () => {
 		const natureOf = new Map(catalog.clueTypes.map((type) => [type.id, type.nature]));

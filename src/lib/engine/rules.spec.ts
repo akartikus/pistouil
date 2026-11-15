@@ -200,6 +200,12 @@ describe('checkRules', () => {
 			}
 		],
 		[
+			'mystery-time-rounded',
+			(i) => {
+				i.mysteryTime = 477; // 7h57
+			}
+		],
+		[
 			'proof-at-departure',
 			(i) => {
 				byId(i, 'f5').from = 1250;
