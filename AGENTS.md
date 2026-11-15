@@ -18,7 +18,7 @@ SvelteKit statique (adapter-static, `ssr = false`), TypeScript strict, Vitest, M
 ## Conventions
 
 - Fichiers et dossiers en anglais ; identifiants du modèle métier en anglais (voir `docs/reference/DATA-MODEL.md`) ; textes du jeu et documents en français.
-- Un brief = un changement OpenSpec. Si une décision contredit `docs/VISION.md`, mettre ce fichier à jour d'abord.
+- Un brief = un changement OpenSpec ; un ajustement hors brief (outil de test, correction, contenu) est aussi un changement OpenSpec. Si une décision contredit `docs/VISION.md`, mettre ce fichier à jour d'abord.
 
 ## Structure
 
@@ -33,6 +33,7 @@ SvelteKit statique (adapter-static, `ssr = false`), TypeScript strict, Vitest, M
 | `tools/data-preparation/` | Scripts Python OSM |
 | `static/map/` | Style, polices, icônes |
 | `docs/` | Vision, référence, briefs |
+| `guide/` | Guides pratiques (méthode OpenSpec, fonctionnement du moteur) |
 | `openspec/` | Specs (`specs/`), changements (`changes/`), config |
 
 ## Commandes
