@@ -11,7 +11,13 @@ import {
 	type PlaygroundOptions
 } from './playground';
 import { validateCatalog } from '../engine/catalog';
-import { fixturePlaces, fixtureRoutes, rawStarterCatalog } from '../engine/fixtures';
+import {
+	fixturePlaces,
+	fixtureRoutes,
+	rawStarterCatalog,
+	richPlaces,
+	richRoutes
+} from '../engine/fixtures';
 import { missingPairs } from '../engine/routes';
 import { formatTime } from '../engine/render';
 import type { Investigation } from '../engine/types';
@@ -312,5 +318,33 @@ describe('describeSnapshot', () => {
 			to: `${formatTime(fact.to)} (${fact.to})`,
 			unlockedBy: fact.unlockedBy
 		});
+	});
+});
+
+describe('describeSnapshot, scenario items', () => {
+	const snapshotOf = (scenarioId: string) => {
+		const result = runPlayground(richPlaces, richRoutes, catalog, {
+			seed: 3,
+			difficulty: 1,
+			scenarioId,
+			motive: null,
+			activePlaceIds: richPlaces.map((place) => place.osmId)
+		});
+		if (!result.ok) throw new Error(result.reason);
+		const snapshot = describeSnapshot(result.investigation, richPlaces);
+		return {
+			investigation: result.investigation,
+			items: snapshot.choices.find((choice) => choice.name === 'items')!.value
+		};
+	};
+
+	it('lists the items drawn for the scenario', () => {
+		const { investigation, items } = snapshotOf('statue_makeover');
+		expect(investigation.itemIds.length).toBeGreaterThan(0);
+		expect(items).toBe(investigation.itemIds.join(', '));
+	});
+
+	it('lists nothing for a scenario without items', () => {
+		expect(snapshotOf('library_swap').items).toBe('');
 	});
 });

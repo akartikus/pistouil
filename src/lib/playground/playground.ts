@@ -300,6 +300,7 @@ export function describeSnapshot(investigation: Investigation, places: Place[]):
 			{ name: 'seed', value: String(investigation.seed) },
 			{ name: 'difficulty', value: String(investigation.difficulty) },
 			{ name: 'scenario', value: investigation.scenarioId },
+			{ name: 'items', value: investigation.itemIds.join(', ') },
 			{ name: 'motive', value: (lie?.kind === 'testimony' && lie.motive) || '' },
 			{ name: 'scene', value: `${investigation.sceneId} (${scene?.name}, ${scene?.typeId})` },
 			{
