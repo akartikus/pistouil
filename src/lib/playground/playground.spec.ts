@@ -6,6 +6,7 @@ import {
 	describeScenarios,
 	describeMatrix,
 	describeSnapshot,
+	formatOpeningHours,
 	discoveredFactIds,
 	checkAccusation,
 	type PlaygroundOptions
@@ -346,5 +347,70 @@ describe('describeSnapshot, scenario items', () => {
 
 	it('lists nothing for a scenario without items', () => {
 		expect(snapshotOf('library_swap').items).toBe('');
+	});
+});
+
+describe('day and opening hours', () => {
+	const view = () => {
+		const result = runPlayground(richPlaces, richRoutes, catalog, {
+			seed: 4,
+			difficulty: 3,
+			scenarioId: null,
+			motive: null,
+			activePlaceIds: richPlaces.map((place) => place.osmId)
+		});
+		if (!result.ok) throw new Error(result.reason);
+		return result;
+	};
+
+	it('gives the day label of the investigation', () => {
+		const { view: v, investigation } = view();
+		expect(v.dayLabel).toBe(investigation.dayType === 'weekday' ? 'En semaine' : 'Le week-end');
+		expect(v.situation.startsWith(v.dayLabel)).toBe(true);
+	});
+
+	it('gives the hours of each place of the investigation on that day', () => {
+		const { view: v, investigation } = view();
+		expect(v.places.map((place) => place.id)).toEqual(investigation.placeIds);
+		for (const place of v.places) {
+			expect(place.hours).toMatch(
+				/^(toujours ouvert|fermé|\d+h\d\d–\d+h\d\d(, \d+h\d\d–\d+h\d\d)*)$/
+			);
+		}
+	});
+
+	it('writes the hours as closed, always open, or a list of intervals', () => {
+		expect(formatOpeningHours(null)).toBe('toujours ouvert');
+		expect(formatOpeningHours([])).toBe('fermé');
+		expect(formatOpeningHours([{ from: 540, to: 750 }])).toBe('9h00–12h30');
+		expect(
+			formatOpeningHours([
+				{ from: 720, to: 870 },
+				{ from: 1140, to: 1380 }
+			])
+		).toBe('12h00–14h30, 19h00–23h00');
+	});
+
+	it('lists the true evening in time order, a distant proof included', () => {
+		const { view: v, investigation } = view();
+		const nameOf = (id: string) => richPlaces.find((place) => place.osmId === id)!.name;
+		for (const character of investigation.characters) {
+			const expected = [...character.segments]
+				.sort((a, b) => a.from - b.from)
+				.map(
+					(segment) =>
+						`${nameOf(segment.placeId)} ${formatTime(segment.from)}–${formatTime(segment.to)}`
+				);
+			const evening = v.reveal.evenings.find((e) => e.name === character.firstName)!;
+			expect(evening.segments).toEqual(expected);
+		}
+	});
+
+	it('shows the day and the kind of lie in the snapshot', () => {
+		const { investigation } = view();
+		const snapshot = describeSnapshot(investigation, richPlaces);
+		const value = (name: string) => snapshot.choices.find((choice) => choice.name === name)?.value;
+		expect(value('dayType')).toBe(investigation.dayType);
+		expect(['alibi', 'framing', 'closed']).toContain(value('lieKind'));
 	});
 });

@@ -190,7 +190,10 @@
 			{@const view = run.view}
 			<section>
 				<h2>Enquêter</h2>
-				<p>Ouvrez un lieu pour voir ses faits, puis accusez un suspect.</p>
+				<p>
+					<strong>{view.dayLabel}</strong> : les horaires indiqués sont ceux de ce jour. Ouvrez un lieu
+					pour voir ses faits, puis accusez un suspect.
+				</p>
 				<div class="buttons">
 					{#each view.places as place (place.id)}
 						<button
@@ -200,6 +203,7 @@
 						>
 							{opened.includes(place.id) ? '✓' : '+'}
 							{place.name}
+							<small>({place.hours})</small>
 						</button>
 					{/each}
 				</div>

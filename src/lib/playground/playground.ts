@@ -1,5 +1,13 @@
 // Logic of the engine playground page: a development tool, not part of the game.
-import type { Catalog, Difficulty, Investigation, LieMotive, Place, Route } from '../engine/types';
+import type {
+	Catalog,
+	Difficulty,
+	Interval,
+	Investigation,
+	LieMotive,
+	Place,
+	Route
+} from '../engine/types';
 import { generateInvestigation, type GenerationFailure } from '../engine/generate';
 import { checkRules, type RuleName } from '../engine/rules';
 import { createTravelTime } from '../engine/routes';
@@ -36,13 +44,15 @@ export interface FactDetail {
 
 export interface InvestigationView {
 	situation: string;
+	// "En semaine" or "Le week-end".
+	dayLabel: string;
 	mysteryTime: string;
 	sceneName: string;
 	measuredDifficulty: number;
 	violations: RuleName[];
 	suspects: { id: string; firstName: string }[];
-	// Places retained by the investigation.
-	places: { id: string; name: string }[];
+	// Places retained by the investigation, with their opening hours on the day.
+	places: { id: string; name: string; hours: string }[];
 	facts: FactView[];
 	// Hidden from the player: shown only on request.
 	reveal: {
@@ -102,6 +112,13 @@ export function filterPlaces(places: Place[], routes: Route[], activeIds: string
 	};
 }
 
+// "9h00–12h30, 14h00–18h00", "fermé" (closed all day) or "toujours ouvert" (null).
+export function formatOpeningHours(hours: Interval[] | null): string {
+	if (hours === null) return 'toujours ouvert';
+	if (hours.length === 0) return 'fermé';
+	return hours.map((i) => `${formatTime(i.from)}–${formatTime(i.to)}`).join(', ');
+}
+
 export function describeInvestigation(
 	investigation: Investigation,
 	places: Place[],
@@ -139,12 +156,18 @@ export function describeInvestigation(
 
 	return {
 		situation: investigation.situationText,
+		dayLabel: investigation.dayType === 'weekday' ? 'En semaine' : 'Le week-end',
 		mysteryTime: formatTime(investigation.mysteryTime),
 		sceneName: placeName(investigation.sceneId),
 		measuredDifficulty: result.difficulty,
 		violations: checkRules(investigation, { places, routes, catalog }),
 		suspects: investigation.characters.map(({ id, firstName }) => ({ id, firstName })),
-		places: investigation.placeIds.map((id) => ({ id, name: placeName(id) })),
+		places: investigation.placeIds.map((id) => {
+			const place = places.find((candidate) => candidate.osmId === id)!;
+			const type = catalog.placeTypes.find((candidate) => candidate.id === place.typeId)!;
+			const hours = (place.actualHours ?? type.typicalHours)[investigation.dayType];
+			return { id, name: place.name, hours: formatOpeningHours(hours) };
+		}),
 		facts: investigation.facts.map((fact) => ({
 			id: fact.id,
 			about: nameOf(fact.characterId),
@@ -166,10 +189,13 @@ export function describeInvestigation(
 			},
 			evenings: investigation.characters.map((character) => ({
 				name: character.firstName,
-				segments: character.segments.map(
-					(segment) =>
-						`${placeName(segment.placeId)} ${formatTime(segment.from)}–${formatTime(segment.to)}`
-				)
+				// In time order: a distant proof adds an older stay at the end of the list.
+				segments: [...character.segments]
+					.sort((a, b) => a.from - b.from)
+					.map(
+						(segment) =>
+							`${placeName(segment.placeId)} ${formatTime(segment.from)}–${formatTime(segment.to)}`
+					)
 			})),
 			revelation: investigation.revelationText,
 			possibleSuspects: result.possible.map(nameOf),
@@ -301,7 +327,9 @@ export function describeSnapshot(investigation: Investigation, places: Place[]):
 			{ name: 'difficulty', value: String(investigation.difficulty) },
 			{ name: 'scenario', value: investigation.scenarioId },
 			{ name: 'items', value: investigation.itemIds.join(', ') },
+			{ name: 'dayType', value: investigation.dayType },
 			{ name: 'motive', value: (lie?.kind === 'testimony' && lie.motive) || '' },
+			{ name: 'lieKind', value: (lie?.kind === 'testimony' && lie.lieKind) || '' },
 			{ name: 'scene', value: `${investigation.sceneId} (${scene?.name}, ${scene?.typeId})` },
 			{
 				name: 'mysteryTime',
