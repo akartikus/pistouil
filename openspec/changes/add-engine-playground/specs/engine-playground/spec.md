@@ -39,6 +39,13 @@ La page SHALL permettre d’activer ou de désactiver chaque lieu fictif, et la 
 - **WHEN** on désactive tous les lieux de rôle `scene`
 - **THEN** la page affiche que la génération a échoué avec la raison `no-scene`
 
+### Requirement: Cocher les lieux en bloc
+La page SHALL proposer de cocher ou de décocher tous les lieux actifs d’un coup.
+
+#### Scenario: Tout décocher
+- **WHEN** l’utilisateur décoche tous les lieux
+- **THEN** aucun lieu n’est actif et la génération échoue avec la raison `no-scene`
+
 ### Requirement: Échec de génération visible
 La page SHALL afficher la raison de l’échec quand la génération n’aboutit pas, au lieu d’une enquête.
 
@@ -54,15 +61,19 @@ La page SHALL afficher la situation du mystère, son heure et sa scène, les sus
 - **THEN** la page affiche que toutes les règles sont respectées et la difficulté mesurée par le solveur
 
 ### Requirement: Matrice des distances
-La page SHALL afficher la matrice des distances entre les lieux actifs : pour chaque paire, la durée en minutes et la distance en mètres, identique dans les deux sens, en marquant la scène de l’enquête.
+La page SHALL afficher la matrice des distances entre les lieux de l’enquête générée (ou entre tous les lieux actifs quand l’utilisateur le demande, et en cas d’échec de génération) : pour chaque paire, la durée en minutes et la distance en mètres, identique dans les deux sens, en marquant la scène.
+
+#### Scenario: Lieux de l’enquête par défaut
+- **WHEN** une enquête est générée
+- **THEN** la matrice ne montre que les lieux retenus par l’enquête
+
+#### Scenario: Tous les lieux actifs
+- **WHEN** l’utilisateur demande tous les lieux actifs
+- **THEN** la matrice montre chaque lieu actif, et un lieu désactivé en disparaît
 
 #### Scenario: Paire de lieux
-- **WHEN** deux lieux sont actifs
-- **THEN** la matrice affiche leur durée et leur distance, identiques dans les deux sens
-
-#### Scenario: Lieu désactivé
-- **WHEN** on désactive un lieu
-- **THEN** il disparaît de la matrice
+- **WHEN** deux lieux sont dans la matrice
+- **THEN** elle affiche leur durée et leur distance, identiques dans les deux sens
 
 ### Requirement: Résolution par l’utilisateur
 La page SHALL permettre de résoudre l’enquête comme un joueur : ouvrir un lieu révèle ses faits dont le fait qui les débloque est déjà découvert, et l’utilisateur peut accuser un suspect, après quoi la page indique si l’accusation est correcte et qui est l’auteur.

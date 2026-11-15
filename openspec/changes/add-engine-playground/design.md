@@ -26,7 +26,7 @@ Le moteur (`src/lib/engine`, specs `investigation-generation`, `investigation-so
 
 **Données.** Catalogue et lieux viennent de `fixtures.ts` (importés par la page de développement). Ce fichier reste une fixture : la page n’est pas dans le build de production utile.
 
-**Matrice.** `describeMatrix` construit, à partir des lieux actifs et de leurs trajets, une grille de textes « N min (M m) » avec la scène marquée. Elle est affichée même quand la génération échoue.
+**Matrice.** `describeMatrix` construit, à partir de lieux et de leurs trajets, une grille de textes « N min (M m) » avec la scène marquée. Avec beaucoup de lieux actifs (jeu riche), la page affiche par défaut seulement les lieux de l’enquête ; une case permet d’afficher tous les lieux actifs, et c’est ce qui s’affiche en cas d’échec de génération.
 
 **Mode enquêteur.** État local de la page : lieux ouverts et suspect accusé, remis à zéro quand l’enquête change. `discoveredFactIds(investigation, openedPlaceIds)` applique la règle du jeu (un fait est découvert si son lieu est ouvert et que son fait déclencheur l’est) ; `checkAccusation` compare au vrai auteur. Les deux sont des fonctions pures et testées.
 

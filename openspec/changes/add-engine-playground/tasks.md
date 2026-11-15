@@ -23,10 +23,15 @@
 - [x] 4.2 Implémenter `describeSnapshot` dans `src/lib/playground/playground.ts` et vérifier que 4.1 passe
 - [x] 4.3 Ajouter les onglets « Simulation » et « Snapshot » à `+page.svelte` (contrôles communs, simulation par défaut, JSON brut déplacé dans le snapshot) ; vérifier avec un navigateur sans interface que l’onglet par défaut est la simulation et que le snapshot affiche les choix du moteur
 
-## 5. Finition
+## 5. Lisibilité avec beaucoup de lieux
 
-- [x] 5.1 Vérifier `npm run test`, `npm run check`, `npm run lint` et `npm run build` sans erreur
-- [x] 5.2 Ajouter la ligne `src/lib/playground` à la table Structure de `AGENTS.md` et vérifier que `src/lib/engine` n’a pas été modifié (`git diff --stat`)
+- [ ] 5.1 Écrire le test dans `playground.spec.ts` : la matrice peut être restreinte aux lieux retenus de l’enquête (`describeMatrix` avec filtre) ; l’implémenter dans `playground.ts` et vérifier que les tests passent
+- [ ] 5.2 Mettre à jour `+page.svelte` : matrice des lieux de l’enquête par défaut avec une case « tous les lieux actifs », et boutons « Tout cocher » / « Tout décocher » pour les lieux ; vérifier avec un navigateur sans interface
+
+## 6. Finition
+
+- [ ] 6.1 Vérifier `npm run test`, `npm run check`, `npm run lint` et `npm run build` sans erreur
+- [x] 6.2 Ajouter la ligne `src/lib/playground` à la table Structure de `AGENTS.md` et vérifier que `src/lib/engine` n’a pas été modifié (`git diff --stat`)
 
 ## Workflow follow-up
 
