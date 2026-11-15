@@ -28,6 +28,44 @@ describe('starter catalog', () => {
 	});
 });
 
+describe('starter catalog variety', () => {
+	const catalog = validateCatalog(clone());
+	const role = (id: string) => catalog.placeTypes.find((type) => type.id === id)?.role;
+
+	it('has bars, post offices, cinemas and performance halls as scenes', () => {
+		for (const id of ['bar', 'post_office', 'cinema', 'performance_hall']) {
+			expect(role(id)).toBe('scene');
+		}
+	});
+
+	it('has a music school as a sensitive alibi place', () => {
+		expect(role('music_school')).toBe('alibi');
+	});
+
+	it('has at least five kinds of shops', () => {
+		const shops = [
+			'butcher',
+			'greengrocer',
+			'florist',
+			'bookshop',
+			'clothes_shop',
+			'hairdresser',
+			'tobacconist',
+			'supermarket'
+		];
+		expect(shops.filter((id) => role(id) === 'scene').length).toBeGreaterThanOrEqual(5);
+	});
+
+	it('only gives a PNJ clue to long-stay places such as the cinema', () => {
+		const natures = new Map(catalog.clueTypes.map((type) => [type.id, type.nature]));
+		for (const id of ['cinema', 'performance_hall']) {
+			const clues = catalog.compatibilities[id];
+			expect(clues.length).toBeGreaterThan(0);
+			for (const clue of clues) expect(natures.get(clue)).toBe('npc');
+		}
+	});
+});
+
 describe('validateCatalog', () => {
 	it('rejects a motive without revelation', () => {
 		const raw = clone();

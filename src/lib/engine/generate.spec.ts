@@ -4,7 +4,13 @@ import { validateCatalog } from './catalog';
 import { checkRules } from './rules';
 import { solve, toSolverInput } from './solver';
 import { createTravelTime } from './routes';
-import { fixturePlaces, fixtureRoutes, rawStarterCatalog } from './fixtures';
+import {
+	fixturePlaces,
+	fixtureRoutes,
+	rawStarterCatalog,
+	richPlaces,
+	richRoutes
+} from './fixtures';
 import type { Difficulty, Investigation } from './types';
 
 const catalog = validateCatalog(structuredClone(rawStarterCatalog));
@@ -226,6 +232,37 @@ describe('performance', () => {
 		const runs = 30;
 		const start = performance.now();
 		for (let seed = 1; seed <= runs; seed++) generate(seed, 3);
+		expect((performance.now() - start) / runs).toBeLessThan(200);
+	});
+});
+
+describe('rich places', () => {
+	const context = { places: richPlaces, routes: richRoutes, catalog };
+
+	it('give valid investigations at every difficulty', () => {
+		const travel = createTravelTime(richRoutes);
+		const failures: string[] = [];
+		for (const difficulty of difficulties) {
+			for (let seed = 1; seed <= 100; seed++) {
+				const result = generateInvestigation(richPlaces, richRoutes, catalog, { seed, difficulty });
+				if (!result.ok) {
+					failures.push(`seed ${seed}, difficulty ${difficulty}: ${result.reason}`);
+					continue;
+				}
+				const { investigation } = result;
+				expect(checkRules(investigation, context)).toEqual([]);
+				expect(solve(toSolverInput(investigation, travel)).difficulty).toBe(difficulty);
+			}
+		}
+		expect(failures).toEqual([]);
+	});
+
+	it('generate in under 200 ms on average', () => {
+		const runs = 30;
+		const start = performance.now();
+		for (let seed = 1; seed <= runs; seed++) {
+			generateInvestigation(richPlaces, richRoutes, catalog, { seed, difficulty: 3 });
+		}
 		expect((performance.now() - start) / runs).toBeLessThan(200);
 	});
 });
