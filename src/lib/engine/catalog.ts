@@ -1,0 +1,99 @@
+import { LIE_MOTIVES, type Catalog } from './types';
+
+export class CatalogError extends Error {}
+
+const CLUE_VARIABLES = ['firstName', 'place', 'time', 'from', 'to'];
+const TESTIMONY_VARIABLES = ['speaker', ...CLUE_VARIABLES];
+const SITUATION_VARIABLES = ['place', 'time'];
+const REVELATION_VARIABLES = ['author', 'place'];
+const MIN_FIRST_NAMES = 12;
+
+function fail(message: string): never {
+	throw new CatalogError(message);
+}
+
+function checkVariables(owner: string, template: string, allowed: string[]) {
+	for (const [, name] of template.matchAll(/\{(\w+)\}/g)) {
+		if (!allowed.includes(name)) fail(`${owner}: unknown variable {${name}}`);
+	}
+}
+
+function checkUniqueIds(label: string, items: { id: string }[]) {
+	const seen = new Set<string>();
+	for (const { id } of items) {
+		if (seen.has(id)) fail(`${label} ${id}: duplicate id`);
+		seen.add(id);
+	}
+}
+
+// The catalog comes from JSON files: validate it before the engine uses it.
+export function validateCatalog(raw: unknown): Catalog {
+	const catalog = raw as Catalog;
+	for (const key of [
+		'placeTypes',
+		'clueTypes',
+		'scenarios',
+		'firstNames',
+		'testimonyTemplates'
+	] as const) {
+		if (!Array.isArray(catalog?.[key])) fail(`catalog.${key} must be a list`);
+	}
+	if (typeof catalog.compatibilities !== 'object' || catalog.compatibilities === null) {
+		fail('catalog.compatibilities must be an object');
+	}
+
+	checkUniqueIds('place type', catalog.placeTypes);
+	checkUniqueIds('clue type', catalog.clueTypes);
+	checkUniqueIds('scenario', catalog.scenarios);
+	checkUniqueIds('testimony template', catalog.testimonyTemplates);
+
+	const placeTypes = new Map(catalog.placeTypes.map((type) => [type.id, type]));
+	const clueTypeIds = new Set(catalog.clueTypes.map((type) => type.id));
+
+	for (const [placeTypeId, clues] of Object.entries(catalog.compatibilities)) {
+		if (!placeTypes.has(placeTypeId)) fail(`compatibility: unknown place type ${placeTypeId}`);
+		for (const clueId of clues) {
+			if (!clueTypeIds.has(clueId))
+				fail(`compatibility ${placeTypeId}: unknown clue type ${clueId}`);
+		}
+	}
+
+	for (const type of catalog.clueTypes) {
+		checkVariables(`clue type ${type.id}`, type.textTemplate, CLUE_VARIABLES);
+	}
+	for (const template of catalog.testimonyTemplates) {
+		checkVariables(`testimony template ${template.id}`, template.textTemplate, TESTIMONY_VARIABLES);
+	}
+
+	for (const scenario of catalog.scenarios) {
+		checkVariables(`scenario ${scenario.id}`, scenario.situation, SITUATION_VARIABLES);
+		for (const typeId of scenario.sceneTypeIds) {
+			const type = placeTypes.get(typeId);
+			if (!type) fail(`scenario ${scenario.id}: unknown scene type ${typeId}`);
+			if (type.role !== 'scene') {
+				fail(`scenario ${scenario.id}: type ${typeId} has role ${type.role}, expected scene`);
+			}
+		}
+		for (const motive of scenario.lieMotives) {
+			if (!LIE_MOTIVES.includes(motive)) fail(`scenario ${scenario.id}: unknown motive ${motive}`);
+			const text = scenario.revelations[motive];
+			if (!text) fail(`scenario ${scenario.id}: motive ${motive} has no revelation`);
+			checkVariables(`scenario ${scenario.id} revelation ${motive}`, text, REVELATION_VARIABLES);
+		}
+	}
+
+	for (const precision of ['instant', 'interval', 'departure']) {
+		for (const subject of ['self', 'other']) {
+			const found = catalog.testimonyTemplates.some(
+				(template) => template.precision === precision && template.subject === subject
+			);
+			if (!found) fail(`no testimony template for ${precision} / ${subject}`);
+		}
+	}
+
+	if (catalog.firstNames.length < MIN_FIRST_NAMES) {
+		fail(`catalog needs at least ${MIN_FIRST_NAMES} first names, got ${catalog.firstNames.length}`);
+	}
+
+	return catalog;
+}

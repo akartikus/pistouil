@@ -1,0 +1,74 @@
+[
+	{
+		"id": "receipt",
+		"nature": "proof",
+		"precision": "instant",
+		"textTemplate": "Un ticket de caisse de {place} daté de {time}, retrouvé dans la poche de {firstName}."
+	},
+	{
+		"id": "bill",
+		"nature": "proof",
+		"precision": "instant",
+		"textTemplate": "Une addition de {place} réglée à {time} par {firstName}."
+	},
+	{
+		"id": "transport_ticket",
+		"nature": "proof",
+		"precision": "instant",
+		"textTemplate": "Un titre de transport validé à {place} à {time} par {firstName}."
+	},
+	{
+		"id": "loan_slip",
+		"nature": "proof",
+		"precision": "instant",
+		"textTemplate": "Une fiche de prêt de {place} tamponnée à {time} pour {firstName}."
+	},
+	{
+		"id": "shopkeeper",
+		"nature": "npc",
+		"precision": "interval",
+		"textTemplate": "Au comptoir de {place}, un témoin se souvient : « {firstName} était là de {from} à {to}. »"
+	},
+	{
+		"id": "waiter",
+		"nature": "npc",
+		"precision": "interval",
+		"textTemplate": "Le serveur de {place} : « {firstName} était là de {from} à {to}. »"
+	},
+	{
+		"id": "librarian",
+		"nature": "npc",
+		"precision": "interval",
+		"textTemplate": "À {place}, on se souvient : « {firstName} était là de {from} à {to}. »"
+	},
+	{
+		"id": "station_agent",
+		"nature": "npc",
+		"precision": "interval",
+		"textTemplate": "À {place}, un agent confirme : « {firstName} attendait entre {from} et {to}. »"
+	},
+	{
+		"id": "bus_driver",
+		"nature": "npc",
+		"precision": "instant",
+		"textTemplate": "Le chauffeur : « J’ai vu {firstName} à {place} à {time}. »"
+	},
+	{
+		"id": "park_keeper",
+		"nature": "npc",
+		"precision": "interval",
+		"textTemplate": "Le gardien de {place} : « {firstName} se promenait entre {from} et {to}. »"
+	},
+	{
+		"id": "jogger",
+		"nature": "npc",
+		"precision": "instant",
+		"textTemplate": "Un joggeur : « J’ai croisé {firstName} à {place} à {time}. »"
+	},
+	{
+		"id": "dog_walker",
+		"nature": "npc",
+		"precision": "interval",
+		"textTemplate": "Une personne qui promenait son chien : « {firstName} était là de {from} à {to}. »"
+	}
+]

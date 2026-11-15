@@ -1,0 +1,74 @@
+[
+	{
+		"id": "instant_self_1",
+		"precision": "instant",
+		"subject": "self",
+		"textTemplate": "{speaker} : « À {time}, j’étais à {place}. »"
+	},
+	{
+		"id": "instant_self_2",
+		"precision": "instant",
+		"subject": "self",
+		"textTemplate": "{speaker} : « Vers {time}, passez à {place} : j’y étais. »"
+	},
+	{
+		"id": "instant_other_1",
+		"precision": "instant",
+		"subject": "other",
+		"textTemplate": "{speaker} : « À {time}, {firstName} était à {place}. »"
+	},
+	{
+		"id": "instant_other_2",
+		"precision": "instant",
+		"subject": "other",
+		"textTemplate": "{speaker} : « J’ai vu {firstName} à {place} à {time}. »"
+	},
+	{
+		"id": "interval_self_1",
+		"precision": "interval",
+		"subject": "self",
+		"textTemplate": "{speaker} : « J’étais à {place} de {from} à {to}. »"
+	},
+	{
+		"id": "interval_self_2",
+		"precision": "interval",
+		"subject": "self",
+		"textTemplate": "{speaker} : « Je n’ai pas bougé de {place} entre {from} et {to}. »"
+	},
+	{
+		"id": "interval_other_1",
+		"precision": "interval",
+		"subject": "other",
+		"textTemplate": "{speaker} : « {firstName} était à {place} de {from} à {to}. »"
+	},
+	{
+		"id": "interval_other_2",
+		"precision": "interval",
+		"subject": "other",
+		"textTemplate": "{speaker} : « Entre {from} et {to}, {firstName} était à {place}. »"
+	},
+	{
+		"id": "departure_self_1",
+		"precision": "departure",
+		"subject": "self",
+		"textTemplate": "{speaker} : « J’ai quitté {place} à {time}. »"
+	},
+	{
+		"id": "departure_self_2",
+		"precision": "departure",
+		"subject": "self",
+		"textTemplate": "{speaker} : « À {time}, j’ai dit au revoir à {place}. »"
+	},
+	{
+		"id": "departure_other_1",
+		"precision": "departure",
+		"subject": "other",
+		"textTemplate": "{speaker} : « J’ai vu {firstName} quitter {place} à {time}. »"
+	},
+	{
+		"id": "departure_other_2",
+		"precision": "departure",
+		"subject": "other",
+		"textTemplate": "{speaker} : « {firstName} a quitté {place} à {time} précisément. »"
+	}
+]

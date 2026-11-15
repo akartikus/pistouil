@@ -1,0 +1,15 @@
+{
+	"park": ["park_keeper", "jogger", "dog_walker"],
+	"square": ["dog_walker"],
+	"pedestrian_street": ["dog_walker"],
+	"bench": ["dog_walker"],
+	"bakery": ["receipt", "shopkeeper"],
+	"cafe": ["bill", "waiter"],
+	"restaurant": ["bill", "waiter"],
+	"pharmacy": ["receipt", "shopkeeper"],
+	"shop": ["receipt", "shopkeeper"],
+	"laundromat": ["receipt", "shopkeeper"],
+	"library": ["loan_slip", "librarian"],
+	"bus_stop": ["bus_driver", "transport_ticket"],
+	"train_station": ["transport_ticket", "station_agent"]
+}

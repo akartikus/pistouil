@@ -1,0 +1,215 @@
+[
+	{
+		"id": "park",
+		"role": "scene",
+		"osmTags": [["leisure=park"]],
+		"typicalHours": null
+	},
+	{
+		"id": "fountain",
+		"role": "scene",
+		"osmTags": [["amenity=fountain"]],
+		"typicalHours": null
+	},
+	{
+		"id": "square",
+		"role": "scene",
+		"osmTags": [["place=square"]],
+		"typicalHours": null
+	},
+	{
+		"id": "pedestrian_street",
+		"role": "scene",
+		"osmTags": [["highway=pedestrian"]],
+		"typicalHours": null
+	},
+	{
+		"id": "statue",
+		"role": "scene",
+		"osmTags": [["tourism=artwork", "artwork_type=statue"]],
+		"typicalHours": null
+	},
+	{
+		"id": "bench",
+		"role": "scene",
+		"osmTags": [["amenity=bench"]],
+		"typicalHours": null
+	},
+	{
+		"id": "kiosk",
+		"role": "scene",
+		"osmTags": [["shop=kiosk"]],
+		"typicalHours": [
+			{
+				"from": 480,
+				"to": 1200
+			}
+		]
+	},
+	{
+		"id": "open_air_market",
+		"role": "scene",
+		"osmTags": [["amenity=marketplace"]],
+		"typicalHours": [
+			{
+				"from": 420,
+				"to": 780
+			}
+		]
+	},
+	{
+		"id": "bakery",
+		"role": "scene",
+		"osmTags": [["shop=bakery"]],
+		"typicalHours": [
+			{
+				"from": 420,
+				"to": 1170
+			}
+		]
+	},
+	{
+		"id": "cafe",
+		"role": "scene",
+		"osmTags": [["amenity=cafe"]],
+		"typicalHours": [
+			{
+				"from": 420,
+				"to": 1380
+			}
+		]
+	},
+	{
+		"id": "restaurant",
+		"role": "scene",
+		"osmTags": [["amenity=restaurant"]],
+		"typicalHours": [
+			{
+				"from": 720,
+				"to": 870
+			},
+			{
+				"from": 1140,
+				"to": 1380
+			}
+		]
+	},
+	{
+		"id": "pharmacy",
+		"role": "scene",
+		"osmTags": [["amenity=pharmacy"]],
+		"typicalHours": [
+			{
+				"from": 510,
+				"to": 1170
+			}
+		]
+	},
+	{
+		"id": "shop",
+		"role": "scene",
+		"osmTags": [["shop=convenience"], ["shop=florist"], ["shop=books"]],
+		"typicalHours": [
+			{
+				"from": 540,
+				"to": 1140
+			}
+		]
+	},
+	{
+		"id": "laundromat",
+		"role": "scene",
+		"osmTags": [["shop=laundry"]],
+		"typicalHours": [
+			{
+				"from": 420,
+				"to": 1260
+			}
+		]
+	},
+	{
+		"id": "library",
+		"role": "scene",
+		"osmTags": [["amenity=library"]],
+		"typicalHours": [
+			{
+				"from": 600,
+				"to": 1080
+			}
+		]
+	},
+	{
+		"id": "bus_stop",
+		"role": "scene",
+		"osmTags": [["highway=bus_stop"]],
+		"typicalHours": null
+	},
+	{
+		"id": "train_station",
+		"role": "scene",
+		"osmTags": [["railway=station"]],
+		"typicalHours": [
+			{
+				"from": 300,
+				"to": 1410
+			}
+		]
+	},
+	{
+		"id": "school",
+		"role": "alibi",
+		"osmTags": [["amenity=school"]],
+		"typicalHours": [
+			{
+				"from": 480,
+				"to": 1020
+			}
+		]
+	},
+	{
+		"id": "place_of_worship",
+		"role": "alibi",
+		"osmTags": [["amenity=place_of_worship"]],
+		"typicalHours": [
+			{
+				"from": 540,
+				"to": 1140
+			}
+		]
+	},
+	{
+		"id": "hospital",
+		"role": "alibi",
+		"osmTags": [["amenity=hospital"]],
+		"typicalHours": null
+	},
+	{
+		"id": "cemetery",
+		"role": "alibi",
+		"osmTags": [["landuse=cemetery"]],
+		"typicalHours": [
+			{
+				"from": 480,
+				"to": 1080
+			}
+		]
+	},
+	{
+		"id": "war_memorial",
+		"role": "alibi",
+		"osmTags": [["historic=memorial", "memorial=war_memorial"]],
+		"typicalHours": null
+	},
+	{
+		"id": "playground",
+		"role": "excluded",
+		"osmTags": [["leisure=playground"]],
+		"typicalHours": null
+	},
+	{
+		"id": "dwelling",
+		"role": "excluded",
+		"osmTags": [["building=house"], ["building=residential"]],
+		"typicalHours": null
+	}
+]
