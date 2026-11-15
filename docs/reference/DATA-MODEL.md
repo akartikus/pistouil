@@ -12,7 +12,7 @@
 
 Ajouter une ligne au catalogue enrichit toutes les enquêtes futures sans toucher au code.
 
-**Conventions** : heures en minutes depuis minuit (entiers, ex. 21h05 = 1265) ; distances en mètres entiers ; identifiants en chaînes.
+**Conventions** : heures en minutes depuis minuit (entiers, ex. 21h05 = 1265) ; distances en mètres entiers ; identifiants en chaînes. L’**heure du mystère** est toujours un multiple de 5 minutes (10h15, 8h05, 18h30 ; jamais 7h57 ni 18h13) ; les autres heures gardent la précision à la minute.
 
 **Horaires** (`typicalHours`, `actualHours`) : liste d’intervalles `{ from, to }` en minutes depuis minuit, valables tous les jours. Horaires absents = lieu toujours ouvert (cas d’un parc, d’une fontaine). Le parsing de `opening_hours` OSM est hors moteur (brief 02).
 
@@ -225,6 +225,7 @@ Garanties par construction, vérifiées à la fin ; une enquête qui en viole un
 | Nombre de suspects | `difficulty + 2` personnages, difficulté de 1 à 3 |
 | Déblocage sans cycle | Le graphe « débloqué par » est sans cycle ; toute chaîne finit par un fait visible dès le départ |
 | Solution atteignable | Le solveur, appliqué aux seuls faits atteignables depuis les faits visibles au départ, donne le même résultat (un seul suspect, l’auteur) |
+| Heure du mystère ronde | L’heure du mystère est un multiple de 5 minutes |
 | Preuve datée du départ | Toute preuve est un fait `departure` dont l’heure est la fin du segment qu’elle concerne |
 | Mensonge démasquable | Le témoignage mensonger est contredit (§7) par au moins un fait fiable à la fin de la résolution, qui n’est pas de l’auteur |
 | Vérités jamais contredites | Aucun fait vrai n’est contredit par un fait fiable |
