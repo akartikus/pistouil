@@ -3,389 +3,648 @@
 		"id": "park",
 		"role": "scene",
 		"osmTags": [["leisure=park"]],
-		"typicalHours": null
+		"typicalHours": {
+			"weekday": null,
+			"weekend": null
+		}
 	},
 	{
 		"id": "fountain",
 		"role": "scene",
 		"osmTags": [["amenity=fountain"]],
-		"typicalHours": null
+		"typicalHours": {
+			"weekday": null,
+			"weekend": null
+		}
 	},
 	{
 		"id": "square",
 		"role": "scene",
 		"osmTags": [["place=square"]],
-		"typicalHours": null
+		"typicalHours": {
+			"weekday": null,
+			"weekend": null
+		}
 	},
 	{
 		"id": "pedestrian_street",
 		"role": "scene",
 		"osmTags": [["highway=pedestrian"]],
-		"typicalHours": null
+		"typicalHours": {
+			"weekday": null,
+			"weekend": null
+		}
 	},
 	{
 		"id": "statue",
 		"role": "scene",
 		"osmTags": [["tourism=artwork", "artwork_type=statue"]],
-		"typicalHours": null
+		"typicalHours": {
+			"weekday": null,
+			"weekend": null
+		}
 	},
 	{
 		"id": "bench",
 		"role": "scene",
 		"osmTags": [["amenity=bench"]],
-		"typicalHours": null
+		"typicalHours": {
+			"weekday": null,
+			"weekend": null
+		}
 	},
 	{
 		"id": "kiosk",
 		"role": "scene",
 		"osmTags": [["shop=kiosk"]],
-		"typicalHours": [
-			{
-				"from": 480,
-				"to": 1200
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 480,
+					"to": 1200
+				}
+			],
+			"weekend": [
+				{
+					"from": 480,
+					"to": 780
+				}
+			]
+		}
 	},
 	{
 		"id": "open_air_market",
 		"role": "scene",
 		"osmTags": [["amenity=marketplace"]],
-		"typicalHours": [
-			{
-				"from": 420,
-				"to": 780
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 420,
+					"to": 780
+				}
+			],
+			"weekend": [
+				{
+					"from": 420,
+					"to": 780
+				}
+			]
+		}
 	},
 	{
 		"id": "bakery",
 		"role": "scene",
 		"osmTags": [["shop=bakery"]],
-		"typicalHours": [
-			{
-				"from": 420,
-				"to": 1170
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 420,
+					"to": 1170
+				}
+			],
+			"weekend": [
+				{
+					"from": 420,
+					"to": 780
+				}
+			]
+		}
 	},
 	{
 		"id": "cafe",
 		"role": "scene",
 		"osmTags": [["amenity=cafe"]],
-		"typicalHours": [
-			{
-				"from": 420,
-				"to": 1380
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 420,
+					"to": 1380
+				}
+			],
+			"weekend": [
+				{
+					"from": 480,
+					"to": 1380
+				}
+			]
+		}
 	},
 	{
 		"id": "restaurant",
 		"role": "scene",
 		"osmTags": [["amenity=restaurant"]],
-		"typicalHours": [
-			{
-				"from": 720,
-				"to": 870
-			},
-			{
-				"from": 1140,
-				"to": 1380
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 720,
+					"to": 870
+				},
+				{
+					"from": 1140,
+					"to": 1380
+				}
+			],
+			"weekend": [
+				{
+					"from": 720,
+					"to": 900
+				},
+				{
+					"from": 1140,
+					"to": 1440
+				}
+			]
+		}
 	},
 	{
 		"id": "pharmacy",
 		"role": "scene",
 		"osmTags": [["amenity=pharmacy"]],
-		"typicalHours": [
-			{
-				"from": 510,
-				"to": 1170
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 510,
+					"to": 1170
+				}
+			],
+			"weekend": [
+				{
+					"from": 540,
+					"to": 750
+				}
+			]
+		}
 	},
 	{
 		"id": "shop",
 		"role": "scene",
 		"osmTags": [["shop=convenience"], ["shop=gift"]],
-		"typicalHours": [
-			{
-				"from": 540,
-				"to": 1140
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 540,
+					"to": 1140
+				}
+			],
+			"weekend": [
+				{
+					"from": 540,
+					"to": 750
+				}
+			]
+		}
 	},
 	{
 		"id": "laundromat",
 		"role": "scene",
 		"osmTags": [["shop=laundry"]],
-		"typicalHours": [
-			{
-				"from": 420,
-				"to": 1260
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 420,
+					"to": 1260
+				}
+			],
+			"weekend": [
+				{
+					"from": 420,
+					"to": 1260
+				}
+			]
+		}
 	},
 	{
 		"id": "library",
 		"role": "scene",
 		"osmTags": [["amenity=library"]],
-		"typicalHours": [
-			{
-				"from": 600,
-				"to": 1080
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 600,
+					"to": 1080
+				}
+			],
+			"weekend": [
+				{
+					"from": 600,
+					"to": 720
+				}
+			]
+		}
 	},
 	{
 		"id": "bus_stop",
 		"role": "scene",
 		"osmTags": [["highway=bus_stop"]],
-		"typicalHours": null
+		"typicalHours": {
+			"weekday": null,
+			"weekend": null
+		}
 	},
 	{
 		"id": "train_station",
 		"role": "scene",
 		"osmTags": [["railway=station"]],
-		"typicalHours": [
-			{
-				"from": 300,
-				"to": 1410
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 300,
+					"to": 1410
+				}
+			],
+			"weekend": [
+				{
+					"from": 360,
+					"to": 1410
+				}
+			]
+		}
 	},
 	{
 		"id": "bar",
 		"role": "scene",
 		"osmTags": [["amenity=bar"], ["amenity=pub"]],
-		"typicalHours": [
-			{
-				"from": 660,
-				"to": 1440
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 660,
+					"to": 1440
+				}
+			],
+			"weekend": [
+				{
+					"from": 660,
+					"to": 1440
+				}
+			]
+		}
 	},
 	{
 		"id": "post_office",
 		"role": "scene",
 		"osmTags": [["amenity=post_office"]],
-		"typicalHours": [
-			{
-				"from": 540,
-				"to": 1080
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 540,
+					"to": 1080
+				}
+			],
+			"weekend": [
+				{
+					"from": 540,
+					"to": 720
+				}
+			]
+		}
 	},
 	{
 		"id": "cinema",
 		"role": "scene",
 		"osmTags": [["amenity=cinema"]],
-		"typicalHours": [
-			{
-				"from": 600,
-				"to": 1440
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 600,
+					"to": 1440
+				}
+			],
+			"weekend": [
+				{
+					"from": 600,
+					"to": 1440
+				}
+			]
+		}
 	},
 	{
 		"id": "performance_hall",
 		"role": "scene",
 		"osmTags": [["amenity=theatre"], ["amenity=arts_centre"], ["amenity=music_venue"]],
-		"typicalHours": [
-			{
-				"from": 840,
-				"to": 1440
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 840,
+					"to": 1440
+				}
+			],
+			"weekend": [
+				{
+					"from": 840,
+					"to": 1440
+				}
+			]
+		}
 	},
 	{
 		"id": "museum",
 		"role": "scene",
 		"osmTags": [["tourism=museum"]],
-		"typicalHours": [
-			{
-				"from": 600,
-				"to": 1080
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 600,
+					"to": 1080
+				}
+			],
+			"weekend": [
+				{
+					"from": 600,
+					"to": 1080
+				}
+			]
+		}
 	},
 	{
 		"id": "town_hall",
 		"role": "scene",
 		"osmTags": [["amenity=townhall"]],
-		"typicalHours": [
-			{
-				"from": 510,
-				"to": 1020
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 510,
+					"to": 1020
+				}
+			],
+			"weekend": []
+		}
 	},
 	{
 		"id": "gym",
 		"role": "scene",
 		"osmTags": [["leisure=fitness_centre"]],
-		"typicalHours": [
-			{
-				"from": 420,
-				"to": 1320
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 420,
+					"to": 1320
+				}
+			],
+			"weekend": [
+				{
+					"from": 480,
+					"to": 1200
+				}
+			]
+		}
 	},
 	{
 		"id": "butcher",
 		"role": "scene",
 		"osmTags": [["shop=butcher"]],
-		"typicalHours": [
-			{
-				"from": 480,
-				"to": 1170
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 480,
+					"to": 1170
+				}
+			],
+			"weekend": [
+				{
+					"from": 480,
+					"to": 780
+				}
+			]
+		}
 	},
 	{
 		"id": "greengrocer",
 		"role": "scene",
 		"osmTags": [["shop=greengrocer"]],
-		"typicalHours": [
-			{
-				"from": 480,
-				"to": 1170
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 480,
+					"to": 1170
+				}
+			],
+			"weekend": [
+				{
+					"from": 480,
+					"to": 780
+				}
+			]
+		}
 	},
 	{
 		"id": "florist",
 		"role": "scene",
 		"osmTags": [["shop=florist"]],
-		"typicalHours": [
-			{
-				"from": 540,
-				"to": 1140
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 540,
+					"to": 1140
+				}
+			],
+			"weekend": [
+				{
+					"from": 540,
+					"to": 780
+				}
+			]
+		}
 	},
 	{
 		"id": "bookshop",
 		"role": "scene",
 		"osmTags": [["shop=books"]],
-		"typicalHours": [
-			{
-				"from": 600,
-				"to": 1140
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 600,
+					"to": 1140
+				}
+			],
+			"weekend": [
+				{
+					"from": 600,
+					"to": 1140
+				}
+			]
+		}
 	},
 	{
 		"id": "clothes_shop",
 		"role": "scene",
 		"osmTags": [["shop=clothes"]],
-		"typicalHours": [
-			{
-				"from": 600,
-				"to": 1140
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 600,
+					"to": 1140
+				}
+			],
+			"weekend": [
+				{
+					"from": 600,
+					"to": 1140
+				}
+			]
+		}
 	},
 	{
 		"id": "hairdresser",
 		"role": "scene",
 		"osmTags": [["shop=hairdresser"]],
-		"typicalHours": [
-			{
-				"from": 540,
-				"to": 1140
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 540,
+					"to": 1140
+				}
+			],
+			"weekend": [
+				{
+					"from": 540,
+					"to": 1020
+				}
+			]
+		}
 	},
 	{
 		"id": "tobacconist",
 		"role": "scene",
 		"osmTags": [["shop=tobacco"]],
-		"typicalHours": [
-			{
-				"from": 420,
-				"to": 1200
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 420,
+					"to": 1200
+				}
+			],
+			"weekend": [
+				{
+					"from": 420,
+					"to": 1200
+				}
+			]
+		}
 	},
 	{
 		"id": "supermarket",
 		"role": "scene",
 		"osmTags": [["shop=supermarket"]],
-		"typicalHours": [
-			{
-				"from": 510,
-				"to": 1230
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 510,
+					"to": 1230
+				}
+			],
+			"weekend": [
+				{
+					"from": 510,
+					"to": 780
+				}
+			]
+		}
 	},
 	{
 		"id": "school",
 		"role": "alibi",
 		"osmTags": [["amenity=school"]],
-		"typicalHours": [
-			{
-				"from": 480,
-				"to": 1020
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 480,
+					"to": 1020
+				}
+			],
+			"weekend": []
+		}
 	},
 	{
 		"id": "place_of_worship",
 		"role": "alibi",
 		"osmTags": [["amenity=place_of_worship"]],
-		"typicalHours": [
-			{
-				"from": 540,
-				"to": 1140
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 540,
+					"to": 1140
+				}
+			],
+			"weekend": [
+				{
+					"from": 540,
+					"to": 1140
+				}
+			]
+		}
 	},
 	{
 		"id": "hospital",
 		"role": "alibi",
 		"osmTags": [["amenity=hospital"]],
-		"typicalHours": null
+		"typicalHours": {
+			"weekday": null,
+			"weekend": null
+		}
 	},
 	{
 		"id": "cemetery",
 		"role": "alibi",
 		"osmTags": [["landuse=cemetery"]],
-		"typicalHours": [
-			{
-				"from": 480,
-				"to": 1080
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 480,
+					"to": 1080
+				}
+			],
+			"weekend": [
+				{
+					"from": 480,
+					"to": 1080
+				}
+			]
+		}
 	},
 	{
 		"id": "war_memorial",
 		"role": "alibi",
 		"osmTags": [["historic=memorial", "memorial=war_memorial"]],
-		"typicalHours": null
+		"typicalHours": {
+			"weekday": null,
+			"weekend": null
+		}
 	},
 	{
 		"id": "music_school",
 		"role": "alibi",
 		"osmTags": [["amenity=music_school"]],
-		"typicalHours": [
-			{
-				"from": 540,
-				"to": 1260
-			}
-		]
+		"typicalHours": {
+			"weekday": [
+				{
+					"from": 540,
+					"to": 1260
+				}
+			],
+			"weekend": [
+				{
+					"from": 540,
+					"to": 1080
+				}
+			]
+		}
 	},
 	{
 		"id": "playground",
 		"role": "excluded",
 		"osmTags": [["leisure=playground"]],
-		"typicalHours": null
+		"typicalHours": {
+			"weekday": null,
+			"weekend": null
+		}
 	},
 	{
 		"id": "dwelling",
 		"role": "excluded",
 		"osmTags": [["building=house"], ["building=residential"]],
-		"typicalHours": null
+		"typicalHours": {
+			"weekday": null,
+			"weekend": null
+		}
 	}
 ]

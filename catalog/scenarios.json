@@ -2,7 +2,7 @@
 	{
 		"id": "laundry_line",
 		"title": "La corde à linge",
-		"situation": "À {time}, une corde à linge est tendue entre un arbre et un lampadaire près de {place}. On y a étendu {items}, comme si de rien n’était.",
+		"situation": "{day}, à {time}, une corde à linge est tendue entre un arbre et un lampadaire près de {place}. On y a étendu {items}, comme si de rien n’était.",
 		"sceneTypeIds": ["square", "park", "pedestrian_street"],
 		"timeRange": {
 			"from": 540,
@@ -25,7 +25,7 @@
 	{
 		"id": "laundromat_surprise",
 		"title": "Le linge du tambour",
-		"situation": "À {time}, on a retrouvé {items} dans un tambour, à {place}, avec un mot : « Quelqu’un a perdu ça ? ».",
+		"situation": "{day}, à {time}, on a retrouvé {items} dans un tambour, à {place}, avec un mot : « Quelqu’un a perdu ça ? ».",
 		"sceneTypeIds": ["laundromat"],
 		"timeRange": {
 			"from": 480,
@@ -48,7 +48,7 @@
 	{
 		"id": "rubber_ducks",
 		"title": "La course sur l’eau",
-		"situation": "À {time}, quelqu’un a lâché {items} dans l’eau, à {place}, avec une pancarte : « Course en cours ».",
+		"situation": "{day}, à {time}, quelqu’un a lâché {items} dans l’eau, à {place}, avec une pancarte : « Course en cours ».",
 		"sceneTypeIds": ["fountain"],
 		"timeRange": {
 			"from": 600,
@@ -71,7 +71,7 @@
 	{
 		"id": "bench_table",
 		"title": "La table réservée",
-		"situation": "À {time}, deux bancs ont été placés face à face près de {place}. Quelqu’un y a installé {items}, avec une pancarte : « Table réservée ».",
+		"situation": "{day}, à {time}, deux bancs ont été placés face à face près de {place}. Quelqu’un y a installé {items}, avec une pancarte : « Table réservée ».",
 		"sceneTypeIds": ["bench", "park", "square"],
 		"timeRange": {
 			"from": 450,
@@ -94,7 +94,7 @@
 	{
 		"id": "library_swap",
 		"title": "Le mélange des genres",
-		"situation": "À {time}, deux étiquettes de rayon ont été échangées à {place} : « Cuisine » sur les romans policiers et « Policier » sur les livres de recettes. Un petit mot : « Mélange des genres, bonne lecture ».",
+		"situation": "{day}, à {time}, deux étiquettes de rayon ont été échangées à {place} : « Cuisine » sur les romans policiers et « Policier » sur les livres de recettes. Un petit mot : « Mélange des genres, bonne lecture ».",
 		"sceneTypeIds": ["library", "bookshop"],
 		"timeRange": {
 			"from": 600,
@@ -117,7 +117,7 @@
 	{
 		"id": "statue_makeover",
 		"title": "La statue relookée",
-		"situation": "À {time}, à {place}, la statue porte {items}, avec un mot : « Ne pas déranger ».",
+		"situation": "{day}, à {time}, à {place}, la statue porte {items}, avec un mot : « Ne pas déranger ».",
 		"sceneTypeIds": ["statue", "fountain", "square"],
 		"timeRange": {
 			"from": 540,
@@ -140,7 +140,7 @@
 	{
 		"id": "vip_entrance",
 		"title": "L’entrée des artistes",
-		"situation": "À {time}, quelqu’un a installé {items} devant {place}, avec une pancarte : « Entrée des artistes ».",
+		"situation": "{day}, à {time}, quelqu’un a installé {items} devant {place}, avec une pancarte : « Entrée des artistes ».",
 		"sceneTypeIds": [
 			"bus_stop",
 			"bakery",

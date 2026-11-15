@@ -54,12 +54,6 @@
 		"textTemplate": "{speaker} : « J’ai quitté {place} à {time}. »"
 	},
 	{
-		"id": "departure_self_2",
-		"precision": "departure",
-		"subject": "self",
-		"textTemplate": "{speaker} : « À {time}, j’ai dit au revoir à {place}. »"
-	},
-	{
 		"id": "departure_other_1",
 		"precision": "departure",
 		"subject": "other",
@@ -69,6 +63,6 @@
 		"id": "departure_other_2",
 		"precision": "departure",
 		"subject": "other",
-		"textTemplate": "{speaker} : « {firstName} a quitté {place} à {time} précisément. »"
+		"textTemplate": "{speaker} : « {firstName} a quitté {place} à {time}. »"
 	}
 ]
