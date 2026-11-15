@@ -166,6 +166,36 @@ describe('describeMatrix', () => {
 	});
 });
 
+describe('describeMatrix restricted to the investigation', () => {
+	it('keeps only the places of the investigation and marks the scene', () => {
+		const result = run();
+		if (!result.ok) throw new Error(result.reason);
+		const { investigation, retainedMatrix, matrix } = result;
+		expect(retainedMatrix.places.map((p) => p.id).sort()).toEqual(
+			[...investigation.placeIds].sort()
+		);
+		expect(retainedMatrix.cells).toHaveLength(investigation.placeIds.length);
+		expect(retainedMatrix.places.filter((p) => p.isScene).map((p) => p.id)).toEqual([
+			investigation.sceneId
+		]);
+		// The full matrix still lists every active place.
+		expect(matrix.places).toHaveLength(allPlaceIds.length);
+		expect(retainedMatrix.places.length).toBeLessThan(matrix.places.length);
+	});
+
+	it('gives the same distance as the full matrix', () => {
+		const result = run();
+		if (!result.ok) throw new Error(result.reason);
+		const { matrix, retainedMatrix } = result;
+		const full = (a: string, b: string) =>
+			matrix.cells[matrix.places.findIndex((p) => p.id === a)][
+				matrix.places.findIndex((p) => p.id === b)
+			];
+		const [first, second] = retainedMatrix.places;
+		expect(retainedMatrix.cells[0][1]).toBe(full(first.id, second.id));
+	});
+});
+
 describe('discoveredFactIds', () => {
 	const investigation = (): Investigation => {
 		const result = run({ difficulty: 2 });

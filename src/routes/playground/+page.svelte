@@ -19,6 +19,7 @@
 	let motive = $state('');
 	let activePlaceIds = $state(richPlaces.map((place) => place.osmId));
 	let tab = $state<'simulation' | 'snapshot'>('simulation');
+	let allPlaces = $state(false);
 	let reveal = $state(false);
 	let opened = $state<string[]>([]);
 	let accused = $state<string | null>(null);
@@ -43,6 +44,9 @@
 		opened = [];
 		accused = null;
 	});
+
+	// The places of the investigation by default; every active place on request or on failure.
+	const matrix = $derived(run.ok && !allPlaces ? run.retainedMatrix : run.matrix);
 
 	const discovered = $derived(run.ok ? discoveredFactIds(run.investigation, opened) : []);
 	const verdict = $derived(run.ok && accused ? checkAccusation(run.investigation, accused) : null);
@@ -108,6 +112,12 @@
 
 	<fieldset>
 		<legend>Lieux actifs</legend>
+		<div class="buttons">
+			<button type="button" onclick={() => (activePlaceIds = richPlaces.map((p) => p.osmId))}>
+				Tout cocher
+			</button>
+			<button type="button" onclick={() => (activePlaceIds = [])}>Tout décocher</button>
+		</div>
 		{#each richPlaces as place (place.osmId)}
 			<label class="place">
 				<input type="checkbox" bind:group={activePlaceIds} value={place.osmId} />
@@ -147,21 +157,25 @@
 
 		<section>
 			<h2>Distances entre les lieux</h2>
+			<label>
+				<input type="checkbox" bind:checked={allPlaces} />
+				Tous les lieux actifs
+			</label>
 			<div class="scroll">
 				<table class="matrix">
 					<thead>
 						<tr>
 							<th></th>
-							{#each run.matrix.places as place (place.id)}
+							{#each matrix.places as place (place.id)}
 								<th class:scene={place.isScene}>{place.name}{place.isScene ? ' ★' : ''}</th>
 							{/each}
 						</tr>
 					</thead>
 					<tbody>
-						{#each run.matrix.places as row, i (row.id)}
+						{#each matrix.places as row, i (row.id)}
 							<tr>
 								<th class:scene={row.isScene}>{row.name}{row.isScene ? ' ★' : ''}</th>
-								{#each run.matrix.cells[i] as cell, j (j)}
+								{#each matrix.cells[i] as cell, j (j)}
 									<td class:diagonal={cell === null}>{cell ?? '—'}</td>
 								{/each}
 							</tr>

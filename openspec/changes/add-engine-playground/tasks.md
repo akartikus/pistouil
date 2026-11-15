@@ -25,12 +25,12 @@
 
 ## 5. Lisibilité avec beaucoup de lieux
 
-- [ ] 5.1 Écrire le test dans `playground.spec.ts` : la matrice peut être restreinte aux lieux retenus de l’enquête (`describeMatrix` avec filtre) ; l’implémenter dans `playground.ts` et vérifier que les tests passent
-- [ ] 5.2 Mettre à jour `+page.svelte` : matrice des lieux de l’enquête par défaut avec une case « tous les lieux actifs », et boutons « Tout cocher » / « Tout décocher » pour les lieux ; vérifier avec un navigateur sans interface
+- [x] 5.1 Écrire le test dans `playground.spec.ts` : la matrice peut être restreinte aux lieux retenus de l’enquête (`describeMatrix` avec filtre) ; l’implémenter dans `playground.ts` et vérifier que les tests passent
+- [x] 5.2 Mettre à jour `+page.svelte` : matrice des lieux de l’enquête par défaut avec une case « tous les lieux actifs », et boutons « Tout cocher » / « Tout décocher » pour les lieux ; vérifier avec un navigateur sans interface
 
 ## 6. Finition
 
-- [ ] 6.1 Vérifier `npm run test`, `npm run check`, `npm run lint` et `npm run build` sans erreur
+- [x] 6.1 Vérifier `npm run test`, `npm run check`, `npm run lint` et `npm run build` sans erreur
 - [x] 6.2 Ajouter la ligne `src/lib/playground` à la table Structure de `AGENTS.md` et vérifier que `src/lib/engine` n’a pas été modifié (`git diff --stat`)
 
 ## Workflow follow-up

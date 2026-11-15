@@ -63,7 +63,14 @@ export interface MatrixView {
 }
 
 export type PlaygroundRun =
-	| { ok: true; investigation: Investigation; view: InvestigationView; matrix: MatrixView }
+	| {
+			ok: true;
+			investigation: Investigation;
+			view: InvestigationView;
+			// Distances between all active places, and between the places of the investigation only.
+			matrix: MatrixView;
+			retainedMatrix: MatrixView;
+	  }
 	| { ok: false; reason: GenerationFailure; matrix: MatrixView };
 
 export interface ScenarioView {
@@ -173,10 +180,15 @@ export function describeInvestigation(
 }
 
 export function describeMatrix(
-	places: Place[],
+	allPlaces: Place[],
 	routes: Route[],
-	investigation: Investigation | null = null
+	investigation: Investigation | null = null,
+	onlyRetained = false
 ): MatrixView {
+	const places =
+		onlyRetained && investigation
+			? allPlaces.filter((place) => investigation.placeIds.includes(place.osmId))
+			: allPlaces;
 	const key = (a: string, b: string) => (a < b ? `${a}|${b}` : `${b}|${a}`);
 	const byPair = new Map(routes.map((route) => [key(route.placeA, route.placeB), route]));
 	return {
@@ -241,7 +253,8 @@ export function runPlayground(
 		ok: true,
 		investigation: result.investigation,
 		view: describeInvestigation(result.investigation, active.places, active.routes, restricted),
-		matrix: describeMatrix(active.places, active.routes, result.investigation)
+		matrix: describeMatrix(active.places, active.routes, result.investigation),
+		retainedMatrix: describeMatrix(active.places, active.routes, result.investigation, true)
 	};
 }
 
