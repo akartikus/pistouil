@@ -46,7 +46,8 @@ const base = (): Investigation => ({
 	seed: 1,
 	difficulty: 1,
 	mysteryTime: 1265,
-	scenarioId: 'music',
+	scenarioId: 'library_swap',
+	itemIds: [],
 	situationText: 'Une boîte à musique.',
 	revelationText: 'Une surprise.',
 	sceneId: 'park',
@@ -200,6 +201,47 @@ describe('checkRules', () => {
 			}
 		],
 		[
+			'items-match-scenario',
+			(i) => {
+				// A linen item in a scenario that only accepts wearable items.
+				i.scenarioId = 'statue_makeover';
+				i.itemIds = ['heart_boxers'];
+			}
+		],
+		[
+			'items-match-scenario',
+			(i) => {
+				i.scenarioId = 'statue_makeover';
+				i.itemIds = ['pink_wig', 'pink_wig'];
+			}
+		],
+		[
+			'items-match-scenario',
+			(i) => {
+				i.scenarioId = 'statue_makeover';
+				i.itemIds = ['pink_wig', 'sunglasses', 'headphones'];
+			}
+		],
+		[
+			'items-match-scenario',
+			(i) => {
+				i.scenarioId = 'statue_makeover';
+				i.itemIds = [];
+			}
+		],
+		[
+			'items-match-scenario',
+			(i) => {
+				i.itemIds = ['ghost'];
+			}
+		],
+		[
+			'items-match-scenario',
+			(i) => {
+				i.scenarioId = 'unknown_scenario';
+			}
+		],
+		[
 			'mystery-time-rounded',
 			(i) => {
 				i.mysteryTime = 477; // 7h57
@@ -227,6 +269,13 @@ describe('checkRules', () => {
 			}
 		]
 	];
+
+	it('accepts items that match the scenario', () => {
+		const investigation = base();
+		investigation.scenarioId = 'statue_makeover';
+		investigation.itemIds = ['pink_wig', 'sunglasses'];
+		expect(checkRules(investigation, context())).toEqual([]);
+	});
 
 	it.each(violations)('detects a violation of %s', (rule, mutate) => {
 		const investigation = base();

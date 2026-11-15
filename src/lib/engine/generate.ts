@@ -17,7 +17,7 @@ import type {
 } from './types';
 import { createRandom, type Random } from './random';
 import { assertCompleteMatrix, createTravelTime, type TravelTime } from './routes';
-import { formatTime, renderTemplate } from './render';
+import { formatTime, renderRevelation, renderSituation, renderTemplate } from './render';
 import { checkRules, fitsInHours, openingHours, type RuleContext } from './rules';
 import { solve, toSolverInput } from './solver';
 
@@ -336,6 +336,13 @@ function buildCandidate(
 	const { scenario, scene, time } = setting;
 	const { difficulty } = options;
 	const motive = rng.pick(scenario.lieMotives);
+	// The objects of the prank: distinct items among those the scenario accepts.
+	const itemPool = ctx.catalog.items.filter((item) =>
+		item.tags.some((tag) => scenario.itemTags.includes(tag))
+	);
+	const items = rng
+		.shuffle(itemPool)
+		.slice(0, rng.int(scenario.itemCount.min, scenario.itemCount.max));
 	const clueCapable = ctx.usable.filter(
 		(place) => place.osmId !== scene.osmId && ctx.clueIdsOf(place).length > 0
 	);
@@ -506,14 +513,9 @@ function buildCandidate(
 		difficulty,
 		mysteryTime: time,
 		scenarioId: scenario.id,
-		situationText: renderTemplate(scenario.situation, {
-			place: scene.name,
-			time: formatTime(time)
-		}),
-		revelationText: renderTemplate(scenario.revelations[motive]!, {
-			author: author.firstName,
-			place: scene.name
-		}),
+		itemIds: items.map((item) => item.id),
+		situationText: renderSituation(scenario, items, scene.name, time),
+		revelationText: renderRevelation(scenario, motive, items, author.firstName, scene.name),
 		sceneId: scene.osmId,
 		placeIds,
 		characters: rng.shuffle(people),

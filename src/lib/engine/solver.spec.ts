@@ -78,6 +78,7 @@ describe('solve, reference example', () => {
 			difficulty: 1,
 			mysteryTime: 1265,
 			scenarioId: 's',
+			itemIds: [],
 			situationText: '',
 			revelationText: '',
 			sceneId: 'park',

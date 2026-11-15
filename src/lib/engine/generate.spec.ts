@@ -180,6 +180,92 @@ describe('mystery time', () => {
 	});
 });
 
+describe('scenario items', () => {
+	const itemOf = (id: string) => catalog.items.find((item) => item.id === id)!;
+	const only = (scenarioId: string) => ({
+		...catalog,
+		scenarios: catalog.scenarios.filter((scenario) => scenario.id === scenarioId)
+	});
+
+	it('match the scenario: count, tags, all different, listed in the situation', () => {
+		let withItems = 0;
+		for (const difficulty of difficulties) {
+			for (let seed = 1; seed <= 60; seed++) {
+				const result = generateInvestigation(richPlaces, richRoutes, catalog, { seed, difficulty });
+				if (!result.ok) throw new Error(result.reason);
+				const { itemIds, scenarioId, situationText } = result.investigation;
+				const scenario = catalog.scenarios.find((s) => s.id === scenarioId)!;
+				expect(itemIds.length).toBeGreaterThanOrEqual(scenario.itemCount.min);
+				expect(itemIds.length).toBeLessThanOrEqual(scenario.itemCount.max);
+				expect(new Set(itemIds).size).toBe(itemIds.length);
+				for (const id of itemIds) {
+					withItems++;
+					expect(itemOf(id).tags.some((tag) => scenario.itemTags.includes(tag))).toBe(true);
+					expect(situationText).toContain(itemOf(id).indefinite);
+				}
+			}
+		}
+		expect(withItems).toBeGreaterThan(0);
+	});
+
+	it('are the same for the same seed', () => {
+		const draw = () => {
+			const result = generateInvestigation(richPlaces, richRoutes, catalog, {
+				seed: 42,
+				difficulty: 2
+			});
+			if (!result.ok) throw new Error(result.reason);
+			return result.investigation.itemIds;
+		};
+		expect(draw()).toEqual(draw());
+	});
+
+	it('vary from one seed to another for the same scenario', () => {
+		const combinations = new Set<string>();
+		for (let seed = 1; seed <= 60; seed++) {
+			const result = generateInvestigation(richPlaces, richRoutes, only('statue_makeover'), {
+				seed,
+				difficulty: 1
+			});
+			if (!result.ok) throw new Error(result.reason);
+			combinations.add(result.investigation.itemIds.join('+'));
+		}
+		expect(combinations.size).toBeGreaterThan(10);
+	});
+
+	it('stay empty for a scenario without items', () => {
+		for (let seed = 1; seed <= 20; seed++) {
+			const result = generateInvestigation(richPlaces, richRoutes, only('library_swap'), {
+				seed,
+				difficulty: 1
+			});
+			if (!result.ok) throw new Error(result.reason);
+			expect(result.investigation.itemIds).toEqual([]);
+		}
+	});
+
+	it('put the definite form of the first item in the revelation when it cites one', () => {
+		let cited = 0;
+		for (let seed = 1; seed <= 60; seed++) {
+			const result = generateInvestigation(richPlaces, richRoutes, only('statue_makeover'), {
+				seed,
+				difficulty: 1
+			});
+			if (!result.ok) throw new Error(result.reason);
+			const { itemIds, revelationText } = result.investigation;
+			const lie = result.investigation.facts.find(
+				(fact) => fact.source.kind === 'testimony' && fact.source.lie
+			)!;
+			const motive = lie.source.kind === 'testimony' ? lie.source.motive! : 'surprise';
+			const template = only('statue_makeover').scenarios[0].revelations[motive]!;
+			if (!template.includes('{item}')) continue;
+			cited++;
+			expect(revelationText).toContain(itemOf(itemIds[0]).definite);
+		}
+		expect(cited).toBeGreaterThan(0);
+	});
+});
+
 describe('proofs', () => {
 	it('are dated at the end of the stay they concern', () => {
 		const natureOf = new Map(catalog.clueTypes.map((type) => [type.id, type.nature]));
