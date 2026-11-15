@@ -7,16 +7,16 @@
 
 Un jeu mobile et web d’enquête **en solo**, dont chaque mystère est **généré automatiquement à partir des vrais lieux** autour du joueur (ou d’une commune qu’il choisit). Le joueur résout l’énigme **par déduction**, en confrontant des alibis aux **vrais temps de marche** entre les lieux, sans avoir à se déplacer.
 
-Le ton est **absurde et positif** : pas de crimes, mais des mystères loufoques (« Qui a tricoté une écharpe à toutes les statues du parc ? »). La logique, elle, reste implacable.
+Le ton est **absurde et farceur, sans malveillance** : pas de crimes, mais des farces loufoques, inoffensives et réversibles, dans des lieux publics non sensibles (« Qui a étendu une culotte à pois sur une corde à linge au milieu de la place ? », « Qui a lâché 200 canards en plastique dans la fontaine ? »). La logique, elle, reste implacable.
 
 ## 2. L’expérience du joueur
 
 1. Il se localise ou choisit une commune (ex. Fuveau).
-2. Le jeu génère un mystère avec les lieux réels du coin : une scène dans l’espace public, des commerces comme lieux d’alibi.
+2. Le jeu génère un mystère avec les lieux réels du coin : une scène dans un lieu public non sensible, d’autres lieux comme alibis.
 3. Il explore la carte : chaque lieu de l’enquête révèle des faits (ticket de caisse, serveur, témoignages).
 4. Il mesure les trajets à pied entre les lieux et repère l’alibi impossible.
 5. Il désigne l’auteur, une seule fois.
-6. La carte rejoue la vraie soirée, et l’on découvre pourquoi l’auteur a menti (une surprise, de la modestie, une maladresse).
+6. La carte rejoue la vraie soirée, et l’on découvre pourquoi l’auteur a menti (une surprise, de la modestie, une maladresse, un malentendu, une erreur).
 
 ## 3. Ce qui nous différencie
 
@@ -30,8 +30,8 @@ Aucun jeu connu ne réunit les trois à la fois :
 
 1. **La vérité d’abord.** On simule la vraie soirée, puis on en dérive témoignages et indices. Une enquête n’est jamais écrite « à l’envers ».
 2. **Solution unique et atteignable.** Le solveur valide chaque enquête : un seul suspect possible, et tous les faits nécessaires peuvent être découverts. Sinon, l’enquête est rejetée.
-3. **Seul l’auteur ment**, sur un point, et pour une bonne raison révélée à la fin.
-4. **Mystères uniquement dans l’espace public.** Commerces et établissements ne servent que d’alibis, avec des faits neutres ou positifs. Les lieux sensibles sont exclus.
+3. **Seul l’auteur ment**, sur un point, et pour une raison bienveillante révélée à la fin (farce, malentendu ou erreur).
+4. **Mystères uniquement dans des lieux publics non sensibles** (places, parcs, mais aussi commerces et services ouverts au public : une farce inoffensive ne nuit pas à leur réputation). Les lieux sensibles (écoles, lieux de culte, hôpitaux, cimetières, monuments aux morts) n’accueillent jamais de mystère : alibis seulement, avec des faits neutres ou positifs. Habitations et aires de jeux sont exclues.
 5. **Personnages toujours fictifs**, jamais le personnel réel d’un lieu.
 6. **Aucune dépendance réseau pendant le jeu.** Données préparées hors ligne, calculs sur le téléphone, jeu jouable hors connexion une fois la zone chargée.
 7. **Garde-fous légaux** : mention de fiction visible, pas de logos de marques, pas de photos de bâtiments, carte stylisée, attribution OpenStreetMap, droit de retrait d’un lieu sur demande.
@@ -92,8 +92,8 @@ Jalon de validation après l’étape 5 : **une enquête jouable de bout en bout
 | --- | --- |
 | Mystère | L’événement absurde à élucider, à un lieu et une heure précis |
 | Auteur | Le suspect responsable du mystère ; le seul qui ment |
-| Scène | Le lieu public où s’est produit le mystère |
-| Lieu d’alibi | Un commerce ou établissement où l’on peut prouver une présence |
+| Scène | Le lieu public non sensible où s’est produit le mystère |
+| Lieu d’alibi | Un lieu où l’on peut prouver une présence : tout lieu public qui n’est pas la scène, ou un lieu sensible (alibi seulement) |
 | Lieu de décor | Un lieu visible sur la carte mais sans rôle dans l’enquête |
 | Vraie soirée | Les déplacements réels de chaque suspect (segments), cachés au joueur |
 | Fait | « Telle personne, à tel lieu, entre telle et telle heure », avec sa source |
