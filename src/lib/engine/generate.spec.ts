@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { generateInvestigation, repairInvestigation } from './generate';
 import { validateCatalog } from './catalog';
-import { checkRules } from './rules';
-import { solve, toSolverInput } from './solver';
+import { checkRules, fitsInHours, openingHours } from './rules';
+import { judgeTestimony, solve, toSolverInput } from './solver';
 import { createTravelTime } from './routes';
 import {
 	fixturePlaces,
@@ -11,13 +11,18 @@ import {
 	richPlaces,
 	richRoutes
 } from './fixtures';
-import type { Difficulty, Investigation } from './types';
+import type { DayType, Difficulty, Investigation } from './types';
 
 const catalog = validateCatalog(structuredClone(rawStarterCatalog));
 const difficulties: Difficulty[] = [1, 2, 3];
 
-function generate(seed: number, difficulty: Difficulty): Investigation {
-	const result = generateInvestigation(fixturePlaces, fixtureRoutes, catalog, { seed, difficulty });
+function generate(
+	seed: number,
+	difficulty: Difficulty,
+	places = fixturePlaces,
+	routes = fixtureRoutes
+): Investigation {
+	const result = generateInvestigation(places, routes, catalog, { seed, difficulty });
 	if (!result.ok) throw new Error(`seed ${seed}, difficulty ${difficulty}: ${result.reason}`);
 	return result.investigation;
 }
@@ -60,11 +65,13 @@ describe('generateInvestigation', () => {
 				)
 			).toBe(true);
 			for (const character of investigation.characters) {
-				const [first, second] = character.segments;
-				if (second)
-					expect(second.from - first.to).toBeGreaterThanOrEqual(
-						travel(first.placeId, second.placeId)
+				// A distant proof adds an older stay at the end of the list: look in time order.
+				const stays = [...character.segments].sort((x, y) => x.from - y.from);
+				for (let i = 1; i < stays.length; i++) {
+					expect(stays[i].from - stays[i - 1].to).toBeGreaterThanOrEqual(
+						travel(stays[i - 1].placeId, stays[i].placeId)
 					);
+				}
 			}
 		}
 	});
@@ -133,10 +140,10 @@ describe('generateInvestigation', () => {
 });
 
 describe('mystery time', () => {
-	const hoursOf = (placeId: string, places: typeof fixturePlaces) => {
+	const hoursOf = (placeId: string, places: typeof fixturePlaces, dayType: DayType) => {
 		const place = places.find((p) => p.osmId === placeId)!;
 		const type = catalog.placeTypes.find((t) => t.id === place.typeId)!;
-		return place.actualHours ?? type.typicalHours ?? [{ from: 0, to: 1440 }];
+		return (place.actualHours ?? type.typicalHours)[dayType] ?? [{ from: 0, to: 1440 }];
 	};
 
 	const check = (places: typeof fixturePlaces, routes: typeof fixtureRoutes) => {
@@ -144,13 +151,15 @@ describe('mystery time', () => {
 			for (let seed = 1; seed <= 100; seed++) {
 				const result = generateInvestigation(places, routes, catalog, { seed, difficulty });
 				if (!result.ok) throw new Error(`seed ${seed}, difficulty ${difficulty}: ${result.reason}`);
-				const { mysteryTime, scenarioId, sceneId } = result.investigation;
+				const { mysteryTime, scenarioId, sceneId, dayType } = result.investigation;
 				expect(mysteryTime % 5).toBe(0);
 				const range = catalog.scenarios.find((s) => s.id === scenarioId)!.timeRange;
 				expect(mysteryTime).toBeGreaterThanOrEqual(range.from);
 				expect(mysteryTime).toBeLessThanOrEqual(range.to);
 				expect(
-					hoursOf(sceneId, places).some((h) => h.from <= mysteryTime && mysteryTime <= h.to)
+					hoursOf(sceneId, places, dayType).some(
+						(h) => h.from <= mysteryTime && mysteryTime <= h.to
+					)
 				).toBe(true);
 			}
 		}
@@ -263,6 +272,255 @@ describe('scenario items', () => {
 			expect(revelationText).toContain(itemOf(itemIds[0]).definite);
 		}
 		expect(cited).toBeGreaterThan(0);
+	});
+});
+
+describe('day of the investigation', () => {
+	it('is a weekday for some seeds and a weekend for others', () => {
+		const days = new Set<string>();
+		for (let seed = 1; seed <= 40; seed++) {
+			days.add(generate(seed, 1).dayType);
+		}
+		expect([...days].sort()).toEqual(['weekday', 'weekend']);
+	});
+
+	it('is the same for the same seed', () => {
+		expect(generate(9, 2).dayType).toBe(generate(9, 2).dayType);
+	});
+
+	it('never puts a scene closed on that day: a library is shut at 14h on a weekend', () => {
+		const library = catalog.scenarios.find((s) => s.id === 'library_swap')!;
+		const afternoon = {
+			...catalog,
+			scenarios: [{ ...library, sceneTypeIds: ['library'], timeRange: { from: 840, to: 960 } }]
+		};
+		for (let seed = 1; seed <= 40; seed++) {
+			const result = generateInvestigation(richPlaces, richRoutes, afternoon, {
+				seed,
+				difficulty: 1
+			});
+			if (!result.ok) throw new Error(result.reason);
+			expect(result.investigation.dayType).toBe('weekday');
+		}
+	});
+
+	it('keeps every fact inside the hours of that day', () => {
+		const context = { places: richPlaces, routes: richRoutes, catalog };
+		for (const difficulty of difficulties) {
+			for (let seed = 1; seed <= 60; seed++) {
+				const result = generateInvestigation(richPlaces, richRoutes, catalog, { seed, difficulty });
+				if (!result.ok) throw new Error(result.reason);
+				const rules = checkRules(result.investigation, context);
+				expect(rules).not.toContain('facts-within-hours');
+				expect(rules).not.toContain('clue-hours');
+			}
+		}
+	});
+
+	it('writes the day at the start of the situation', () => {
+		for (let seed = 1; seed <= 20; seed++) {
+			const { situationText, dayType } = generate(seed, 1);
+			expect(
+				situationText.startsWith(dayType === 'weekday' ? 'En semaine, à ' : 'Le week-end, à ')
+			).toBe(true);
+		}
+	});
+});
+
+describe('lie kinds', () => {
+	const travel = createTravelTime(richRoutes);
+	const placeOf = (id: string) => richPlaces.find((p) => p.osmId === id)!;
+
+	// The lie, its kind, and what the solver makes of it.
+	function inspect(seed: number, difficulty: Difficulty) {
+		const investigation = generate(seed, difficulty, richPlaces, richRoutes);
+		const lieFact = investigation.facts.find((f) => f.source.kind === 'testimony' && f.source.lie)!;
+		const source = lieFact.source;
+		if (source.kind !== 'testimony') throw new Error('expected a testimony');
+		const input = toSolverInput(investigation, travel);
+		const result = solve(input);
+		const verdict = judgeTestimony(
+			input.facts.find((f) => f.id === lieFact.id)!,
+			input,
+			result
+		);
+		const author = investigation.characters.find((c) => c.author)!;
+		return { investigation, lieFact, kind: source.lieKind, verdict, result, author };
+	}
+
+	const kindsAt = (difficulty: Difficulty, seeds = 150) => {
+		const kinds = new Set<string>();
+		for (let seed = 1; seed <= seeds; seed++) kinds.add(String(inspect(seed, difficulty).kind));
+		return [...kinds].sort();
+	};
+
+	it('are only the obvious false alibi at difficulty 1', () => {
+		expect(kindsAt(1)).toEqual(['alibi']);
+	});
+
+	it('are the false alibi or the accusation at difficulty 2', () => {
+		expect(kindsAt(2)).toEqual(['alibi', 'framing']);
+	});
+
+	it('include the closed place at difficulty 3', () => {
+		expect(kindsAt(3)).toEqual(['alibi', 'closed', 'framing']);
+	});
+
+	it('keep the kind in the lying testimony only', () => {
+		const { investigation } = inspect(5, 3);
+		for (const fact of investigation.facts) {
+			if (fact.source.kind !== 'testimony') continue;
+			expect(fact.source.lieKind === null).toBe(!fact.source.lie);
+		}
+	});
+
+	it('make a false alibi about the author, contradicted by a witness', () => {
+		let seen = 0;
+		for (let seed = 1; seed <= 60; seed++) {
+			const { kind, lieFact, author, verdict } = inspect(seed, 1);
+			if (kind !== 'alibi') continue;
+			seen++;
+			expect(lieFact.characterId).toBe(author.id);
+			expect(verdict).toBe('contradicted');
+		}
+		expect(seen).toBe(60);
+	});
+
+	it('accuse an innocent suspect, contradicted by a reliable fact about that suspect', () => {
+		let seen = 0;
+		for (let seed = 1; seed <= 120; seed++) {
+			const { kind, lieFact, author, verdict, result } = inspect(seed, 2);
+			if (kind !== 'framing') continue;
+			seen++;
+			expect(lieFact.characterId).not.toBe(author.id);
+			expect(verdict).toBe('contradicted');
+			// The accused is cleared by another fact: the contradiction alone does not name the author.
+			expect(result.clearedAtRound[lieFact.characterId]).toBeDefined();
+		}
+		expect(seen).toBeGreaterThan(10);
+	});
+
+	it('put the author in a closed place, with no reliable fact against the lie', () => {
+		let seen = 0;
+		for (let seed = 1; seed <= 150; seed++) {
+			const { kind, lieFact, author, verdict, investigation } = inspect(seed, 3);
+			if (kind !== 'closed') continue;
+			seen++;
+			const place = placeOf(lieFact.placeId);
+			const type = catalog.placeTypes.find((t) => t.id === place.typeId)!;
+			expect(lieFact.characterId).toBe(author.id);
+			expect(
+				fitsInHours(openingHours(place, type, investigation.dayType), lieFact.from, lieFact.to)
+			).toBe(false);
+			expect(verdict).not.toBe('contradicted');
+		}
+		expect(seen).toBeGreaterThan(10);
+	});
+
+	it('stay valid at every difficulty', () => {
+		const context = { places: richPlaces, routes: richRoutes, catalog };
+		for (const difficulty of difficulties) {
+			for (let seed = 1; seed <= 80; seed++) {
+				const { investigation, result } = inspect(seed, difficulty);
+				expect(checkRules(investigation, context)).toEqual([]);
+				expect(result.difficulty).toBe(difficulty);
+			}
+		}
+	});
+});
+
+describe('distant proofs', () => {
+	const travel = createTravelTime(richRoutes);
+	const natureOf = new Map(catalog.clueTypes.map((type) => [type.id, type.nature]));
+
+	// A proof dated far from the mystery time: true, but it does not clear anyone.
+	function distantProofs(investigation: Investigation) {
+		return investigation.facts.filter((fact) => {
+			if (fact.source.kind !== 'clue' || natureOf.get(fact.source.clueTypeId) !== 'proof')
+				return false;
+			const trip = travel(fact.placeId, investigation.sceneId);
+			return Math.abs(fact.to - investigation.mysteryTime) >= trip;
+		});
+	}
+
+	const shareAt = (difficulty: Difficulty, seeds = 100) => {
+		let suspects = 0;
+		let withProof = 0;
+		for (let seed = 1; seed <= seeds; seed++) {
+			const investigation = generate(seed, difficulty, richPlaces, richRoutes);
+			const owners = new Set(distantProofs(investigation).map((fact) => fact.characterId));
+			suspects += investigation.characters.length;
+			withProof += owners.size;
+		}
+		return withProof / suspects;
+	};
+
+	it('never appear at difficulty 1', () => {
+		for (let seed = 1; seed <= 100; seed++) {
+			expect(distantProofs(generate(seed, 1, richPlaces, richRoutes))).toEqual([]);
+		}
+	});
+
+	it('concern about a third of the suspects at difficulty 2 and half at difficulty 3', () => {
+		const two = shareAt(2);
+		const three = shareAt(3);
+		expect(two).toBeGreaterThan(0.2);
+		expect(two).toBeLessThan(0.5);
+		expect(three).toBeGreaterThan(0.35);
+		expect(three).toBeLessThan(0.65);
+		expect(three).toBeGreaterThan(two);
+	});
+
+	it('concern innocents and the author', () => {
+		let author = 0;
+		let innocent = 0;
+		for (let seed = 1; seed <= 100; seed++) {
+			const investigation = generate(seed, 3, richPlaces, richRoutes);
+			const authorId = investigation.characters.find((c) => c.author)!.id;
+			for (const fact of distantProofs(investigation)) {
+				if (fact.characterId === authorId) author++;
+				else innocent++;
+			}
+		}
+		expect(author).toBeGreaterThan(5);
+		expect(innocent).toBeGreaterThan(5);
+	});
+
+	it('clear nobody: the solver gives the same result without them', () => {
+		for (const difficulty of [2, 3] as const) {
+			for (let seed = 1; seed <= 60; seed++) {
+				const investigation = generate(seed, difficulty, richPlaces, richRoutes);
+				const without = {
+					...investigation,
+					facts: investigation.facts.filter((fact) => !distantProofs(investigation).includes(fact))
+				};
+				const a = solve(toSolverInput(investigation, travel));
+				const b = solve(toSolverInput(without, travel));
+				expect(a.clearedAtRound).toEqual(b.clearedAtRound);
+				expect(a.possible).toEqual(b.possible);
+			}
+		}
+	});
+
+	it('leave realistic trips between the old stay and the next ones', () => {
+		const context = { places: richPlaces, routes: richRoutes, catalog };
+		for (let seed = 1; seed <= 60; seed++) {
+			const investigation = generate(seed, 3, richPlaces, richRoutes);
+			expect(checkRules(investigation, context)).toEqual([]);
+			for (const fact of distantProofs(investigation)) {
+				const character = investigation.characters.find((c) => c.id === fact.characterId)!;
+				const old = character.segments[fact.segment!];
+				expect(old.to).toBe(fact.to);
+				const later = character.segments.filter(
+					(segment) => segment !== old && segment.from > old.to
+				);
+				for (const segment of later) {
+					expect(segment.from - old.to).toBeGreaterThanOrEqual(
+						travel(old.placeId, segment.placeId)
+					);
+				}
+			}
+		}
 	});
 });
 

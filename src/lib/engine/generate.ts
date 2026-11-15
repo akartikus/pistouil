@@ -2,10 +2,12 @@
 import type {
 	Catalog,
 	Character,
+	DayType,
 	Difficulty,
 	Fact,
 	Interval,
 	Investigation,
+	LieKind,
 	LieMotive,
 	Place,
 	PlaceType,
@@ -19,7 +21,7 @@ import { createRandom, type Random } from './random';
 import { assertCompleteMatrix, createTravelTime, type TravelTime } from './routes';
 import { formatTime, renderRevelation, renderSituation, renderTemplate } from './render';
 import { checkRules, fitsInHours, openingHours, type RuleContext } from './rules';
-import { solve, toSolverInput } from './solver';
+import { contradicts, solve, toSolverInput } from './solver';
 
 export interface GenerationOptions {
 	seed: number;
@@ -32,6 +34,14 @@ export type GenerationResult =
 	{ ok: true; investigation: Investigation } | { ok: false; reason: GenerationFailure };
 
 const MAX_ATTEMPTS = 60;
+// Share of suspects who get a distant proof: none when easy, then a third, then a half.
+const FAR_PROOF_SHARE: Record<Difficulty, number> = { 1: 0, 2: 1 / 3, 3: 1 / 2 };
+// How the author may lie: the obvious false alibi when easy, a trap for each step up.
+const LIE_KINDS: Record<Difficulty, LieKind[]> = {
+	1: ['alibi'],
+	2: ['alibi', 'framing'],
+	3: ['alibi', 'framing', 'closed']
+};
 // The mystery time is a multiple of this many minutes.
 const MYSTERY_STEP = 5;
 
@@ -42,7 +52,9 @@ interface Context {
 	travel: TravelTime;
 	// Places that can appear in an investigation: not removed, role scene or alibi.
 	usable: Place[];
+	dayType: DayType;
 	typeOf: (place: Place) => PlaceType;
+	// Opening hours on the day of the investigation.
 	hoursOf: (place: Place) => Interval[];
 	clueIdsOf: (place: Place) => string[];
 }
@@ -51,6 +63,7 @@ interface Setting {
 	scenario: ScenarioModel;
 	scene: Place;
 	time: number;
+	dayType: DayType;
 }
 
 // A suspect cleared by a fact, with the fact that clears them.
@@ -64,7 +77,12 @@ interface Innocent {
 const deriveSeed = (seed: number, attempt: number) => (seed + Math.imul(attempt, 0x9e3779b9)) >>> 0;
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
-function createContext(places: Place[], routes: Route[], catalog: Catalog): Context {
+function createContext(
+	places: Place[],
+	routes: Route[],
+	catalog: Catalog,
+	dayType: DayType = 'weekday'
+): Context {
 	const typeById = new Map(catalog.placeTypes.map((type) => [type.id, type]));
 	const typeOf = (place: Place) => typeById.get(place.typeId)!;
 	return {
@@ -76,13 +94,31 @@ function createContext(places: Place[], routes: Route[], catalog: Catalog): Cont
 			const type = typeById.get(place.typeId);
 			return !place.removed && type !== undefined && type.role !== 'excluded';
 		}),
+		dayType,
 		typeOf,
-		hoursOf: (place) => openingHours(place, typeOf(place)),
+		hoursOf: (place) => openingHours(place, typeOf(place), dayType),
 		clueIdsOf: (place) => catalog.compatibilities[place.typeId] ?? []
 	};
 }
 
-function chooseSetting(ctx: Context, rng: Random): Setting | null {
+function forDay(ctx: Context, dayType: DayType): Context {
+	return {
+		...ctx,
+		dayType,
+		hoursOf: (place) => openingHours(place, ctx.typeOf(place), dayType)
+	};
+}
+
+// Picks the day, the scenario, the scene and the mystery time. A scene closed that day is skipped.
+function chooseSetting(base: Context, rng: Random): Setting | null {
+	for (const dayType of rng.shuffle<DayType>(['weekday', 'weekend'])) {
+		const setting = chooseSettingOn(forDay(base, dayType), rng);
+		if (setting) return setting;
+	}
+	return null;
+}
+
+function chooseSettingOn(ctx: Context, rng: Random): Setting | null {
 	for (const scenario of rng.shuffle(ctx.catalog.scenarios)) {
 		const scenes = ctx.usable.filter(
 			(place) => ctx.typeOf(place).role === 'scene' && scenario.sceneTypeIds.includes(place.typeId)
@@ -98,7 +134,12 @@ function chooseSetting(ctx: Context, rng: Random): Setting | null {
 				.filter((slot) => slot.from <= slot.to);
 			if (slots.length > 0) {
 				const slot = rng.pick(slots);
-				return { scenario, scene, time: rng.int(slot.from, slot.to) * MYSTERY_STEP };
+				return {
+					scenario,
+					scene,
+					time: rng.int(slot.from, slot.to) * MYSTERY_STEP,
+					dayType: ctx.dayType
+				};
 			}
 		}
 	}
@@ -186,6 +227,151 @@ function planLie(
 	return rng.next() < 0.5 ? (timeLie() ?? placeLie()) : (placeLie() ?? timeLie());
 }
 
+// What the author says falsely, and who it is about.
+interface LiePlan {
+	kind: LieKind;
+	subject: Character;
+	place: Place;
+	precision: 'interval' | 'departure';
+	from: number;
+	to: number;
+	// Only the false alibi has a witness who saw the author leave.
+	witnessSawAuthor: boolean;
+}
+
+// An alibi at a place that is closed at that time and day: only the opening hours betray it.
+function planClosedLie(
+	ctx: Context,
+	rng: Random,
+	plan: AuthorPlan,
+	scene: Place,
+	time: number,
+	author: Character
+): LiePlan | null {
+	const otherDay: DayType = ctx.dayType === 'weekday' ? 'weekend' : 'weekday';
+	const others = ctx.usable.filter((place) => place.osmId !== scene.osmId);
+	for (const place of rng.shuffle(others)) {
+		const from = plan.leave - rng.int(5, 20);
+		const to = time + rng.int(0, 10);
+		if (from < 0 || fitsInHours(ctx.hoursOf(place), from, to)) continue;
+		// Credible: the place opens at that time the other day, or at least opens that day.
+		const opensOtherDay = fitsInHours(openingHours(place, ctx.typeOf(place), otherDay), from, to);
+		if (!opensOtherDay && ctx.hoursOf(place).length === 0) continue;
+		return {
+			kind: 'closed',
+			subject: author,
+			place,
+			precision: 'interval',
+			from,
+			to,
+			witnessSawAuthor: false
+		};
+	}
+	return null;
+}
+
+// The author says an innocent left earlier than they did, enough to have reached the scene.
+function planFramingLie(
+	ctx: Context,
+	rng: Random,
+	scene: Place,
+	time: number,
+	targets: { character: Character; place: Place; segment: Segment; clue: Fact }[]
+): LiePlan | null {
+	for (const target of rng.shuffle(targets)) {
+		const trip = ctx.travel(target.place.osmId, scene.osmId);
+		const earliest = target.segment.from;
+		const latest = Math.min(target.segment.to - 1, time - trip);
+		if (earliest > latest) continue;
+		const left = rng.int(earliest, latest);
+		const probe = {
+			characterId: target.character.id,
+			placeId: target.place.osmId,
+			from: left,
+			to: left,
+			departure: true
+		};
+		// A reliable fact about the accused must contradict the lie, or nobody could unmask it.
+		if (!contradicts(probe, target.clue, ctx.travel)) continue;
+		return {
+			kind: 'framing',
+			subject: target.character,
+			place: target.place,
+			precision: 'departure',
+			from: left,
+			to: left,
+			witnessSawAuthor: false
+		};
+	}
+	return null;
+}
+
+// A true proof from an earlier stay, dated at its end and too far from the mystery time to clear.
+function addDistantProofs(
+	ctx: Context,
+	rng: Random,
+	people: Character[],
+	facts: Fact[],
+	scene: Place,
+	time: number,
+	difficulty: Difficulty,
+	nextId: () => string
+) {
+	for (const character of people) {
+		if (rng.next() >= FAR_PROOF_SHARE[difficulty]) continue;
+		const next = [...character.segments].sort((a, b) => a.from - b.from)[0];
+		const nextPlace = ctx.places.find((place) => place.osmId === next.placeId)!;
+		for (const place of rng.shuffle(ctx.usable.filter((p) => p.osmId !== scene.osmId))) {
+			const proofIds = ctx
+				.clueIdsOf(place)
+				.filter((id) => ctx.catalog.clueTypes.find((type) => type.id === id)?.nature === 'proof');
+			if (proofIds.length === 0) continue;
+			// Far enough not to clear, and early enough to reach the first stay.
+			const latest = Math.min(
+				time - ctx.travel(place.osmId, scene.osmId) - 15,
+				next.from - ctx.travel(place.osmId, nextPlace.osmId) - 10
+			);
+			const to = latest - rng.int(0, 30);
+			const from = to - rng.int(10, 40);
+			if (from < 0 || !fitsInHours(ctx.hoursOf(place), from, to)) continue;
+
+			const clueType = ctx.catalog.clueTypes.find((type) => type.id === rng.pick(proofIds))!;
+			const proof: Fact = {
+				id: nextId(),
+				characterId: character.id,
+				placeId: place.osmId,
+				from: to,
+				to,
+				departure: true,
+				segment: character.segments.length,
+				unlockedBy: null,
+				source: {
+					kind: 'clue',
+					clueTypeId: clueType.id,
+					renderedText: renderTemplate(clueType.textTemplate, {
+						firstName: character.firstName,
+						place: place.name,
+						time: formatTime(to),
+						from: formatTime(to),
+						to: formatTime(to)
+					})
+				}
+			};
+			// Never contradict another fact of this person, the lie included.
+			if (
+				facts.some(
+					(fact) => fact.characterId === character.id && contradicts(fact, proof, ctx.travel)
+				)
+			) {
+				continue;
+			}
+			character.segments.push({ placeId: place.osmId, from, to });
+			facts.push(proof);
+			break;
+		}
+	}
+}
+
 function renderTestimony(
 	ctx: Context,
 	rng: Random,
@@ -267,6 +453,7 @@ interface TestimonyArgs {
 	segment: number | null;
 	unlockedBy: string | null;
 	lie?: LieMotive;
+	lieKind?: LieKind;
 }
 
 function testimonyFact(ctx: Context, rng: Random, args: TestimonyArgs): Fact {
@@ -299,7 +486,8 @@ function testimonyFact(ctx: Context, rng: Random, args: TestimonyArgs): Fact {
 			speakerId: speaker.id,
 			renderedText: text,
 			lie: args.lie !== undefined,
-			motive: args.lie ?? null
+			motive: args.lie ?? null,
+			lieKind: args.lieKind ?? null
 		}
 	};
 }
@@ -380,10 +568,6 @@ function buildCandidate(
 	}
 	if (!otherPlace || !otherSegment) return null;
 
-	const lie = planLie(ctx, rng, plan, stayPlace, scene, time);
-	if (!lie) return null;
-	const liePlace = ctx.places.find((place) => place.osmId === lie.placeId)!;
-
 	author.segments = [plan.stay, plan.atScene];
 	witness.segments = [plan.witnessStay];
 	other.segments = [otherSegment];
@@ -418,32 +602,64 @@ function buildCandidate(
 		{ character: other, place: otherPlace, segment: otherSegment, clearingFactId: otherClue.id }
 	];
 
-	// The witness saw the author leave: this contradicts the false alibi.
-	facts.push(
-		testimonyFact(ctx, rng, {
-			id: nextId(),
-			speaker: witness,
-			subject: author,
-			place: stayPlace,
-			precision: 'departure',
-			from: plan.leave,
-			to: plan.leave,
-			segment: 0,
-			unlockedBy: witnessClue.id
-		})
-	);
+	// How the author lies, among the kinds the difficulty allows (the false alibi when easy).
+	let liePlan: LiePlan | null = null;
+	for (const kind of rng.shuffle(LIE_KINDS[difficulty])) {
+		if (kind === 'alibi') {
+			const lie = planLie(ctx, rng, plan, stayPlace, scene, time);
+			const place = lie && ctx.places.find((candidate) => candidate.osmId === lie.placeId);
+			if (lie && place) {
+				liePlan = {
+					kind,
+					subject: author,
+					place,
+					precision: 'interval',
+					from: lie.from,
+					to: lie.to,
+					witnessSawAuthor: true
+				};
+			}
+		} else if (kind === 'closed') {
+			liePlan = planClosedLie(ctx, rng, plan, scene, time, author);
+		} else {
+			liePlan = planFramingLie(ctx, rng, scene, time, [
+				{ character: witness, place: stayPlace, segment: plan.witnessStay, clue: witnessClue },
+				{ character: other, place: otherPlace, segment: otherSegment, clue: otherClue }
+			]);
+		}
+		if (liePlan) break;
+	}
+	if (!liePlan) return null;
+
+	// For the false alibi only: the witness saw the author leave, which contradicts it.
+	if (liePlan.witnessSawAuthor) {
+		facts.push(
+			testimonyFact(ctx, rng, {
+				id: nextId(),
+				speaker: witness,
+				subject: author,
+				place: stayPlace,
+				precision: 'departure',
+				from: plan.leave,
+				to: plan.leave,
+				segment: 0,
+				unlockedBy: witnessClue.id
+			})
+		);
+	}
 	facts.push(
 		testimonyFact(ctx, rng, {
 			id: nextId(),
 			speaker: author,
-			subject: author,
-			place: liePlace,
-			precision: 'interval',
-			from: lie.from,
-			to: lie.to,
+			subject: liePlan.subject,
+			place: liePlan.place,
+			precision: liePlan.precision,
+			from: liePlan.from,
+			to: liePlan.to,
 			segment: null,
 			unlockedBy: null,
-			lie: motive
+			lie: motive,
+			lieKind: liePlan.kind
 		})
 	);
 
@@ -498,13 +714,13 @@ function buildCandidate(
 		);
 	}
 
+	addDistantProofs(ctx, rng, people, facts, scene, time, difficulty, nextId);
+
 	const placeIds = [
 		...new Set([
 			scene.osmId,
-			stayPlace.osmId,
-			otherPlace.osmId,
-			liePlace.osmId,
-			...cleared.map((innocent) => innocent.place.osmId)
+			liePlan.place.osmId,
+			...people.flatMap((person) => person.segments.map((segment) => segment.placeId))
 		])
 	];
 
@@ -512,9 +728,10 @@ function buildCandidate(
 		seed: options.seed,
 		difficulty,
 		mysteryTime: time,
+		dayType: ctx.dayType,
 		scenarioId: scenario.id,
 		itemIds: items.map((item) => item.id),
-		situationText: renderSituation(scenario, items, scene.name, time),
+		situationText: renderSituation(scenario, items, scene.name, time, ctx.dayType),
 		revelationText: renderRevelation(scenario, motive, items, author.firstName, scene.name),
 		sceneId: scene.osmId,
 		placeIds,
@@ -537,7 +754,7 @@ export function repairInvestigation(
 	investigation: Investigation,
 	context: RuleContext
 ): Investigation | null {
-	const ctx = createContext(context.places, context.routes, context.catalog);
+	const ctx = createContext(context.places, context.routes, context.catalog, investigation.dayType);
 	const scene = ctx.places.find((place) => place.osmId === investigation.sceneId)!;
 	const { possible } = solve(toSolverInput(investigation, ctx.travel));
 	const rng = createRandom(deriveSeed(investigation.seed, 1000));
@@ -583,20 +800,20 @@ export function generateInvestigation(
 	options: GenerationOptions
 ): GenerationResult {
 	assertCompleteMatrix(places, routes);
-	const ctx = createContext(places, routes, catalog);
+	const base = createContext(places, routes, catalog);
 	let foundSetting = false;
 
 	for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
 		const rng = createRandom(deriveSeed(options.seed, attempt));
-		const setting = chooseSetting(ctx, rng);
+		const setting = chooseSetting(base, rng);
 		if (!setting) break;
 		foundSetting = true;
 
-		let candidate = buildCandidate(ctx, rng, setting, options);
-		if (candidate && !isValid(candidate, ctx)) {
+		let candidate = buildCandidate(forDay(base, setting.dayType), rng, setting, options);
+		if (candidate && !isValid(candidate, base)) {
 			candidate = repairInvestigation(candidate, { places, routes, catalog }) ?? candidate;
 		}
-		if (candidate && isValid(candidate, ctx)) return { ok: true, investigation: candidate };
+		if (candidate && isValid(candidate, base)) return { ok: true, investigation: candidate };
 	}
 	return { ok: false, reason: foundSetting ? 'difficulty-unreachable' : 'no-scene' };
 }
