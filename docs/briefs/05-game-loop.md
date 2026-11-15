@@ -60,6 +60,7 @@
 ## Points à trancher pendant la proposition
 
 - Forme exacte du signalement des contradictions sur le curseur horaire.
+- Les liens « débloqué par » produits par le moteur relient aujourd’hui des faits d’un même lieu : ouvrir un lieu révèle donc tous ses faits d’un coup. Décider s’il faut aussi des liens entre lieux (alors un changement du moteur), ou s’en tenir à l’ouverture du lieu.
 - Textes de l’interface (boutons, libellés, messages) : seuls textes rédigés dans ce brief. Les textes des faits viennent du moteur (`renderedText`, brief 01).
 
 ## Consigne pour OpenSpec

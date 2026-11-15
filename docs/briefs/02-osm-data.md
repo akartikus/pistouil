@@ -12,7 +12,7 @@
 - Filtrage avec osmium sur les tags utiles au catalogue (commerces, cafés, restaurants, pharmacies, fontaines, bancs, marchés, parcs, places, arrêts de bus, œuvres d’art, et les lieux sensibles `alibi` ou `excluded` pour le décor).
 - Correspondance tags OSM → `PlaceType`, à partir des `osmTags` du catalogue (jamais codée en dur dans le script).
 - Point représentatif pour les surfaces (un parc devient un point).
-- Lecture de `opening_hours` quand il existe.
+- Lecture de `opening_hours` quand il existe. Les horaires réels des lieux (semaine et week-end, `weekday` et `weekend`) viendront plus tard, une fois les lieux réels sur la carte, et leur source reste à trouver : en attendant, le moteur utilise les horaires typiques du catalogue, écrits en dur pour tester.
 - Application d’une liste de retrait (`catalog/removed-places.json`, identifiants OSM).
 - Sortie : un fichier JSON compact par case de grille, plus un index des communes (nom, code INSEE, centre, rectangle englobant, contour simplifié).
 - Un manifeste avec la date et la source de l’extrait.

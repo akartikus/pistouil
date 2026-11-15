@@ -96,7 +96,7 @@
 
 ## Points à trancher pendant la proposition
 
-- Algorithme pseudo-aléatoire retenu (proposition : un générateur simple et éprouvé, type mulberry32 ou xoshiro).
+- Algorithme pseudo-aléatoire : mulberry32 (tranché, voir `docs/VISION.md` §6).
 
 ## Consigne pour OpenSpec
 
