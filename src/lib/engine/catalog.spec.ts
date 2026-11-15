@@ -111,3 +111,86 @@ describe('validateCatalog', () => {
 		expect(() => validateCatalog(raw)).toThrow(/mystery/);
 	});
 });
+
+describe('catalog items', () => {
+	it('have a unique id, at least one tag and both forms', () => {
+		const { items } = validateCatalog(clone());
+		expect(items.length).toBeGreaterThanOrEqual(20);
+		expect(new Set(items.map((item) => item.id)).size).toBe(items.length);
+		for (const item of items) {
+			expect(item.tags.length).toBeGreaterThan(0);
+			expect(item.indefinite).toBeTruthy();
+			expect(item.definite).toBeTruthy();
+		}
+	});
+
+	it('accepts a scenario without items', () => {
+		const scenario = validateCatalog(clone()).scenarios.find((s) => s.id === 'library_swap')!;
+		expect(scenario.itemCount).toEqual({ min: 0, max: 0 });
+	});
+
+	it('gives every composable scenario enough items for its tags', () => {
+		const catalog = validateCatalog(clone());
+		for (const scenario of catalog.scenarios) {
+			const pool = catalog.items.filter((item) =>
+				item.tags.some((tag) => scenario.itemTags.includes(tag))
+			);
+			expect(pool.length).toBeGreaterThanOrEqual(scenario.itemCount.max);
+		}
+	});
+});
+
+describe('validateCatalog, composable scenarios', () => {
+	const scenarioOf = (raw: ReturnType<typeof clone>, id: string) =>
+		raw.scenarios.find((scenario) => scenario.id === id)!;
+
+	it('rejects a minimum above the maximum', () => {
+		const raw = clone();
+		scenarioOf(raw, 'statue_makeover').itemCount = { min: 2, max: 1 };
+		expect(() => validateCatalog(raw)).toThrow(/statue_makeover/);
+	});
+
+	it('rejects a scenario that asks for more items than its tags offer', () => {
+		const raw = clone();
+		scenarioOf(raw, 'statue_makeover').itemCount = { min: 1, max: 999 };
+		expect(() => validateCatalog(raw)).toThrow(/statue_makeover/);
+	});
+
+	it('rejects an item variable in a scenario without items', () => {
+		const raw = clone();
+		scenarioOf(raw, 'library_swap').situation += ' {items}';
+		expect(() => validateCatalog(raw)).toThrow(/library_swap/);
+	});
+
+	it('rejects a situation without the item list when the scenario asks for items', () => {
+		const raw = clone();
+		scenarioOf(raw, 'statue_makeover').situation = 'À {time}, à {place}, la statue est là.';
+		expect(() => validateCatalog(raw)).toThrow(/statue_makeover/);
+	});
+
+	it('rejects an item placed right after « de » or « à »', () => {
+		const afterDe = clone();
+		scenarioOf(afterDe, 'statue_makeover').revelations.surprise = '{author} rêvait de {item}.';
+		expect(() => validateCatalog(afterDe)).toThrow(/statue_makeover/);
+
+		const afterA = clone();
+		scenarioOf(afterA, 'statue_makeover').situation = 'À {time}, {place} ressemble à {items}.';
+		expect(() => validateCatalog(afterA)).toThrow(/statue_makeover/);
+	});
+
+	it('rejects a duplicate item id', () => {
+		const raw = clone();
+		raw.items.push({ ...raw.items[0] });
+		expect(() => validateCatalog(raw)).toThrow(/duplicate/);
+	});
+
+	it('rejects an item without a tag or without a form', () => {
+		const noTag = clone();
+		noTag.items[0].tags = [];
+		expect(() => validateCatalog(noTag)).toThrow(CatalogError);
+
+		const noForm = clone();
+		noForm.items[0].definite = '';
+		expect(() => validateCatalog(noForm)).toThrow(CatalogError);
+	});
+});

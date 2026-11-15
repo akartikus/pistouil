@@ -3,6 +3,7 @@ import placeTypes from '../../../catalog/place-types.json';
 import clueTypes from '../../../catalog/clue-types.json';
 import compatibilities from '../../../catalog/compatibilities.json';
 import scenarios from '../../../catalog/scenarios.json';
+import items from '../../../catalog/items.json';
 import firstNames from '../../../catalog/first-names.json';
 import testimonyTemplates from '../../../catalog/testimony-templates.json';
 import type { Place, Route } from './types';
@@ -12,6 +13,7 @@ export const rawStarterCatalog = {
 	clueTypes,
 	compatibilities,
 	scenarios,
+	items,
 	firstNames,
 	testimonyTemplates
 };

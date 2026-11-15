@@ -42,12 +42,25 @@ export interface ClueType {
 	textTemplate: string;
 }
 
+// An object a scenario can use, written out with its article in both forms.
+export interface ItemType {
+	id: string;
+	tags: string[];
+	// "une perruque rose"
+	indefinite: string;
+	// "la perruque"
+	definite: string;
+}
+
 export interface ScenarioModel {
 	id: string;
 	title: string;
 	situation: string;
 	sceneTypeIds: string[];
 	timeRange: Interval;
+	// Tags of the items the scenario accepts, and how many it draws (0 and 0: no item).
+	itemTags: string[];
+	itemCount: { min: number; max: number };
 	lieMotives: LieMotive[];
 	revelations: Partial<Record<LieMotive, string>>;
 }
@@ -65,6 +78,7 @@ export interface Catalog {
 	// Place type id -> compatible clue type ids.
 	compatibilities: Record<string, string[]>;
 	scenarios: ScenarioModel[];
+	items: ItemType[];
 	firstNames: string[];
 	testimonyTemplates: TestimonyTemplate[];
 }
@@ -145,6 +159,8 @@ export interface Investigation {
 	difficulty: Difficulty;
 	mysteryTime: number;
 	scenarioId: string;
+	// Items drawn for the scenario, in the order of the situation text.
+	itemIds: string[];
 	situationText: string;
 	// Private: shown only after the accusation.
 	revelationText: string;

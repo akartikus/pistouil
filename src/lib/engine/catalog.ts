@@ -4,8 +4,10 @@ export class CatalogError extends Error {}
 
 const CLUE_VARIABLES = ['firstName', 'place', 'time', 'from', 'to'];
 const TESTIMONY_VARIABLES = ['speaker', ...CLUE_VARIABLES];
-const SITUATION_VARIABLES = ['place', 'time'];
-const REVELATION_VARIABLES = ['author', 'place'];
+const SITUATION_VARIABLES = ['place', 'time', 'items'];
+const REVELATION_VARIABLES = ['author', 'place', 'item'];
+// An item right after « de » or « à » would need a contracted article.
+const ITEM_AFTER_PREPOSITION = /(?<!\p{L})(?:(?:de|à)\s+|d[’'])\{items?\}/iu;
 const MIN_FIRST_NAMES = 12;
 
 function fail(message: string): never {
@@ -33,6 +35,7 @@ export function validateCatalog(raw: unknown): Catalog {
 		'placeTypes',
 		'clueTypes',
 		'scenarios',
+		'items',
 		'firstNames',
 		'testimonyTemplates'
 	] as const) {
@@ -46,6 +49,12 @@ export function validateCatalog(raw: unknown): Catalog {
 	checkUniqueIds('clue type', catalog.clueTypes);
 	checkUniqueIds('scenario', catalog.scenarios);
 	checkUniqueIds('testimony template', catalog.testimonyTemplates);
+	checkUniqueIds('item', catalog.items);
+
+	for (const item of catalog.items) {
+		if (!Array.isArray(item.tags) || item.tags.length === 0) fail(`item ${item.id}: no tag`);
+		if (!item.indefinite || !item.definite) fail(`item ${item.id}: missing form`);
+	}
 
 	const placeTypes = new Map(catalog.placeTypes.map((type) => [type.id, type]));
 	const clueTypeIds = new Set(catalog.clueTypes.map((type) => type.id));
@@ -73,6 +82,27 @@ export function validateCatalog(raw: unknown): Catalog {
 			if (type.role !== 'scene') {
 				fail(`scenario ${scenario.id}: type ${typeId} has role ${type.role}, expected scene`);
 			}
+		}
+		const { min, max } = scenario.itemCount ?? { min: NaN, max: NaN };
+		const texts = [scenario.situation, ...Object.values(scenario.revelations)];
+		if (!Number.isInteger(min) || !Number.isInteger(max) || min < 0 || min > max) {
+			fail(`scenario ${scenario.id}: invalid item count`);
+		}
+		if (max > 0 && min === 0) fail(`scenario ${scenario.id}: item count must start at 1`);
+		const pool = catalog.items.filter((item) =>
+			item.tags.some((tag) => scenario.itemTags.includes(tag))
+		);
+		if (pool.length < max) {
+			fail(`scenario ${scenario.id}: needs ${max} items, its tags offer ${pool.length}`);
+		}
+		if (max === 0 && texts.some((text) => /\{items?\}/.test(text))) {
+			fail(`scenario ${scenario.id}: item variable without items`);
+		}
+		if (min > 0 && !scenario.situation.includes('{items}')) {
+			fail(`scenario ${scenario.id}: the situation must list {items}`);
+		}
+		if (texts.some((text) => ITEM_AFTER_PREPOSITION.test(text))) {
+			fail(`scenario ${scenario.id}: an item cannot follow « de » or « à »`);
 		}
 		for (const motive of scenario.lieMotives) {
 			if (!LIE_MOTIVES.includes(motive)) fail(`scenario ${scenario.id}: unknown motive ${motive}`);
