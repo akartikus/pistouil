@@ -14,7 +14,7 @@ Ajouter une ligne au catalogue enrichit toutes les enquêtes futures sans touche
 
 **Conventions** : heures en minutes depuis minuit (entiers, ex. 21h05 = 1265) ; distances en mètres entiers ; identifiants en chaînes. L’**heure du mystère** est toujours un multiple de 5 minutes (10h15, 8h05, 18h30 ; jamais 7h57 ni 18h13) ; les autres heures gardent la précision à la minute.
 
-**Horaires** (`typicalHours`, `actualHours`) : liste d’intervalles `{ from, to }` en minutes depuis minuit, valables tous les jours. Horaires absents = lieu toujours ouvert (cas d’un parc, d’une fontaine). Le parsing de `opening_hours` OSM est hors moteur (brief 02).
+**Horaires** (`typicalHours`, `actualHours`) : liste d’intervalles `{ from, to }` en minutes depuis minuit, valables tous les jours. Horaires absents = lieu toujours ouvert (cas d’un parc, d’une fontaine). Pour le moment les horaires sont écrits en dur dans le catalogue (`typicalHours`, par type de lieu) pour tester le moteur ; la manière d’obtenir les vrais horaires des vrais lieux sera trouvée plus tard, une fois les lieux réels sur la carte. Le moteur reçoit des horaires déjà prêts et ne lit ni OSM ni `opening_hours`.
 
 ## 2. Catalogue
 
@@ -116,7 +116,7 @@ classDiagram
   Place "*" --> "1" PlaceType : est un
 ```
 
-- `actualHours` vient du tag OSM `opening_hours` et remplace `typicalHours` quand il existe.
+- `actualHours` est facultatif : quand un lieu en fournit (source à définir plus tard), il remplace `typicalHours`. En test, seuls les horaires typiques du catalogue servent.
 - `removed` marque un lieu retiré à la demande de son propriétaire (liste d’exclusion par identifiant OSM).
 
 ## 4. Faits, sources et vraie soirée
