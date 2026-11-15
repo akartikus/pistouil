@@ -1,0 +1,206 @@
+[
+	{
+		"id": "pink_wig",
+		"tags": ["wearable"],
+		"indefinite": "une perruque rose",
+		"definite": "la perruque"
+	},
+	{
+		"id": "lipstick",
+		"tags": ["wearable"],
+		"indefinite": "du rouge à lèvres éclatant",
+		"definite": "le rouge à lèvres"
+	},
+	{
+		"id": "wool_scarf",
+		"tags": ["wearable", "linen"],
+		"indefinite": "une écharpe en laine",
+		"definite": "l’écharpe"
+	},
+	{
+		"id": "sunglasses",
+		"tags": ["wearable"],
+		"indefinite": "des lunettes de soleil",
+		"definite": "les lunettes de soleil"
+	},
+	{
+		"id": "headphones",
+		"tags": ["wearable"],
+		"indefinite": "un casque audio",
+		"definite": "le casque audio"
+	},
+	{
+		"id": "straw_hat",
+		"tags": ["wearable"],
+		"indefinite": "un chapeau de paille",
+		"definite": "le chapeau de paille"
+	},
+	{
+		"id": "bow_tie",
+		"tags": ["wearable"],
+		"indefinite": "un nœud papillon à pois",
+		"definite": "le nœud papillon"
+	},
+	{
+		"id": "fake_moustache",
+		"tags": ["wearable"],
+		"indefinite": "une moustache postiche",
+		"definite": "la moustache postiche"
+	},
+	{
+		"id": "feather_boa",
+		"tags": ["wearable"],
+		"indefinite": "un boa à plumes",
+		"definite": "le boa à plumes"
+	},
+	{
+		"id": "bobble_hat",
+		"tags": ["wearable"],
+		"indefinite": "un bonnet à pompon",
+		"definite": "le bonnet à pompon"
+	},
+	{
+		"id": "flower_necklace",
+		"tags": ["wearable"],
+		"indefinite": "un collier de fleurs",
+		"definite": "le collier de fleurs"
+	},
+	{
+		"id": "heart_boxers",
+		"tags": ["linen"],
+		"indefinite": "un caleçon à cœurs",
+		"definite": "le caleçon à cœurs"
+	},
+	{
+		"id": "odd_sock",
+		"tags": ["linen"],
+		"indefinite": "une chaussette dépareillée",
+		"definite": "la chaussette dépareillée"
+	},
+	{
+		"id": "polka_knickers",
+		"tags": ["linen"],
+		"indefinite": "une grande culotte à pois",
+		"definite": "la culotte à pois"
+	},
+	{
+		"id": "striped_pyjamas",
+		"tags": ["linen"],
+		"indefinite": "un pyjama à rayures",
+		"definite": "le pyjama à rayures"
+	},
+	{
+		"id": "flowery_swimsuit",
+		"tags": ["linen"],
+		"indefinite": "un maillot de bain fleuri",
+		"definite": "le maillot de bain"
+	},
+	{
+		"id": "bathrobe",
+		"tags": ["linen"],
+		"indefinite": "un peignoir moelleux",
+		"definite": "le peignoir"
+	},
+	{
+		"id": "christmas_jumper",
+		"tags": ["linen"],
+		"indefinite": "un pull de Noël",
+		"definite": "le pull de Noël"
+	},
+	{
+		"id": "rubber_ducks",
+		"tags": ["floating"],
+		"indefinite": "une vingtaine de canards en plastique",
+		"definite": "les canards en plastique"
+	},
+	{
+		"id": "paper_boats",
+		"tags": ["floating"],
+		"indefinite": "une flottille de bateaux en papier",
+		"definite": "les bateaux en papier"
+	},
+	{
+		"id": "ping_pong_balls",
+		"tags": ["floating"],
+		"indefinite": "une centaine de balles de ping-pong",
+		"definite": "les balles de ping-pong"
+	},
+	{
+		"id": "mini_buoys",
+		"tags": ["floating"],
+		"indefinite": "une dizaine de bouées miniatures",
+		"definite": "les bouées miniatures"
+	},
+	{
+		"id": "cork_raft",
+		"tags": ["floating"],
+		"indefinite": "un radeau en bouchons de liège",
+		"definite": "le radeau en bouchons"
+	},
+	{
+		"id": "checked_tablecloth",
+		"tags": ["tableware"],
+		"indefinite": "une nappe à carreaux",
+		"definite": "la nappe à carreaux"
+	},
+	{
+		"id": "candlestick",
+		"tags": ["tableware"],
+		"indefinite": "un chandelier",
+		"definite": "le chandelier"
+	},
+	{
+		"id": "plastic_bouquet",
+		"tags": ["tableware"],
+		"indefinite": "un bouquet de fleurs en plastique",
+		"definite": "le bouquet"
+	},
+	{
+		"id": "cardboard_cutlery",
+		"tags": ["tableware"],
+		"indefinite": "des couverts en carton",
+		"definite": "les couverts en carton"
+	},
+	{
+		"id": "menu_board",
+		"tags": ["tableware"],
+		"indefinite": "une ardoise de menu",
+		"definite": "l’ardoise de menu"
+	},
+	{
+		"id": "bread_basket",
+		"tags": ["tableware"],
+		"indefinite": "une corbeille à pain vide",
+		"definite": "la corbeille à pain"
+	},
+	{
+		"id": "red_carpet",
+		"tags": ["welcome"],
+		"indefinite": "un petit tapis rouge",
+		"definite": "le tapis rouge"
+	},
+	{
+		"id": "velvet_rope",
+		"tags": ["welcome"],
+		"indefinite": "un cordon de velours",
+		"definite": "le cordon de velours"
+	},
+	{
+		"id": "golden_balloons",
+		"tags": ["welcome"],
+		"indefinite": "une haie de ballons dorés",
+		"definite": "les ballons dorés"
+	},
+	{
+		"id": "pocket_spotlight",
+		"tags": ["welcome"],
+		"indefinite": "un projecteur de poche",
+		"definite": "le projecteur"
+	},
+	{
+		"id": "paper_flower_arch",
+		"tags": ["welcome"],
+		"indefinite": "une arche de fleurs en papier",
+		"definite": "l’arche de fleurs"
+	}
+]
