@@ -126,6 +126,28 @@ describe('generateInvestigation', () => {
 	});
 });
 
+describe('proofs', () => {
+	it('are dated at the end of the stay they concern', () => {
+		const natureOf = new Map(catalog.clueTypes.map((type) => [type.id, type.nature]));
+		let proofs = 0;
+		for (const difficulty of difficulties) {
+			for (let seed = 1; seed <= 60; seed++) {
+				const investigation = generate(seed, difficulty);
+				for (const fact of investigation.facts) {
+					if (fact.source.kind !== 'clue' || natureOf.get(fact.source.clueTypeId) !== 'proof')
+						continue;
+					proofs++;
+					const character = investigation.characters.find((c) => c.id === fact.characterId)!;
+					expect(fact.departure).toBe(true);
+					expect(fact.from).toBe(fact.to);
+					expect(fact.to).toBe(character.segments[fact.segment!].to);
+				}
+			}
+		}
+		expect(proofs).toBeGreaterThan(0);
+	});
+});
+
 describe('repairInvestigation', () => {
 	it('adds a clue for a suspect who cannot be cleared', () => {
 		const context = { places: fixturePlaces, routes: fixtureRoutes, catalog };
@@ -139,6 +161,44 @@ describe('repairInvestigation', () => {
 
 		const repaired = repairInvestigation(broken, context)!;
 		expect(checkRules(repaired, context)).toEqual([]);
+	});
+});
+
+describe('repairInvestigation and proofs', () => {
+	const context = { places: fixturePlaces, routes: fixtureRoutes, catalog };
+
+	// An investigation where the only suspect to clear stays long after the mystery time.
+	function withLongStay() {
+		const investigation = structuredClone(generate(5, 1));
+		const referenced = new Set(investigation.facts.map((f) => f.unlockedBy));
+		const loose = investigation.facts.find(
+			(f) => f.source.kind === 'clue' && !referenced.has(f.id)
+		)!;
+		const character = investigation.characters.find((c) => c.id === loose.characterId)!;
+		character.segments[loose.segment!].to = investigation.mysteryTime + 200;
+		investigation.facts = investigation.facts.filter((f) => f !== loose);
+		return { investigation, loose };
+	}
+
+	it('uses a PNJ clue when the stay ends too long after the mystery time for a proof', () => {
+		const { investigation } = withLongStay();
+		const repaired = repairInvestigation(investigation, context)!;
+		const added = repaired.facts.filter((fact) => fact.id.startsWith('r'));
+		expect(added).toHaveLength(1);
+		const source = added[0].source;
+		if (source.kind !== 'clue') throw new Error('expected a clue');
+		expect(catalog.clueTypes.find((type) => type.id === source.clueTypeId)!.nature).toBe('npc');
+	});
+
+	it('adds nothing when no clue can clear the suspect', () => {
+		const { investigation, loose } = withLongStay();
+		const place = fixturePlaces.find((p) => p.osmId === loose.placeId)!;
+		const proofId = catalog.clueTypes.find((type) => type.nature === 'proof')!.id;
+		const proofOnly = {
+			...catalog,
+			compatibilities: { ...catalog.compatibilities, [place.typeId]: [proofId] }
+		};
+		expect(repairInvestigation(investigation, { ...context, catalog: proofOnly })).toBeNull();
 	});
 });
 

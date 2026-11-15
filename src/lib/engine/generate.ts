@@ -102,13 +102,14 @@ function chooseSetting(ctx: Context, rng: Random): Setting | null {
 	return null;
 }
 
-// A stay at `place` that clears the suspect: its distance to the mystery time is under the trip.
+// A stay at `place` that clears the suspect. It ends within a trip of the mystery time, so a
+// proof dated at the end of the stay clears the suspect too.
 function nearSegment(ctx: Context, rng: Random, place: Place, scene: Place, time: number) {
 	const trip = ctx.travel(place.osmId, scene.osmId);
 	for (let tries = 0; tries < 30; tries++) {
-		const from = rng.int(time - 60, time + trip - 1);
-		const to = from + rng.int(20, 75);
-		if (time - to < trip && from >= 0 && fitsInHours(ctx.hoursOf(place), from, to)) {
+		const to = rng.int(time - trip + 1, time + trip - 1);
+		const from = to - rng.int(20, 75);
+		if (from >= 0 && fitsInHours(ctx.hoursOf(place), from, to)) {
 			return { placeId: place.osmId, from, to };
 		}
 	}
@@ -132,7 +133,8 @@ function planAuthor(ctx: Context, rng: Random, place: Place, scene: Place, time:
 		const witnessStay = {
 			placeId: place.osmId,
 			from: leave - rng.int(5, 40),
-			to: Math.max(leave + 1, time - trip + 1 + rng.int(0, 20))
+			// Ends within a trip of the mystery time (and after the author leaves).
+			to: rng.int(time - trip + 1, time + trip - 1)
 		};
 		const hours = ctx.hoursOf(place);
 		if (stay.from < 0 || witnessStay.from < 0) continue;
@@ -210,12 +212,23 @@ function clueFact(
 	scene: Place,
 	time: number,
 	unlockedBy: string | null = null
-): Fact {
-	const clueTypeId = rng.pick(ctx.clueIdsOf(place));
-	const clueType = ctx.catalog.clueTypes.find((type) => type.id === clueTypeId)!;
+): Fact | null {
 	const trip = ctx.travel(place.osmId, scene.osmId);
+	// A proof is dated at the end of the stay: it only clears the suspect if that end is near.
+	const options = ctx.catalog.clueTypes.filter(
+		(type) =>
+			ctx.clueIdsOf(place).includes(type.id) &&
+			(type.nature !== 'proof' || Math.abs(segment.to - time) < trip)
+	);
+	if (options.length === 0) return null;
+	const clueType = rng.pick(options);
+	const proof = clueType.nature === 'proof';
 	const instant = clueType.precision === 'instant';
-	const from = instant ? clearingInstant(rng, segment, trip, time) : segment.from;
+	const from = proof
+		? segment.to
+		: instant
+			? clearingInstant(rng, segment, trip, time)
+			: segment.from;
 	const to = instant ? from : segment.to;
 	return {
 		id,
@@ -223,7 +236,7 @@ function clueFact(
 		placeId: place.osmId,
 		from,
 		to,
-		departure: false,
+		departure: proof,
 		segment: segmentIndex,
 		unlockedBy,
 		source: {
@@ -382,6 +395,7 @@ function buildCandidate(
 		time
 	);
 	const otherClue = clueFact(ctx, rng, nextId(), other, otherPlace, otherSegment, 0, scene, time);
+	if (!witnessClue || !otherClue) return null;
 	facts.push(witnessClue, otherClue);
 
 	const cleared: Innocent[] = [
@@ -527,22 +541,16 @@ export function repairInvestigation(
 	for (const character of investigation.characters) {
 		if (character.author || !possible.includes(character.id)) continue;
 		const trip = (place: Place) => ctx.travel(place.osmId, scene.osmId);
-		const index = character.segments.findIndex((segment) => {
+		let clue: Fact | null = null;
+		character.segments.some((segment, index) => {
 			const place = ctx.places.find((p) => p.osmId === segment.placeId)!;
 			const distance = Math.max(
 				segment.from - investigation.mysteryTime,
 				investigation.mysteryTime - segment.to,
 				0
 			);
-			return (
-				place.osmId !== scene.osmId && ctx.clueIdsOf(place).length > 0 && distance < trip(place)
-			);
-		});
-		if (index === -1) return null;
-		const segment = character.segments[index];
-		const place = ctx.places.find((p) => p.osmId === segment.placeId)!;
-		added.push(
-			clueFact(
+			if (place.osmId === scene.osmId || distance >= trip(place)) return false;
+			clue = clueFact(
 				ctx,
 				rng,
 				`r${added.length + 1}`,
@@ -552,8 +560,11 @@ export function repairInvestigation(
 				index,
 				scene,
 				investigation.mysteryTime
-			)
-		);
+			);
+			return clue !== null;
+		});
+		if (!clue) return null;
+		added.push(clue);
 	}
 	return added.length === 0
 		? null

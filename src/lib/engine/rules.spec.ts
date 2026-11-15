@@ -66,7 +66,7 @@ const base = (): Investigation => ({
 			id: 'paul',
 			firstName: 'Paul',
 			author: false,
-			segments: [{ placeId: 'bakery', from: 1240, to: 1275 }]
+			segments: [{ placeId: 'bakery', from: 1240, to: 1263 }]
 		},
 		{
 			id: 'ines',
@@ -77,10 +77,10 @@ const base = (): Investigation => ({
 	],
 	facts: [
 		fact('f1', 'lucie', 'cafe', 1230, 1260, null, testimony('lucie', true)),
-		fact('f2', 'paul', 'bakery', 1240, 1275, 0, testimony('paul')),
+		fact('f2', 'paul', 'bakery', 1240, 1263, 0, testimony('paul')),
 		fact('f3', 'ines', 'cafe', 1230, 1280, 0, testimony('ines')),
 		fact('f4', 'lucie', 'cafe', 1250, 1250, 0, testimony('ines'), true),
-		fact('f5', 'paul', 'bakery', 1263, 1263, 0, clue('receipt')),
+		fact('f5', 'paul', 'bakery', 1263, 1263, 0, clue('receipt'), true),
 		fact('f6', 'ines', 'cafe', 1230, 1280, 0, clue('waiter'))
 	]
 });
@@ -197,6 +197,19 @@ describe('checkRules', () => {
 			'lie-detectable',
 			(i) => {
 				i.facts = i.facts.filter((f) => f.id !== 'f4');
+			}
+		],
+		[
+			'proof-at-departure',
+			(i) => {
+				byId(i, 'f5').from = 1250;
+				byId(i, 'f5').to = 1250;
+			}
+		],
+		[
+			'proof-at-departure',
+			(i) => {
+				byId(i, 'f5').departure = false;
 			}
 		],
 		[

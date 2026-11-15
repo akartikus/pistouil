@@ -38,10 +38,10 @@ const fact = (
 });
 
 const lucieLie = fact('lie', 'lucie', 'cafe', 1230, 1260, 'lucie');
-const paulTestimony = fact('paul-t', 'paul', 'bakery', 1240, 1275, 'paul');
+const paulTestimony = fact('paul-t', 'paul', 'bakery', 1240, 1263, 'paul');
 const inesTestimony = fact('ines-t', 'ines', 'cafe', 1230, 1280, 'ines');
 const lucieLeaves = fact('lucie-leaves', 'lucie', 'cafe', 1250, 1250, 'ines', { departure: true });
-const ticket = fact('ticket', 'paul', 'bakery', 1263, 1263, null);
+const ticket = fact('ticket', 'paul', 'bakery', 1263, 1263, null, { departure: true });
 const waiter = fact('waiter', 'ines', 'cafe', 1230, 1280, null);
 
 const reference = (): SolverInput => ({

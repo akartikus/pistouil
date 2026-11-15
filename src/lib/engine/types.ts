@@ -131,6 +131,7 @@ export interface Fact {
 	from: number;
 	to: number;
 	// The person was there at that instant and left right after (from = to).
+	// A proof (receipt, bill, ticket) is always a departure, dated at the end of the stay.
 	departure: boolean;
 	// Index in the character's segments; null only for the author's lie.
 	segment: number | null;

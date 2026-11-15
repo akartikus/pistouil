@@ -19,6 +19,7 @@ export type RuleName =
 	| 'complete-route-matrix'
 	| 'suspect-count'
 	| 'unlock-acyclic'
+	| 'proof-at-departure'
 	| 'lie-detectable'
 	| 'truths-uncontradicted';
 
@@ -198,6 +199,21 @@ export function checkRules(investigation: Investigation, context: RuleContext): 
 		reliableIds = [];
 	}
 	const reliable: SolverFact[] = solverInput.facts.filter((fact) => reliableIds.includes(fact.id));
+
+	// A proof (receipt, bill, ticket) is bought or validated on the way out.
+	check('proof-at-departure', () =>
+		clueFacts.every((fact) => {
+			if (fact.source.kind !== 'clue') return true;
+			const clueTypeId = fact.source.clueTypeId;
+			const type = catalog.clueTypes.find((clueType) => clueType.id === clueTypeId);
+			if (type?.nature !== 'proof') return true;
+			const character = investigation.characters.find((c) => c.id === fact.characterId);
+			const segment = fact.segment === null ? undefined : character?.segments[fact.segment];
+			return (
+				fact.departure && fact.from === fact.to && segment !== undefined && fact.to === segment.to
+			);
+		})
+	);
 
 	check('lie-detectable', () => {
 		const lie = solverInput.facts.find((fact) => fact.id === lieFacts[0]?.id);
