@@ -14,7 +14,7 @@ Périmètre exact du brief 01 (Inclus / Exclu), sans extension :
 - Générateur déterministe : scène, heure, suspects, auteur, vraie soirée, témoignages, mensonge, indices, liens « débloqué par ».
 - Solveur (référence §7), y compris faits atteignables et contradiction entre faits.
 - Vérification des règles de cohérence (référence §6) ; une enquête qui en viole une est réparée ou rejetée.
-- Générateur pseudo-aléatoire initialisé par la graine.
+- Générateur pseudo-aléatoire initialisé par la seed.
 - Mise à jour du cap (`docs/VISION.md`) : feuille de route, suppression de `docs/writing/`.
 
 Hors périmètre : lecture OSM (brief 02), calcul des trajets (brief 03), interface, carte, stockage, textes enrichis par IA. Le moteur reçoit lieux et matrice de trajets en entrée.

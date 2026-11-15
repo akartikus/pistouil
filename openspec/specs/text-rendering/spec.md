@@ -18,7 +18,7 @@ Le moteur SHALL produire un `renderedText` pour chaque indice et chaque témoign
 - **THEN** le texte rendu affiche `21h05`
 
 ### Requirement: Les prénoms sont distincts
-Deux personnages d’une même enquête SHALL avoir des prénoms différents, tirés dans la liste du catalogue avec la graine.
+Deux personnages d’une même enquête SHALL avoir des prénoms différents, tirés dans la liste du catalogue avec la seed.
 
 #### Scenario: Cinq suspects
 - **WHEN** une enquête est générée avec la difficulté 3 (5 suspects)
@@ -32,8 +32,8 @@ Le `renderedText` d’un témoignage mensonger SHALL être produit par le même 
 - **THEN** son texte utilise un gabarit `interval` de sujet `self`, comme un témoignage vrai du même type
 
 ### Requirement: Rendu pur et reproductible
-Le rendu SHALL dépendre uniquement du gabarit, des valeurs et de la graine, sans lire l’horloge ni le réseau.
+Le rendu SHALL dépendre uniquement du gabarit, des valeurs et de la seed, sans lire l’horloge ni le réseau.
 
 #### Scenario: Même entrée, même texte
-- **WHEN** on rend deux fois le même gabarit avec les mêmes valeurs et la même graine
+- **WHEN** on rend deux fois le même gabarit avec les mêmes valeurs et la même seed
 - **THEN** les deux textes sont identiques

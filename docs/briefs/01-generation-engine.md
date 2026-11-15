@@ -1,6 +1,6 @@
 # Brief 01 — Moteur : génération et solveur
 
-**Objectif** : à partir d’une liste de lieux, d’une matrice de temps de marche, du catalogue et d’une graine, produire une enquête valide, vérifiée par le solveur.
+**Objectif** : à partir d’une liste de lieux, d’une matrice de temps de marche, du catalogue et d’une seed, produire une enquête valide, vérifiée par le solveur.
 **Dépend de** : étape 0 (projet initialisé).
 **À lire** : `docs/VISION.md` §4 et §6 (ton et règles de rédaction, issus de la phase de rédaction, §7) ; `docs/reference/DATA-MODEL.md` en entier.
 
@@ -13,7 +13,7 @@
 - Le générateur : choix de la scène, de l’heure, des suspects et de l’auteur ; simulation de la vraie soirée ; dérivation des témoignages, du mensonge et des indices ; liens « débloqué par ».
 - Le solveur, tel que décrit dans la référence §7.
 - La vérification de toutes les règles de cohérence (référence §6).
-- Un générateur pseudo-aléatoire déterministe initialisé par la graine.
+- Un générateur pseudo-aléatoire déterministe initialisé par la seed.
 
 **Exclu**
 - Lecture des données OSM (brief 02) et calcul des trajets (brief 03) : le moteur reçoit lieux et matrice en entrée.
@@ -77,7 +77,7 @@
 ### Réparation ou rejet
 - QUAND une enquête générée n’est pas valide
 - ALORS le générateur ajoute ou retire un indice et revérifie, dans une limite de tentatives,
-- ET s’il n’y parvient pas, il recommence avec une graine dérivée, de façon déterministe.
+- ET s’il n’y parvient pas, il recommence avec une seed dérivée, de façon déterministe.
 
 ### Difficulté
 - QUAND le joueur demande une difficulté donnée
@@ -87,10 +87,10 @@
 
 - [ ] Tous les types du modèle existent et compilent en mode strict.
 - [ ] L’exemple de référence et sa variante invalide sont des tests permanents ; l’exemple contient un mensonge contredit (témoignage d’Inès).
-- [ ] Sur 500 graines et un jeu de lieux fictif de 8 lieux (4 `scene`, 2 `alibi`, 1 `excluded`, 1 `removed`, matrice complète), à chaque difficulté de 1 à 3, 100 % des enquêtes produites sont valides et respectent toutes les règles de cohérence.
-- [ ] Même graine, même enquête (test dédié).
-- [ ] Sur les 500 graines, le mensonge est toujours démasquable et aucun fait vrai n’est contredit.
-- [ ] Sur les 500 graines, aucun texte avec variable non résolue et aucun prénom en double.
+- [ ] Sur 500 seeds et un jeu de lieux fictif de 8 lieux (4 `scene`, 2 `alibi`, 1 `excluded`, 1 `removed`, matrice complète), à chaque difficulté de 1 à 3, 100 % des enquêtes produites sont valides et respectent toutes les règles de cohérence.
+- [ ] Même seed, même enquête (test dédié).
+- [ ] Sur les 500 seeds, le mensonge est toujours démasquable et aucun fait vrai n’est contredit.
+- [ ] Sur les 500 seeds, aucun texte avec variable non résolue et aucun prénom en double.
 - [ ] Génération d’une enquête en moins de 200 ms sur un ordinateur de bureau.
 
 ## Points à trancher pendant la proposition

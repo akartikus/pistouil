@@ -13,8 +13,8 @@ Le moteur SHALL vérifier les règles de cohérence du modèle sur chaque enquê
 - **WHEN** une enquête viole une règle de cohérence
 - **THEN** la vérification échoue en nommant la règle violée
 
-#### Scenario: 500 graines
-- **WHEN** on génère des enquêtes sur 500 graines avec un jeu de 8 lieux (4 `scene`, 2 `alibi`, 1 `excluded`, 1 `removed`) et à chaque difficulté de 1 à 3
+#### Scenario: 500 seeds
+- **WHEN** on génère des enquêtes sur 500 seeds avec un jeu de 8 lieux (4 `scene`, 2 `alibi`, 1 `excluded`, 1 `removed`) et à chaque difficulté de 1 à 3
 - **THEN** 100 % des enquêtes produites respectent toutes les règles
 
 ### Requirement: Mensonge démasquable

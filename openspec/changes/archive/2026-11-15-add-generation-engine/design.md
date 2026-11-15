@@ -20,7 +20,7 @@ Aucune capability existante (`openspec/specs/` est vide). Le moteur vit dans `sr
 
 **Organisation du code.** `src/lib/engine/` : `types.ts`, `random.ts`, `catalog.ts` (chargement et validation), `render.ts`, `solver.ts`, `rules.ts`, `generate.ts`, chacun avec son `*.spec.ts` à côté. Le catalogue est passé en argument ; le moteur n’importe pas de JSON. Les tests importent `catalog/*.json` directement. *Alternative écartée* : charger le JSON dans le moteur (couple moteur et fichiers).
 
-**PRNG : mulberry32.** Quelques lignes, état 32 bits, rapide, suffisant pour tirer des indices et des heures. *Alternative* : xoshiro128 (meilleure qualité, inutile ici). Graine dérivée pour une nouvelle tentative : `mulberry32(seed)` consommée une fois par tentative, de façon déterministe.
+**PRNG : mulberry32.** Quelques lignes, état 32 bits, rapide, suffisant pour tirer des indices et des heures. *Alternative* : xoshiro128 (meilleure qualité, inutile ici). Seed dérivée pour une nouvelle tentative : `mulberry32(seed)` consommée une fois par tentative, de façon déterministe.
 
 **Validation du catalogue sans bibliothèque.** Les JSON sont des entrées externes (frontière) : une fonction de validation écrite à la main, avec erreurs nommant l’élément fautif. Pas de dépendance ajoutée (`zod`) pour une dizaine de contrôles.
 
@@ -35,7 +35,7 @@ Aucune capability existante (`openspec/specs/` est vide). Le moteur vit dans `sr
 4. Chaîne de déduction pour la difficulté `d` : les innocents du tour 1 reçoivent un indice (preuve ou PNJ) ; l’innocent du tour `k > 1` n’est couvert que par le témoignage d’un innocent du tour `k − 1`. Ce témoignage est débloqué par un fait du tour `k − 1`.
 5. Dériver témoignages vrais, indices, et le mensonge de l’auteur : un intervalle ou instant faux sur son lieu `A` à `T`, tel qu’un fait fiable le contredit (départ témoigné par un innocent).
 6. Rendre tous les textes (`renderedText`), puis lancer le solveur et les règles de cohérence.
-7. Si invalide : ajouter un indice pour chaque suspect resté possible et revérifier ; sinon recommencer avec une graine dérivée (60 tentatives au plus) ; sinon retourner l’échec. Retirer un indice n’a jamais été nécessaire : la construction ne produit pas d’indice en trop.
+7. Si invalide : ajouter un indice pour chaque suspect resté possible et revérifier ; sinon recommencer avec une seed dérivée (60 tentatives au plus) ; sinon retourner l’échec. Retirer un indice n’a jamais été nécessaire : la construction ne produit pas d’indice en trop.
 
 **Contradiction implémentée une seule fois** (`solver.ts`) et réutilisée par les règles de cohérence.
 

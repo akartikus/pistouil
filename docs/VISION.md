@@ -35,13 +35,13 @@ Aucun jeu connu ne réunit les trois à la fois :
 5. **Personnages toujours fictifs**, jamais le personnel réel d’un lieu.
 6. **Aucune dépendance réseau pendant le jeu.** Données préparées hors ligne, calculs sur le téléphone, jeu jouable hors connexion une fois la zone chargée.
 7. **Garde-fous légaux** : mention de fiction visible, pas de logos de marques, pas de photos de bâtiments, carte stylisée, attribution OpenStreetMap, droit de retrait d’un lieu sur demande.
-8. **Le moteur est du code pur** (aucune dépendance à l’interface), testé et reproductible à partir d’une graine.
+8. **Le moteur est du code pur** (aucune dépendance à l’interface), testé et reproductible à partir d’une seed.
 
 ## 5. Périmètre
 
 | Version 1 | Plus tard |
 | --- | --- |
-| Mode solo, enquête à la demande | Partage de résultat façon Wordle, envoi d’une enquête par sa graine |
+| Mode solo, enquête à la demande | Partage de résultat façon Wordle, envoi d’une enquête par sa seed |
 | Exploration libre des lieux | Limite de visites ou temps d’enquête fictif |
 | Textes à trous | Textes réécrits par IA, une fois par enquête |
 | Suspects identifiés par leur nom | Témoins qui décrivent sans reconnaître (« manteau rouge ») |
@@ -100,7 +100,7 @@ Jalon de validation après l’étape 5 : **une enquête jouable de bout en bout
 | Fait | « Telle personne, à tel lieu, entre telle et telle heure », avec sa source |
 | Indice | Source toujours fiable : preuve (ticket) ou PNJ (serveur) |
 | Témoignage | Parole d’un suspect, fiable seulement s’il est innocenté |
-| Graine | Valeur qui permet de régénérer une enquête à l’identique |
+| Seed | Valeur qui permet de régénérer une enquête à l’identique |
 
 ## 9. Carte des documents
 

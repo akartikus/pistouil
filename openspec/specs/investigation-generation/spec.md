@@ -2,19 +2,19 @@
 
 ## Purpose
 
-Génère une enquête valide à partir de lieux, d’une matrice de trajets, du catalogue, d’une graine et d’une difficulté. La vérité est simulée d’abord, témoignages et indices en sont dérivés. Types et règles : `docs/reference/DATA-MODEL.md`.
+Génère une enquête valide à partir de lieux, d’une matrice de trajets, du catalogue, d’une seed et d’une difficulté. La vérité est simulée d’abord, témoignages et indices en sont dérivés. Types et règles : `docs/reference/DATA-MODEL.md`.
 
 ## Requirements
 
 ### Requirement: Le moteur est pur et reproductible
 Appelée deux fois avec les mêmes entrées, la génération SHALL produire deux enquêtes strictement identiques. Le moteur MUST NOT utiliser `Math.random`, l’horloge, le réseau ni le DOM.
 
-#### Scenario: Même graine, même enquête
+#### Scenario: Même seed, même enquête
 - **WHEN** on appelle `generateInvestigation(places, routes, catalog, { seed, difficulty })` deux fois avec les mêmes entrées
 - **THEN** les deux enquêtes sont strictement identiques
 
-#### Scenario: Graines différentes
-- **WHEN** on appelle la génération avec deux graines différentes
+#### Scenario: Seeds différentes
+- **WHEN** on appelle la génération avec deux seeds différentes
 - **THEN** les enquêtes peuvent différer, mais chacune est valide
 
 ### Requirement: Les entrées sont validées
@@ -73,15 +73,15 @@ L’enquête produite SHALL avoir exactement la difficulté demandée (de 1 à 3
 - **THEN** la génération retourne un résultat d’échec avec la raison
 
 ### Requirement: Réparation ou rejet
-Quand une enquête générée n’est pas valide, le générateur SHALL ajouter un indice qui innocente un suspect resté possible et revérifier ; si la réparation échoue, il SHALL recommencer avec une graine dérivée de façon déterministe, dans une limite de tentatives.
+Quand une enquête générée n’est pas valide, le générateur SHALL ajouter un indice qui innocente un suspect resté possible et revérifier ; si la réparation échoue, il SHALL recommencer avec une seed dérivée de façon déterministe, dans une limite de tentatives.
 
 #### Scenario: Réparation par un indice
 - **WHEN** une enquête candidate a deux suspects possibles
 - **THEN** le générateur ajoute un indice qui innocente l’un d’eux et revérifie
 
-#### Scenario: Graine dérivée
+#### Scenario: Seed dérivée
 - **WHEN** la réparation échoue dans la limite de tentatives
-- **THEN** le générateur recommence avec une graine dérivée, de façon déterministe
+- **THEN** le générateur recommence avec une seed dérivée, de façon déterministe
 
 ### Requirement: Liens de déblocage
 Le générateur SHALL produire des liens « débloqué par » entre faits ; un fait sans lien est visible dès le départ.

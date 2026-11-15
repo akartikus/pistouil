@@ -15,7 +15,7 @@
 - Écran **Carnet** : chronologie des faits découverts, incohérences repérées, notes libres, annotations attachées à des lieux.
 - Écran **Suspects** : fiches, statut d’alibi (vérifié, douteux, à vérifier), accusation unique.
 - **Révélation** : la carte rejoue la vraie soirée le long des trajets, et le texte de révélation du motif du mensonge (fourni par le catalogue) s’affiche.
-- Progression sauvegardée localement (graine + faits découverts + annotations + notes + accusation).
+- Progression sauvegardée localement (seed + faits découverts + annotations + notes + accusation).
 - Mention de fiction visible.
 
 **Exclu**
@@ -45,7 +45,7 @@
 
 ### Reprise
 - QUAND le joueur ferme l’application puis la rouvre
-- ALORS il retrouve son enquête exactement où il l’avait laissée, régénérée à partir de la graine.
+- ALORS il retrouve son enquête exactement où il l’avait laissée, régénérée à partir de la seed.
 
 ### Rien n’est révélé avant l’heure
 - L’interface n’affiche jamais l’auteur, les mensonges ni la vraie soirée avant l’accusation.

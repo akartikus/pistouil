@@ -3,7 +3,7 @@
 ## 1. Types et PRNG
 
 - [x] 1.1 Créer `src/lib/engine/types.ts` avec tous les types du modèle (`DATA-MODEL.md`) et vérifier que `npm run check` passe en mode strict
-- [x] 1.2 Écrire `random.spec.ts` (même graine, même suite ; graines différentes, suites différentes), puis implémenter `random.ts` (mulberry32) et vérifier que le test passe
+- [x] 1.2 Écrire `random.spec.ts` (même seed, même suite ; seeds différentes, suites différentes), puis implémenter `random.ts` (mulberry32) et vérifier que le test passe
 
 ## 2. Catalogue
 
@@ -31,9 +31,9 @@
 ## 6. Générateur
 
 - [x] 6.1 Créer un jeu de lieux fictif de test (4 `scene`, 2 `alibi`, 1 `excluded`, 1 `removed`, matrice complète de 28 trajets) dans un fichier de fixtures du moteur
-- [x] 6.2 Écrire `generate.spec.ts` : même graine, même enquête ; matrice incomplète rejetée ; auteur à la scène à `T` ; soirées réalistes ; un seul mensonge avec motif du scénario ; `difficulty + 2` suspects ; rôles respectés ; échec signalé quand la difficulté est inatteignable
-- [x] 6.3 Implémenter `generate.ts` (pipeline du design, réparation, graine dérivée) et vérifier que 6.2 passe
-- [x] 6.4 Ajouter le test sur 500 graines et les difficultés 1 à 3 : 100 % valides, aucun texte non résolu, aucun prénom en double, mensonge toujours démasquable ; vérifier qu’il passe
+- [x] 6.2 Écrire `generate.spec.ts` : même seed, même enquête ; matrice incomplète rejetée ; auteur à la scène à `T` ; soirées réalistes ; un seul mensonge avec motif du scénario ; `difficulty + 2` suspects ; rôles respectés ; échec signalé quand la difficulté est inatteignable
+- [x] 6.3 Implémenter `generate.ts` (pipeline du design, réparation, seed dérivée) et vérifier que 6.2 passe
+- [x] 6.4 Ajouter le test sur 500 seeds et les difficultés 1 à 3 : 100 % valides, aucun texte non résolu, aucun prénom en double, mensonge toujours démasquable ; vérifier qu’il passe
 - [x] 6.5 Mesurer la génération d’une enquête et vérifier qu’elle prend moins de 200 ms sur un ordinateur de bureau (test ou script de mesure documenté dans le test)
 
 ## 7. Finition
