@@ -36,6 +36,10 @@ export type GenerationResult =
 const MAX_ATTEMPTS = 60;
 // Share of suspects who get a distant proof: none when easy, then a third, then a half.
 const FAR_PROOF_SHARE: Record<Difficulty, number> = { 1: 0, 2: 1 / 3, 3: 1 / 2 };
+// Share of those old stays that end just in time to reach the next one: they look like a lie.
+const TENSE_SHARE = 1 / 2;
+// Spare minutes of a tense stay, on top of the walk to the next one.
+const TENSE_MARGIN = 3;
 // How the author may lie: the obvious false alibi when easy, a trap for each step up.
 const LIE_KINDS: Record<Difficulty, LieKind[]> = {
 	1: ['alibi'],
@@ -319,6 +323,7 @@ function addDistantProofs(
 ) {
 	for (const character of people) {
 		if (rng.next() >= FAR_PROOF_SHARE[difficulty]) continue;
+		const tenseWanted = rng.next() < TENSE_SHARE;
 		const next = [...character.segments].sort((a, b) => a.from - b.from)[0];
 		const nextPlace = ctx.places.find((place) => place.osmId === next.placeId)!;
 		for (const place of rng.shuffle(ctx.usable.filter((p) => p.osmId !== scene.osmId))) {
@@ -327,11 +332,11 @@ function addDistantProofs(
 				.filter((id) => ctx.catalog.clueTypes.find((type) => type.id === id)?.nature === 'proof');
 			if (proofIds.length === 0) continue;
 			// Far enough not to clear, and early enough to reach the first stay.
-			const latest = Math.min(
-				time - ctx.travel(place.osmId, scene.osmId) - 15,
-				next.from - ctx.travel(place.osmId, nextPlace.osmId) - 10
-			);
-			const to = latest - rng.int(0, 30);
+			const farEnough = time - ctx.travel(place.osmId, scene.osmId) - 15;
+			const walk = ctx.travel(place.osmId, nextPlace.osmId);
+			const tenseTo = next.from - walk - rng.int(0, TENSE_MARGIN);
+			const tense = tenseWanted && tenseTo <= farEnough;
+			const to = tense ? tenseTo : Math.min(farEnough, next.from - walk - 10) - rng.int(0, 30);
 			const from = to - rng.int(10, 40);
 			if (from < 0 || !fitsInHours(ctx.hoursOf(place), from, to)) continue;
 
@@ -357,16 +362,33 @@ function addDistantProofs(
 					})
 				}
 			};
+			// A tense stay is followed by the person's own word on arriving at the next one.
+			const arrival = tense
+				? testimonyFact(ctx, rng, {
+						id: nextId(),
+						speaker: character,
+						subject: character,
+						place: nextPlace,
+						precision: 'instant',
+						from: next.from,
+						to: next.from,
+						segment: character.segments.indexOf(next),
+						unlockedBy: null
+					})
+				: null;
 			// Never contradict another fact of this person, the lie included.
+			const added = arrival ? [proof, arrival] : [proof];
 			if (
 				facts.some(
-					(fact) => fact.characterId === character.id && contradicts(fact, proof, ctx.travel)
+					(fact) =>
+						fact.characterId === character.id &&
+						added.some((candidate) => contradicts(fact, candidate, ctx.travel))
 				)
 			) {
 				continue;
 			}
 			character.segments.push({ placeId: place.osmId, from, to });
-			facts.push(proof);
+			facts.push(...added);
 			break;
 		}
 	}

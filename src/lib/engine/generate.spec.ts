@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { generateInvestigation, repairInvestigation } from './generate';
 import { validateCatalog } from './catalog';
 import { checkRules, fitsInHours, openingHours } from './rules';
-import { judgeTestimony, solve, toSolverInput } from './solver';
+import { contradicts, judgeTestimony, solve, toSolverInput } from './solver';
 import { createTravelTime } from './routes';
 import {
 	fixturePlaces,
@@ -11,7 +11,7 @@ import {
 	richPlaces,
 	richRoutes
 } from './fixtures';
-import type { DayType, Difficulty, Investigation } from './types';
+import type { DayType, Difficulty, Fact, Investigation } from './types';
 
 const catalog = validateCatalog(structuredClone(rawStarterCatalog));
 const difficulties: Difficulty[] = [1, 2, 3];
@@ -521,6 +521,86 @@ describe('distant proofs', () => {
 				}
 			}
 		}
+	});
+});
+
+describe('tense stays', () => {
+	const travel = createTravelTime(richRoutes);
+	const gap = (a: Fact, b: Fact) => Math.max(a.from - b.to, b.from - a.to, 0);
+	const isTrue = (fact: Fact) => fact.source.kind === 'clue' || !fact.source.lie;
+
+	// Two true facts of one person at two places, apart by the walk plus at most 3 minutes.
+	function tensions(investigation: Investigation) {
+		const found: [Fact, Fact][] = [];
+		const facts = investigation.facts.filter(isTrue);
+		for (const a of facts) {
+			for (const b of facts) {
+				if (a.id >= b.id || a.characterId !== b.characterId || a.placeId === b.placeId) continue;
+				const slack = gap(a, b) - travel(a.placeId, b.placeId);
+				if (slack >= 0 && slack <= 3) found.push([a, b]);
+			}
+		}
+		return found;
+	}
+
+	function contradictions(investigation: Investigation) {
+		let count = 0;
+		for (const a of investigation.facts) {
+			for (const b of investigation.facts) {
+				if (a.id < b.id && contradicts(a, b, travel)) count++;
+			}
+		}
+		return count;
+	}
+
+	it('never appear at difficulty 1', () => {
+		for (let seed = 1; seed <= 100; seed++) {
+			expect(tensions(generate(seed, 1, richPlaces, richRoutes))).toEqual([]);
+		}
+	});
+
+	it('appear for innocents and for the author at difficulties 2 and 3', () => {
+		for (const difficulty of [2, 3] as const) {
+			let author = 0;
+			let innocent = 0;
+			for (let seed = 1; seed <= 100; seed++) {
+				const investigation = generate(seed, difficulty, richPlaces, richRoutes);
+				const authorId = investigation.characters.find((c) => c.author)!.id;
+				for (const [a] of tensions(investigation)) {
+					if (a.characterId === authorId) author++;
+					else innocent++;
+				}
+			}
+			expect(author).toBeGreaterThan(0);
+			expect(innocent).toBeGreaterThan(0);
+		}
+	});
+
+	it('are true: the investigation stays valid and the difficulty exact', () => {
+		const context = { places: richPlaces, routes: richRoutes, catalog };
+		for (const difficulty of [2, 3] as const) {
+			for (let seed = 1; seed <= 60; seed++) {
+				const investigation = generate(seed, difficulty, richPlaces, richRoutes);
+				expect(checkRules(investigation, context)).toEqual([]);
+				expect(solve(toSolverInput(investigation, travel)).difficulty).toBe(difficulty);
+			}
+		}
+	});
+
+	it('hide the real contradiction among false alarms from difficulty 2', () => {
+		const shareAt = (difficulty: Difficulty) => {
+			let real = 0;
+			let alarms = 0;
+			for (let seed = 1; seed <= 100; seed++) {
+				const investigation = generate(seed, difficulty, richPlaces, richRoutes);
+				real += contradictions(investigation);
+				alarms += tensions(investigation).length;
+			}
+			return real / (real + alarms);
+		};
+		expect(shareAt(1)).toBe(1);
+		expect(shareAt(2)).toBeLessThan(0.8);
+		expect(shareAt(3)).toBeLessThan(0.7);
 	});
 });
 
