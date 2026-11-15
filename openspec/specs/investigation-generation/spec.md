@@ -89,3 +89,40 @@ Le générateur SHALL produire des liens « débloqué par » entre faits ; un f
 #### Scenario: Faits visibles au départ
 - **WHEN** une enquête est générée
 - **THEN** au moins un fait n’a pas de lien « débloqué par »
+
+### Requirement: Les preuves datent du départ et innocentent
+Quand la génération place une preuve, elle SHALL la dater de la fin du séjour du personnage, et ce séjour SHALL finir assez près de l’heure du mystère pour que la preuve innocente le personnage.
+
+#### Scenario: Addition au départ
+- **WHEN** une enquête est générée avec une addition comme preuve
+- **THEN** l’addition est datée de l’heure à laquelle le personnage quitte le lieu
+
+#### Scenario: Séjour proche de l’heure du mystère
+- **WHEN** une preuve innocente un personnage au tour 1
+- **THEN** la fin de son séjour est à moins du temps de trajet vers la scène de l’heure du mystère
+
+### Requirement: La réparation respecte les preuves
+Quand la réparation ajoute un indice à un personnage, elle SHALL n’utiliser une preuve que si la fin de son séjour est assez proche de l’heure du mystère pour l’innocenter, sinon un indice PNJ, et SHALL renoncer à réparer s’il n’y en a aucun.
+
+#### Scenario: Séjour trop long pour une preuve
+- **WHEN** la fin du séjour d’un personnage est trop éloignée de l’heure du mystère pour qu’une preuve l’innocente
+- **THEN** la réparation utilise un indice PNJ compatible avec le lieu
+
+#### Scenario: Aucun indice possible
+- **WHEN** aucun indice compatible ne peut innocenter le personnage
+- **THEN** la réparation n’ajoute rien
+
+### Requirement: L’heure du mystère est ronde
+Le moteur SHALL choisir l’heure du mystère parmi les multiples de 5 minutes compris dans la plage horaire du scénario et dans les horaires de la scène, et SHALL écarter un couple scénario/scène qui n’en contient aucun.
+
+#### Scenario: Heures rondes
+- **WHEN** des enquêtes sont générées sur de nombreuses seeds
+- **THEN** l’heure du mystère de chacune est un multiple de 5 minutes, comme 10h15 ou 8h05, jamais 7h57 ni 18h13
+
+#### Scenario: Dans la plage et les horaires
+- **WHEN** une enquête est générée
+- **THEN** l’heure du mystère est dans la plage du scénario et dans les horaires de la scène
+
+#### Scenario: Aucun multiple de 5 minutes
+- **WHEN** la plage d’un couple scénario/scène ne contient aucun multiple de 5 minutes
+- **THEN** ce couple n’est pas utilisé et la génération choisit un autre couple

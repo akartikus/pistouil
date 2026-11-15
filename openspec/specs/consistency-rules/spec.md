@@ -56,3 +56,29 @@ Une enquête SHALL avoir une scène de rôle `scene`, aucun lieu `excluded` ou `
 #### Scenario: Indice incompatible
 - **WHEN** un indice n’est pas dans la table de compatibilité du type de son lieu
 - **THEN** l’enquête est rejetée
+
+### Requirement: Preuve datée du départ
+Toute preuve (indice de nature `proof`) SHALL être un fait de départ daté de la fin du segment du personnage qu’elle concerne (`departure` vrai, `from = to` = fin du segment), car elle prouve un achat ou un passage après lequel la personne part.
+
+#### Scenario: Preuve conforme
+- **WHEN** un ticket de caisse concerne un séjour qui finit à 21h03
+- **THEN** le fait est un départ daté de 21h03 et la règle est respectée
+
+#### Scenario: Preuve au milieu du séjour
+- **WHEN** une addition est datée de 16h56 alors que le séjour du personnage finit à 17h59
+- **THEN** l’enquête est rejetée en nommant la règle « preuve datée du départ »
+
+#### Scenario: Indice PNJ non concerné
+- **WHEN** un indice PNJ place un personnage au lieu pendant son séjour
+- **THEN** la règle n’est pas appliquée à cet indice
+
+### Requirement: Heure du mystère ronde
+L’heure du mystère d’une enquête SHALL être un multiple de 5 minutes.
+
+#### Scenario: Heure ronde
+- **WHEN** l’heure du mystère est 10h15
+- **THEN** la règle est respectée
+
+#### Scenario: Heure précise
+- **WHEN** l’heure du mystère est 7h57
+- **THEN** l’enquête est rejetée en nommant la règle « heure du mystère ronde »
