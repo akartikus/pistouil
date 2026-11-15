@@ -8,8 +8,17 @@ export interface Interval {
 
 export type Difficulty = 1 | 2 | 3;
 
+export type DayType = 'weekday' | 'weekend';
+
+// null means always open, an empty list means closed all day.
+export interface OpeningHours {
+	weekday: Interval[] | null;
+	weekend: Interval[] | null;
+}
+
 export type PlaceRole = 'scene' | 'alibi' | 'excluded';
 export type ClueNature = 'proof' | 'npc';
+export type LieKind = 'alibi' | 'framing' | 'closed';
 export type CluePrecision = 'instant' | 'interval';
 export type TestimonyPrecision = 'instant' | 'interval' | 'departure';
 export type TestimonySubject = 'self' | 'other';
@@ -29,8 +38,7 @@ export interface PlaceType {
 	id: string;
 	// Outer list is an OR, each inner list is an AND of OSM tags.
 	osmTags: string[][];
-	// null means always open.
-	typicalHours: Interval[] | null;
+	typicalHours: OpeningHours;
 	role: PlaceRole;
 	icon?: string;
 }
@@ -91,8 +99,8 @@ export interface Place {
 	lat: number;
 	lon: number;
 	typeId: string;
-	// Overrides the type's typical hours when present.
-	actualHours?: Interval[];
+	// Overrides the type's typical hours (both days) when present.
+	actualHours?: OpeningHours;
 	removed: boolean;
 }
 
@@ -134,6 +142,8 @@ export interface Testimony {
 	// Private: never read by the solver.
 	lie: boolean;
 	motive: LieMotive | null;
+	// Private: how the author lies (null for a true testimony).
+	lieKind: LieKind | null;
 }
 
 export type Source = Clue | Testimony;
@@ -158,6 +168,8 @@ export interface Investigation {
 	seed: number;
 	difficulty: Difficulty;
 	mysteryTime: number;
+	// The day of the investigation: opening hours apply as of that day.
+	dayType: DayType;
 	scenarioId: string;
 	// Items drawn for the scenario, in the order of the situation text.
 	itemIds: string[];
