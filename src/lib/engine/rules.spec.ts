@@ -14,7 +14,7 @@ const place = (osmId: string, name: string, typeId: string, extra: Partial<Place
 	lon: 0,
 	typeId,
 	removed: false,
-	actualHours: open,
+	actualHours: { weekday: open, weekend: open },
 	...extra
 });
 
@@ -34,7 +34,8 @@ const testimony = (speakerId: string, lie = false) => ({
 	speakerId,
 	renderedText: 'Un témoignage.',
 	lie,
-	motive: lie ? ('surprise' as const) : null
+	motive: lie ? ('surprise' as const) : null,
+	lieKind: lie ? ('alibi' as const) : null
 });
 const clue = (clueTypeId: string) => ({
 	kind: 'clue' as const,
@@ -46,6 +47,7 @@ const base = (): Investigation => ({
 	seed: 1,
 	difficulty: 1,
 	mysteryTime: 1265,
+	dayType: 'weekday',
 	scenarioId: 'library_swap',
 	itemIds: [],
 	situationText: 'Une boîte à musique.',
@@ -130,7 +132,30 @@ describe('checkRules', () => {
 		[
 			'clue-hours',
 			(_, c) => {
-				c.places[1].actualHours = [{ from: 420, to: 1170 }];
+				c.places[1].actualHours = { weekday: [{ from: 420, to: 1170 }], weekend: [] };
+			}
+		],
+		[
+			'clue-hours',
+			(i, c) => {
+				// The café is closed on the weekend, and the investigation is on a weekend.
+				i.dayType = 'weekend';
+				c.places[0].actualHours = { weekday: open, weekend: [] };
+			}
+		],
+		[
+			'facts-within-hours',
+			(_, c) => {
+				// A true testimony places someone in the café outside its hours.
+				c.places[0].actualHours = { weekday: [{ from: 600, to: 1200 }], weekend: open };
+			}
+		],
+		[
+			'facts-within-hours',
+			(i, c) => {
+				// The bakery is open on weekdays only: the facts at the bakery are out on a weekend.
+				i.dayType = 'weekend';
+				c.places[1].actualHours = { weekday: open, weekend: [] };
 			}
 		],
 		[
@@ -269,6 +294,28 @@ describe('checkRules', () => {
 			}
 		]
 	];
+
+	it('accepts a lie in a closed place even when no fact contradicts it', () => {
+		const investigation = base();
+		const ctx = context();
+		// No witness saw Lucie leave, and her alibi is at the park, which is shut at that hour.
+		investigation.facts = investigation.facts.filter((f) => f.id !== 'f4');
+		byId(investigation, 'f1').placeId = 'park';
+		ctx.places[2].actualHours = { weekday: [{ from: 0, to: 600 }], weekend: open };
+		expect(checkRules(investigation, ctx)).not.toContain('lie-detectable');
+	});
+
+	it('rejects a lie that nothing contradicts and that falls in the opening hours', () => {
+		const investigation = base();
+		investigation.facts = investigation.facts.filter((f) => f.id !== 'f4');
+		expect(checkRules(investigation, context())).toContain('lie-detectable');
+	});
+
+	it('accepts the same facts on a weekend when every place is open', () => {
+		const investigation = base();
+		investigation.dayType = 'weekend';
+		expect(checkRules(investigation, context())).toEqual([]);
+	});
 
 	it('accepts items that match the scenario', () => {
 		const investigation = base();

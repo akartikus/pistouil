@@ -1,5 +1,14 @@
 // Consistency rules of the model (docs/reference/DATA-MODEL.md section 6).
-import type { Catalog, Fact, Interval, Investigation, Place, PlaceType, Route } from './types';
+import type {
+	Catalog,
+	DayType,
+	Fact,
+	Interval,
+	Investigation,
+	Place,
+	PlaceType,
+	Route
+} from './types';
 import { createTravelTime, missingPairs, assertCompleteMatrix } from './routes';
 import { contradicts, reachableFacts, solve, toSolverInput, type SolverFact } from './solver';
 import { hasUnresolvedVariable } from './render';
@@ -9,6 +18,7 @@ export type RuleName =
 	| 'excluded-places-unused'
 	| 'clue-compatibility'
 	| 'clue-hours'
+	| 'facts-within-hours'
 	| 'realistic-routes'
 	| 'true-facts-derived'
 	| 'only-author-lies'
@@ -34,8 +44,9 @@ export interface RuleContext {
 
 const ALWAYS_OPEN: Interval[] = [{ from: 0, to: 1440 }];
 
-export function openingHours(place: Place, type: PlaceType): Interval[] {
-	return place.actualHours ?? type.typicalHours ?? ALWAYS_OPEN;
+// The opening hours of a place on a given day: its own hours, else those of its type.
+export function openingHours(place: Place, type: PlaceType, dayType: DayType): Interval[] {
+	return (place.actualHours ?? type.typicalHours)[dayType] ?? ALWAYS_OPEN;
 }
 
 export function fitsInHours(hours: Interval[], from: number, to: number): boolean {
@@ -105,7 +116,24 @@ export function checkRules(investigation: Investigation, context: RuleContext): 
 		clueFacts.every((fact) => {
 			const place = placeById.get(fact.placeId);
 			const type = typeOf(fact.placeId);
-			return place && type && fitsInHours(openingHours(place, type), fact.from, fact.to);
+			return (
+				place &&
+				type &&
+				fitsInHours(openingHours(place, type, investigation.dayType), fact.from, fact.to)
+			);
+		})
+	);
+
+	// Every true fact falls in the opening hours of its place that day: only the lie can escape.
+	check('facts-within-hours', () =>
+		trueFacts.every((fact) => {
+			const place = placeById.get(fact.placeId);
+			const type = typeOf(fact.placeId);
+			return (
+				place &&
+				type &&
+				fitsInHours(openingHours(place, type, investigation.dayType), fact.from, fact.to)
+			);
 		})
 	);
 
@@ -237,8 +265,20 @@ export function checkRules(investigation: Investigation, context: RuleContext): 
 		})
 	);
 
+	// The lie can be unmasked: a reliable fact contradicts it, or its place is closed at that time.
 	check('lie-detectable', () => {
-		const lie = solverInput.facts.find((fact) => fact.id === lieFacts[0]?.id);
+		const lieFact = lieFacts[0];
+		if (!lieFact) return false;
+		const place = placeById.get(lieFact.placeId);
+		const type = typeOf(lieFact.placeId);
+		if (
+			place &&
+			type &&
+			!fitsInHours(openingHours(place, type, investigation.dayType), lieFact.from, lieFact.to)
+		) {
+			return true;
+		}
+		const lie = solverInput.facts.find((fact) => fact.id === lieFact.id);
 		return (
 			lie !== undefined &&
 			reliable.some(
