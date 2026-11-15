@@ -77,6 +77,7 @@ describe('solve, reference example', () => {
 			seed: 1,
 			difficulty: 1,
 			mysteryTime: 1265,
+			dayType: 'weekday',
 			scenarioId: 's',
 			itemIds: [],
 			situationText: '',
@@ -107,7 +108,8 @@ describe('solve, reference example', () => {
 								speakerId: f.speakerId,
 								renderedText: '',
 								lie,
-								motive: lie ? 'surprise' : null
+								motive: lie ? 'surprise' : null,
+								lieKind: lie ? 'alibi' : null
 							}
 			}))
 		});
@@ -163,6 +165,24 @@ describe('contradicts', () => {
 		expect(contradicts(atCafe, atBakery, travelTime)).toBe(true);
 		const later = fact('c', 'paul', 'bakery', 1261, 1261, null);
 		expect(contradicts(atCafe, later, travelTime)).toBe(false);
+	});
+
+	it('detects two different departures from the same place', () => {
+		const early = fact('d1', 'lucie', 'cafe', 1108, 1108, null, { departure: true });
+		const late = fact('d2', 'lucie', 'cafe', 1130, 1130, 'ines', { departure: true });
+		expect(contradicts(early, late, travelTime)).toBe(true);
+	});
+
+	it('does not contradict two identical departures', () => {
+		const proof = fact('d1', 'lucie', 'cafe', 1130, 1130, null, { departure: true });
+		const testimony = fact('d2', 'lucie', 'cafe', 1130, 1130, 'ines', { departure: true });
+		expect(contradicts(proof, testimony, travelTime)).toBe(false);
+	});
+
+	it('does not mix departures of different people or places', () => {
+		const a = fact('d1', 'lucie', 'cafe', 1108, 1108, null, { departure: true });
+		const other = fact('d2', 'paul', 'cafe', 1130, 1130, null, { departure: true });
+		expect(contradicts(a, other, travelTime)).toBe(false);
 	});
 
 	it('never contradicts facts about two different people', () => {

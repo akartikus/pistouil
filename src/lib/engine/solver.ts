@@ -56,6 +56,9 @@ type Timed = Pick<SolverFact, 'characterId' | 'placeId' | 'from' | 'to' | 'depar
 
 const gap = (a: Timed, b: Timed) => Math.max(a.from - b.to, b.from - a.to, 0);
 
+// A character leaves a place once: two departures at different times cannot both be true.
+const differentDepartures = (a: Timed, b: Timed) => a.departure && b.departure && a.from !== b.from;
+
 // A departure interrupts a continuous presence at the same place.
 const interrupts = (departure: Timed, presence: Timed) =>
 	departure.departure &&
@@ -66,7 +69,7 @@ const interrupts = (departure: Timed, presence: Timed) =>
 export function contradicts(a: Timed, b: Timed, travelTime: TravelTime): boolean {
 	if (a.characterId !== b.characterId) return false;
 	if (a.placeId !== b.placeId) return gap(a, b) < travelTime(a.placeId, b.placeId);
-	return interrupts(a, b) || interrupts(b, a);
+	return interrupts(a, b) || interrupts(b, a) || differentDepartures(a, b);
 }
 
 export function reachableFacts(facts: SolverFact[]): SolverFact[] {
