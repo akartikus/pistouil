@@ -42,10 +42,10 @@ Rien ne remonte : la génération ne dépend jamais du solveur pour **construire
 
 Le moteur n'écrit jamais une enquête « à l'envers ». Il fait vivre les personnages, puis raconte.
 
-1. **Cadre** : choisit un scénario, une scène parmi les lieux publics non sensibles, et l'heure du mystère (multiple de 5 minutes).
+1. **Cadre** : choisit le jour (semaine ou week-end), un scénario, une scène parmi les lieux publics non sensibles ouverts ce jour-là, et l'heure du mystère (multiple de 5 minutes).
 2. **Suspects** : `difficulté + 2` prénoms distincts, dont un auteur et un motif de mensonge.
 3. **Vraie soirée** : chaque suspect a des séjours enchaînés, compatibles avec les temps de marche. L'auteur est sur la scène à l'heure du mystère.
-4. **Faits** : en dérive des indices (preuves datées du départ, PNJ) et des témoignages (voir « Les faits »). Seul l'auteur ment, une fois, sur l'endroit ou l'heure où il était.
+4. **Faits** : en dérive des indices (preuves datées du départ, PNJ) et des témoignages (voir « Les faits »). Seul l'auteur ment, une fois, de la façon que la difficulté permet (voir « Les genres de mensonge »).
 5. **Objets** : tire les objets de la farce (une perruque, un bonnet…) selon le scénario.
 6. **Textes** : remplit les gabarits (`renderedText`) pour la situation, la révélation, les indices et les témoignages.
 7. **Contrôle** : lance le solveur et les règles. Si l'enquête est invalide, ajoute un indice ; si cela ne suffit pas, recommence avec une seed dérivée (60 tentatives au plus). Sinon renvoie un échec avec sa raison.
@@ -96,7 +96,7 @@ Un témoignage parle de soi (`self`) ou d'un autre suspect (`other`). Le mensong
 
 - **Atteignable** : visible dès le départ, ou débloqué par un fait lui-même atteignable. Le solveur ne lit que les faits atteignables.
 - **Fiable** : un indice, ou le témoignage d'un suspect déjà innocenté.
-- **Contradiction** : deux faits sur la même personne se contredisent si elle n'a pas pu aller de l'un à l'autre à pied, ou si un départ interrompt une présence continue au même lieu. Un témoignage est **contredit**, **corroboré** ou **non vérifié** selon les faits fiables.
+- **Contradiction** : deux faits sur la même personne se contredisent si elle n'a pas pu aller de l'un à l'autre à pied, si un départ interrompt une présence continue au même lieu, ou si elle est dite partir du même lieu à deux heures différentes. Un témoignage est **contredit**, **corroboré** ou **non vérifié** selon les faits fiables.
 
 Exemple (l'exemple de référence du modèle) :
 
@@ -108,6 +108,20 @@ Exemple (l'exemple de référence du modèle) :
 | Lucie quitte le café à 20h50 | Témoignage d'Inès | Fiable une fois Inès innocentée ; contredit Lucie (partie à 20h50, pas à 21h00) |
 
 Ce que le joueur retient : le départ d'Inès à 20h50 démasque le mensonge de Lucie, et Lucie, seule suspecte possible, est l'auteur.
+
+## Les genres de mensonge
+
+L'auteur ment une seule fois. Plus la difficulté monte, plus il a de façons de brouiller les pistes :
+
+| Genre | Ce qui est faux | Comment on le démasque | Dès la difficulté |
+| --- | --- | --- | --- |
+| `alibi` | L'auteur dit être ailleurs ou plus longtemps | Un témoin l'a vu partir : contradiction directe | 1 |
+| `framing` | L'auteur dit qu'un innocent est parti plus tôt | Un indice ou un témoin innocenté contredit l'auteur, sans lui on ne sait pas qui ment | 2 |
+| `closed` | L'auteur dit être dans un lieu fermé à cette heure | Personne ne le contredit : seuls les horaires du lieu le trahissent | 3 |
+
+À partir de la difficulté 2, certains suspects ont aussi une **preuve lointaine** : un vrai ticket d'un séjour plus ancien, trop loin de l'heure du mystère pour innocenter. Elle est vraie et vérifiable, mais ne sauve personne.
+
+Les horaires des lieux (semaine et week-end) et le jour de l'enquête s'appliquent à tous les faits vrais dès la difficulté 1 : un fait vrai n'est jamais dans un lieu fermé. Pour le moment les horaires sont écrits en dur dans le catalogue.
 
 ## Le solveur
 
@@ -132,7 +146,8 @@ Vérifiées sur chaque enquête avant de la livrer (`rules.ts`) :
 
 - **Lieux** : scène de rôle `scene`, aucun lieu exclu ou retiré, matrice de trajets complète, indices compatibles avec leur lieu et ouverts à l'heure du fait.
 - **Vérité** : trajets réalistes entre séjours, tout fait vrai appartient à un séjour, preuve datée du départ, heure du mystère ronde.
-- **Mensonge** : seul l'auteur ment, une fois, une autre source fiable peut le contredire, et aucun fait vrai n'est contredit par un fait fiable.
+- **Mensonge** : seul l'auteur ment, une fois ; une source fiable le contredit, ou son lieu est fermé à l'heure annoncée ; aucun fait vrai n'est contredit par un fait fiable.
+- **Horaires** : tout fait vrai tombe dans les horaires de son lieu le jour de l'enquête.
 - **Déduction** : solution unique, atteignable avec les faits débloqués, liens de déblocage sans cycle.
 - **Contenu** : prénoms distincts, textes complets, objets compatibles avec le scénario, `difficulté + 2` suspects.
 

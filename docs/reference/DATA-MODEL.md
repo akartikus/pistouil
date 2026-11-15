@@ -14,7 +14,7 @@ Ajouter une ligne au catalogue enrichit toutes les enquêtes futures sans touche
 
 **Conventions** : heures en minutes depuis minuit (entiers, ex. 21h05 = 1265) ; distances en mètres entiers ; identifiants en chaînes. L’**heure du mystère** est toujours un multiple de 5 minutes (10h15, 8h05, 18h30 ; jamais 7h57 ni 18h13) ; les autres heures gardent la précision à la minute.
 
-**Horaires** (`typicalHours`, `actualHours`) : liste d’intervalles `{ from, to }` en minutes depuis minuit, valables tous les jours. Horaires absents = lieu toujours ouvert (cas d’un parc, d’une fontaine). Pour le moment les horaires sont écrits en dur dans le catalogue (`typicalHours`, par type de lieu) pour tester le moteur ; la manière d’obtenir les vrais horaires des vrais lieux sera trouvée plus tard, une fois les lieux réels sur la carte. Le moteur reçoit des horaires déjà prêts et ne lit ni OSM ni `opening_hours`.
+**Horaires** (`typicalHours`, `actualHours`) : `{ weekday, weekend }`, chacun étant une liste d’intervalles `{ from, to }` en minutes depuis minuit, `null` (toujours ouvert : un parc, une fontaine) ou `[]` (fermé toute la journée : une mairie le week-end). Le jour de l’enquête (`dayType`, `weekday` ou `weekend`) choisit la liste qui s’applique. Pour le moment les horaires sont écrits en dur dans le catalogue (`typicalHours`, par type de lieu) pour tester le moteur ; la manière d’obtenir les vrais horaires des vrais lieux sera trouvée plus tard, une fois les lieux réels sur la carte. Le moteur reçoit des horaires déjà prêts et ne lit ni OSM ni `opening_hours`.
 
 ## 2. Catalogue
 
@@ -88,6 +88,24 @@ Un scénario est une farce générique écrite à la main ; ses détails viennen
 
 Le moteur tire les objets avec la seed, tous différents, et les garde dans l’enquête (`itemIds`). Exemple : « La statue relookée » accepte 1 à 2 objets `wearable`, et donne « la statue porte des lunettes de soleil et une perruque rose » ou « la statue porte du rouge à lèvres éclatant ».
 
+### Genres de mensonge
+
+L’auteur ment de l’une des façons que la difficulté permet (`LieKind`) : les cas évidents d’avant restent ceux de la difficulté facile.
+
+| Genre | Ce qui est faux | Comment le joueur le démasque |
+| --- | --- | --- |
+| `alibi` | L’auteur dit être ailleurs, ou plus longtemps | Un témoin l’a vu partir : contradiction directe |
+| `framing` | L’auteur dit qu’un innocent a quitté son lieu plus tôt qu’en réalité | Un indice ou un témoin innocenté contredit l’auteur : sans lui, on ne sait pas qui ment |
+| `closed` | L’auteur dit être dans un lieu fermé à cette heure ce jour-là | Aucun témoin ne le contredit : seuls les horaires du lieu le trahissent |
+
+| Difficulté | Genres permis | Preuves lointaines |
+| --- | --- | --- |
+| 1 | `alibi` | aucune |
+| 2 | `alibi`, `framing` | environ 1 suspect sur 3 |
+| 3 | `alibi`, `framing`, `closed` | environ 1 suspect sur 2 |
+
+Le genre est stocké dans le témoignage mensonger (`lieKind`, privé comme `lie` et `motive`). Un genre impossible avec les lieux fournis est remplacé par un autre genre permis.
+
 ### Motifs du mensonge
 
 L’auteur ment pour une raison bienveillante, révélée à la fin : `surprise` (farce ou cadeau gardé secret), `modesty` (ne veut pas de mérite), `clumsiness` (maladresse), `misunderstanding` (malentendu) ou `mistake` (erreur de jugement ou de lieu). Le mystère peut être une farce, mais l’explication n’en est pas forcément une. Chaque `ScenarioModel` porte, pour chacun de ses motifs possibles (`lieMotives`), le texte de révélation (`revelations`) affiché à la fin.
@@ -147,6 +165,7 @@ classDiagram
   class Testimony {
     -lie
     -motive
+    -lieKind
   }
   Character "1" *-- "*" Segment : vraie soirée
   Segment "*" --> "1" Place
@@ -169,10 +188,11 @@ classDiagram
 - Seuls les **suspects** sont des `Character`. Les PNJ n’existent qu’à travers les indices de nature `npc`.
 - Les **segments** forment la vraie soirée : cachés au joueur, ils servent à générer les faits et à la révélation finale.
 - Tout fait vrai pointe vers un segment ; seul le mensonge de l’auteur ne pointe vers rien.
+- Une **preuve lointaine** est une vraie preuve d’un séjour plus ancien, datée de sa fin, trop éloignée de l’heure du mystère pour innocenter (écart au moins égal au trajet vers la scène) : vérifiable mais sans effet sur la déduction. Le tableau `segments` d’un personnage n’est donc pas forcément chronologique (le séjour ancien est ajouté à la fin) ; l’indice d’un séjour est sa position dans le tableau.
 - Le lieu d’un indice est celui du fait qu’il prouve.
 - `departure` : la personne était au lieu à cet instant et l’a quitté juste après (fait ponctuel, `from = to`).
 - Une **preuve** (indice `proof`) est un fait `departure` daté de la fin du séjour (`from = to` = fin du segment) : un ticket, une addition ou un titre de transport prouve un achat ou un passage après lequel la personne part. Les indices PNJ n’ont pas cette contrainte.
-- Les attributs privés (`author`, `lie`, `motive`) ne sont **jamais** lus par le solveur.
+- Les attributs privés (`author`, `lie`, `motive`, `lieKind`) ne sont **jamais** lus par le solveur.
 - `renderedText` est visible du joueur pour toutes les sources, y compris le témoignage mensonger : il ne doit rien révéler du mensonge.
 
 ## 5. Enquête, trajets et progression
@@ -185,6 +205,7 @@ classDiagram
     center
     radius
     mysteryTime
+    dayType
     difficulty
     itemIds
     situationText
@@ -232,7 +253,8 @@ Garanties par construction, vérifiées à la fin ; une enquête qui en viole un
 | Scène dans un lieu public non sensible | Le lieu de la scène a le rôle `scene` |
 | Lieux exclus jamais utilisés | Aucun lieu `excluded` ou `removed` parmi les lieux retenus |
 | Indice compatible avec son lieu | Le couple (type du lieu du fait, type de l’indice) est dans les compatibilités |
-| Indice pendant les horaires | L’heure du fait tombe dans les horaires du lieu |
+| Indice pendant les horaires | L’heure du fait tombe dans les horaires du lieu le jour de l’enquête |
+| Faits vrais dans les horaires | Tout fait vrai, indice ou témoignage, tombe dans les horaires de son lieu ce jour-là : seul le mensonge peut y échapper |
 | Trajets réalistes | Entre deux segments d’un personnage, le temps écoulé couvre le trajet |
 | Faits vrais dérivés de la vérité | Tout fait non mensonger est inclus dans un segment |
 | Seul l’auteur ment | Tout témoignage mensonger est prononcé par l’auteur |
@@ -246,7 +268,7 @@ Garanties par construction, vérifiées à la fin ; une enquête qui en viole un
 | Objets compatibles avec le scénario | Les objets de l’enquête existent, sont tous différents, portent une étiquette acceptée par le scénario, en nombre permis |
 | Heure du mystère ronde | L’heure du mystère est un multiple de 5 minutes |
 | Preuve datée du départ | Toute preuve est un fait `departure` dont l’heure est la fin du segment qu’elle concerne |
-| Mensonge démasquable | Le témoignage mensonger est contredit (§7) par au moins un fait fiable à la fin de la résolution, qui n’est pas de l’auteur |
+| Mensonge démasquable | Le témoignage mensonger est contredit (§7) par au moins un fait fiable à la fin de la résolution, qui n’est pas de l’auteur, ou son lieu est fermé à l’heure annoncée le jour de l’enquête |
 | Vérités jamais contredites | Aucun fait vrai n’est contredit par un fait fiable |
 
 ## 7. Algorithme du solveur
@@ -264,9 +286,10 @@ Le solveur ne lit que ce que le joueur peut voir.
 
 Deux faits `A` et `B` sur le même personnage **se contredisent** si :
 - ils sont à des lieux différents `L1 ≠ L2` et `écart(A, B) < temps(L1, L2)`, avec `écart(A, B) = max(A.from − B.to, B.from − A.to, 0)` (on n’a pas pu aller de l’un à l’autre) ;
-- ou ils sont au même lieu, `A` est un `departure` à l’instant `t` et `B` est un fait de présence avec `B.from ≤ t < B.to` (B affirme une présence continue que le départ interrompt).
+- ou ils sont au même lieu, `A` est un `departure` à l’instant `t` et `B` est un fait de présence avec `B.from ≤ t < B.to` (B affirme une présence continue que le départ interrompt) ;
+- ou ils sont au même lieu et tous deux sont des `departure` à des heures différentes (on ne quitte un lieu qu’une fois).
 
-Un témoignage est **contredit** s’il contredit au moins un fait fiable à la fin de la résolution (étape 4), **corroboré** s’il est compatible avec tous les faits fiables et en recoupe un, **non vérifié** sinon. La règle « Mensonge démasquable » exige que le témoignage mensonger soit contredit ; la règle « Vérités jamais contredites » interdit qu’un fait vrai le soit.
+Un témoignage est **contredit** s’il contredit au moins un fait fiable à la fin de la résolution (étape 4), **corroboré** s’il est compatible avec tous les faits fiables et en recoupe un, **non vérifié** sinon. La règle « Mensonge démasquable » exige que le témoignage mensonger soit contredit par un fait fiable, ou démenti par les horaires du lieu ; la règle « Vérités jamais contredites » interdit qu’un fait vrai le soit.
 
 ## 8. Exemple de référence (sert de test)
 

@@ -36,7 +36,7 @@
 
 ### Un seul mensonge, avec un motif
 - QUAND une enquête est générée
-- ALORS l’auteur fait exactement un témoignage mensonger, sur l’heure ou le lieu où il se trouvait au moment du mystère,
+- ALORS l’auteur fait exactement un témoignage mensonger : un faux alibi sur lui-même, ou, selon la difficulté, une accusation d’un autre suspect ou un alibi dans un lieu fermé (voir `docs/reference/DATA-MODEL.md`, genres de mensonge),
 - ET ce témoignage porte un motif parmi `surprise`, `modesty`, `clumsiness`, `misunderstanding`, `mistake`.
 
 ### Textes rendus par le moteur

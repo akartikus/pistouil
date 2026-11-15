@@ -30,7 +30,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 
 1. **La vérité d’abord.** On simule la vraie soirée, puis on en dérive témoignages et indices. Une enquête n’est jamais écrite « à l’envers ».
 2. **Solution unique et atteignable.** Le solveur valide chaque enquête : un seul suspect possible, et tous les faits nécessaires peuvent être découverts. Sinon, l’enquête est rejetée.
-3. **Seul l’auteur ment**, sur un point, et pour une raison bienveillante révélée à la fin (farce, malentendu ou erreur).
+3. **Seul l’auteur ment**, une seule fois, sur lui-même ou sur un autre suspect, et pour une raison bienveillante révélée à la fin (farce, malentendu ou erreur).
 4. **Mystères uniquement dans des lieux publics non sensibles** (places, parcs, mais aussi commerces et services ouverts au public : une farce inoffensive ne nuit pas à leur réputation). Les lieux sensibles (écoles, lieux de culte, hôpitaux, cimetières, monuments aux morts) n’accueillent jamais de mystère : alibis seulement, avec des faits neutres ou positifs. Habitations et aires de jeux sont exclues.
 5. **Personnages toujours fictifs**, jamais le personnel réel d’un lieu.
 6. **Aucune dépendance réseau pendant le jeu.** Données préparées hors ligne, calculs sur le téléphone, jeu jouable hors connexion une fois la zone chargée.
@@ -66,6 +66,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 | CI/CD GitHub Actions : tests sur chaque changement, builds mobiles à la demande et sur `master` seulement | Valider chaque changement sans consommer le cloud (dépôt privé, runner macOS coûteux) |
 | Textes rendus par le moteur à la génération (indices et témoignages), gabarits dans le catalogue, sans accord de genre | Moteur pur et déterministe, interface qui n’affiche que du texte, point d’entrée unique pour une réécriture par IA ultérieure |
 | Générateur pseudo-aléatoire mulberry32 ; génération retournée en `{ ok, investigation }` ou `{ ok: false, reason }` ; texte de révélation rendu à la génération (`revelationText`, caché jusqu’à l’accusation) | Quelques lignes sans dépendance, reproductible ; l’échec (difficulté inatteignable) est un cas normal, pas une exception ; même principe que les autres textes rendus |
+| Genres de mensonge selon la difficulté : faux alibi (facile), accusation d’un autre suspect (dès la difficulté 2), alibi dans un lieu fermé (difficulté 3) ; preuves vraies mais lointaines ; horaires de semaine et de week-end et jour de l’enquête | Les cas évidents restent à la difficulté facile ; la première contradiction ne désigne plus toujours le coupable ; les horaires, écrits en dur pour tester, seront remplacés par de vrais horaires plus tard |
 | Scénarios composés : une farce générique écrite à la main, complétée par des objets tirés d’une réserve du catalogue (étiquettes, formes avec article) | Beaucoup de farces à partir de peu de textes, sans moteur de grammaire ; ajouter un objet enrichit toutes les enquêtes |
 | Nom du jeu : Pistouil | Jeu de mots « piste » + « fouille », court, sans accent, plus facile à protéger qu’un mot courant |
 
