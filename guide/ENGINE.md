@@ -121,6 +121,8 @@ L'auteur ment une seule fois. Plus la difficulté monte, plus il a de façons de
 
 À partir de la difficulté 2, certains suspects ont aussi une **preuve lointaine** : un vrai ticket d'un séjour plus ancien, trop loin de l'heure du mystère pour innocenter. Elle est vraie et vérifiable, mais ne sauve personne.
 
+Un tel séjour peut aussi être **tendu** : la personne le quitte tout juste à temps pour arriver au séjour suivant (de 0 à 3 minutes de marge), et elle dit elle-même à quelle heure elle y est arrivée. Les deux faits sont vrais, mais ils *ressemblent* à une contradiction : il faut lire la matrice des trajets pour voir qu'ils sont compatibles. Ces fausses alertes noient la vraie contradiction, qui ne se détache plus d'un coup d'œil.
+
 Les horaires des lieux (semaine et week-end) et le jour de l'enquête s'appliquent à tous les faits vrais dès la difficulté 1 : un fait vrai n'est jamais dans un lieu fermé. Pour le moment les horaires sont écrits en dur dans le catalogue.
 
 ## Le solveur
