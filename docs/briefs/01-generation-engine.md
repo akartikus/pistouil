@@ -50,7 +50,8 @@
 - ALORS il ne la prend que parmi les lieux de rôle `scene`,
 - ET il n’utilise jamais un lieu `excluded` ou `removed`,
 - ET les lieux d’alibi (rôle `alibi`, ou rôle `scene` qui n’est pas la scène) ne reçoivent que des indices de la table de compatibilité, à une heure d’ouverture (un lieu sans horaires est toujours ouvert), et les lieux de rôle `alibi` que des faits neutres ou positifs,
-- ET une scène peut recevoir des PNJ et des témoins, dont les faits n’innocentent personne.
+- ET une scène peut recevoir des PNJ et des témoins, dont les faits n’innocentent personne,
+- ET une preuve (ticket, addition, titre de transport) est datée de la fin du séjour, car la personne part ensuite.
 
 ### Validation par le solveur
 - QUAND le solveur analyse l’exemple de référence (référence §8)
