@@ -194,3 +194,78 @@ describe('validateCatalog, composable scenarios', () => {
 		expect(() => validateCatalog(noForm)).toThrow(CatalogError);
 	});
 });
+
+describe('natural testimony wording', () => {
+	it('rejects a template that says goodbye to a place', () => {
+		const raw = clone();
+		raw.testimonyTemplates[0].textTemplate =
+			'{speaker} : « À {time}, j’ai dit au revoir à {place}. »';
+		expect(() => validateCatalog(raw)).toThrow(new RegExp(raw.testimonyTemplates[0].id));
+	});
+
+	it('rejects a template that insists on precision', () => {
+		const raw = clone();
+		raw.testimonyTemplates[1].textTemplate =
+			'{speaker} : « {firstName} est parti à {time} précisément. »';
+		expect(() => validateCatalog(raw)).toThrow(new RegExp(raw.testimonyTemplates[1].id));
+	});
+
+	it('rejects a clue template with a forbidden phrase', () => {
+		const raw = clone();
+		raw.clueTypes[0].textTemplate += ' précisément';
+		expect(() => validateCatalog(raw)).toThrow(/précisément/);
+	});
+
+	it('is free of forbidden phrases in the starter catalog', () => {
+		const catalog = validateCatalog(clone());
+		const texts = [
+			...catalog.testimonyTemplates.map((t) => t.textTemplate),
+			...catalog.clueTypes.map((c) => c.textTemplate)
+		];
+		for (const text of texts) expect(text).not.toMatch(/au revoir à|précisément/i);
+	});
+});
+
+describe('opening hours by day', () => {
+	const catalog = () => validateCatalog(clone());
+	const typeOf = (id: string) => catalog().placeTypes.find((type) => type.id === id)!;
+
+	it('gives every place type hours for the weekday and the weekend', () => {
+		for (const type of catalog().placeTypes) {
+			expect('weekday' in type.typicalHours).toBe(true);
+			expect('weekend' in type.typicalHours).toBe(true);
+		}
+	});
+
+	it('closes the town hall and the school on the weekend', () => {
+		expect(typeOf('town_hall').typicalHours.weekend).toEqual([]);
+		expect(typeOf('school').typicalHours.weekend).toEqual([]);
+		expect(typeOf('town_hall').typicalHours.weekday).not.toEqual([]);
+	});
+
+	it('has places whose hours differ between the two days', () => {
+		const differing = catalog().placeTypes.filter(
+			(type) =>
+				JSON.stringify(type.typicalHours.weekday) !== JSON.stringify(type.typicalHours.weekend)
+		);
+		expect(differing.length).toBeGreaterThanOrEqual(10);
+		expect(typeOf('bakery').typicalHours.weekend).toEqual([{ from: 420, to: 780 }]);
+	});
+
+	it('keeps parks and fountains always open', () => {
+		expect(typeOf('park').typicalHours).toEqual({ weekday: null, weekend: null });
+		expect(typeOf('fountain').typicalHours).toEqual({ weekday: null, weekend: null });
+	});
+
+	it('rejects a place type without hours for one day', () => {
+		const raw = clone();
+		delete (raw.placeTypes[0].typicalHours as Record<string, unknown>).weekend;
+		expect(() => validateCatalog(raw)).toThrow(new RegExp(raw.placeTypes[0].id));
+	});
+
+	it('rejects hours that are not a list of increasing intervals', () => {
+		const raw = clone();
+		(raw.placeTypes[0].typicalHours as Record<string, unknown>).weekday = [{ from: 900, to: 800 }];
+		expect(() => validateCatalog(raw)).toThrow(new RegExp(raw.placeTypes[0].id));
+	});
+});

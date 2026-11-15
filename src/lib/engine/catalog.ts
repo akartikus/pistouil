@@ -4,11 +4,13 @@ export class CatalogError extends Error {}
 
 const CLUE_VARIABLES = ['firstName', 'place', 'time', 'from', 'to'];
 const TESTIMONY_VARIABLES = ['speaker', ...CLUE_VARIABLES];
-const SITUATION_VARIABLES = ['place', 'time', 'items'];
+const SITUATION_VARIABLES = ['day', 'place', 'time', 'items'];
 const REVELATION_VARIABLES = ['author', 'place', 'item'];
 // An item right after « de » or « à » would need a contracted article.
 const ITEM_AFTER_PREPOSITION = /(?<!\p{L})(?:(?:de|à)\s+|d[’'])\{items?\}/iu;
 const MIN_FIRST_NAMES = 12;
+// Wording that sounds wrong (you do not say goodbye to a place) or points at a testimony.
+const FORBIDDEN_PHRASES = [/au revoir à/i, /précisément/i];
 
 function fail(message: string): never {
 	throw new CatalogError(message);
@@ -59,6 +61,21 @@ export function validateCatalog(raw: unknown): Catalog {
 	const placeTypes = new Map(catalog.placeTypes.map((type) => [type.id, type]));
 	const clueTypeIds = new Set(catalog.clueTypes.map((type) => type.id));
 
+	for (const type of catalog.placeTypes) {
+		for (const day of ['weekday', 'weekend'] as const) {
+			const hours = type.typicalHours?.[day];
+			if (hours === undefined) fail(`place type ${type.id}: no ${day} hours`);
+			if (hours === null) continue;
+			const valid =
+				Array.isArray(hours) &&
+				hours.every(
+					(interval, i) =>
+						interval.from < interval.to && (i === 0 || hours[i - 1].to <= interval.from)
+				);
+			if (!valid) fail(`place type ${type.id}: invalid ${day} hours`);
+		}
+	}
+
 	for (const [placeTypeId, clues] of Object.entries(catalog.compatibilities)) {
 		if (!placeTypes.has(placeTypeId)) fail(`compatibility: unknown place type ${placeTypeId}`);
 		for (const clueId of clues) {
@@ -69,6 +86,13 @@ export function validateCatalog(raw: unknown): Catalog {
 
 	for (const type of catalog.clueTypes) {
 		checkVariables(`clue type ${type.id}`, type.textTemplate, CLUE_VARIABLES);
+	}
+	for (const [label, id, template] of [
+		...catalog.clueTypes.map((type) => ['clue type', type.id, type.textTemplate] as const),
+		...catalog.testimonyTemplates.map((t) => ['testimony template', t.id, t.textTemplate] as const)
+	]) {
+		const phrase = FORBIDDEN_PHRASES.find((pattern) => pattern.test(template));
+		if (phrase) fail(`${label} ${id}: forbidden phrase ${phrase.source}`);
 	}
 	for (const template of catalog.testimonyTemplates) {
 		checkVariables(`testimony template ${template.id}`, template.textTemplate, TESTIMONY_VARIABLES);
@@ -97,6 +121,9 @@ export function validateCatalog(raw: unknown): Catalog {
 		}
 		if (max === 0 && texts.some((text) => /\{items?\}/.test(text))) {
 			fail(`scenario ${scenario.id}: item variable without items`);
+		}
+		if (!scenario.situation.includes('{day}')) {
+			fail(`scenario ${scenario.id}: the situation must say the day with {day}`);
 		}
 		if (min > 0 && !scenario.situation.includes('{items}')) {
 			fail(`scenario ${scenario.id}: the situation must list {items}`);
