@@ -7,7 +7,7 @@ Le moteur remplit les gabarits du catalogue à la génération et stocke le text
 ## Requirements
 
 ### Requirement: Chaque source a un texte rendu complet
-Le moteur SHALL produire un `renderedText` pour chaque indice et chaque témoignage, et pour la situation du mystère, sans aucune variable non résolue.
+Le moteur SHALL produire un `renderedText` pour chaque indice et chaque témoignage, pour la situation du mystère et pour le texte de révélation, sans aucune variable non résolue.
 
 #### Scenario: Texte sans variable restante
 - **WHEN** une enquête est générée
