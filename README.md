@@ -6,7 +6,7 @@ Jeu d'enquête solo, mobile et web : des mystères générés à partir des vrai
 
 ```sh
 npm install
-npm run dev      # développement
+npm run dev      # développement (page de test du moteur : /playground)
 npm run test     # tests
 npm run check    # types
 npm run lint     # format + lint
