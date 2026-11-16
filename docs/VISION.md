@@ -90,7 +90,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 | 2. Préparation des données OSM | `briefs/02-osm-data.md` | ☑ |
 | 3. Réseau piéton et trajets | `briefs/03-routes.md` | ☑ |
 | 4. Carte et identité visuelle | `briefs/04-map.md` | ☑ |
-| 5. Boucle de jeu complète | `briefs/05-game-loop.md` | ☐ |
+| 5. Boucle de jeu complète | `briefs/05-game-loop.md` | ☑ |
 | 6. Hors-ligne et application mobile | `briefs/06-offline-mobile.md` | ☐ |
 | 7. CI/CD : tests (partie A, dès maintenant), builds mobiles (partie B, après l’étape 6) | `briefs/07-ci-cd.md` | ☐ |
 | 8. Design restant et finitions (brief à rédiger à la fin des autres) | — | ☐ |
