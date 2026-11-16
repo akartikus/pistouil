@@ -50,6 +50,9 @@ export interface ClueType {
 	nature: ClueNature;
 	precision: CluePrecision;
 	textTemplate: string;
+	// Icon and French label of the piece, used by the interface only.
+	icon?: string;
+	label?: string;
 }
 
 // An object a scenario can use, written out with its article in both forms.
@@ -186,12 +189,4 @@ export interface Investigation {
 	characters: Character[];
 	facts: Fact[];
 	routes: Route[];
-}
-
-export interface Progress {
-	discoveredFactIds: string[];
-	annotations: { placeId: string; text: string }[];
-	notes: string;
-	accusation: string | null;
-	resolutionDate: string | null;
 }

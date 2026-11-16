@@ -2,90 +2,120 @@
 	{
 		"id": "receipt",
 		"nature": "proof",
+		"icon": "receipt",
+		"label": "Ticket de caisse",
 		"precision": "instant",
 		"textTemplate": "Un ticket de caisse de {place} daté de {time}, retrouvé dans la poche de {firstName}."
 	},
 	{
 		"id": "bill",
 		"nature": "proof",
+		"icon": "bill",
+		"label": "Addition",
 		"precision": "instant",
 		"textTemplate": "Une addition de {place} réglée à {time} par {firstName}."
 	},
 	{
 		"id": "transport_ticket",
 		"nature": "proof",
+		"icon": "transport_ticket",
+		"label": "Titre de transport",
 		"precision": "instant",
 		"textTemplate": "Un titre de transport validé à {place} à {time} par {firstName}."
 	},
 	{
 		"id": "loan_slip",
 		"nature": "proof",
+		"icon": "loan_slip",
+		"label": "Fiche de prêt",
 		"precision": "instant",
 		"textTemplate": "Une fiche de prêt de {place} tamponnée à {time} pour {firstName}."
 	},
 	{
 		"id": "shopkeeper",
 		"nature": "npc",
+		"icon": "npc",
+		"label": "Commerçant",
 		"precision": "interval",
 		"textTemplate": "Au comptoir de {place}, un témoin se souvient : « {firstName} était là de {from} à {to}. »"
 	},
 	{
 		"id": "waiter",
 		"nature": "npc",
+		"icon": "npc",
+		"label": "Serveur",
 		"precision": "interval",
 		"textTemplate": "Le serveur de {place} : « {firstName} était là de {from} à {to}. »"
 	},
 	{
 		"id": "librarian",
 		"nature": "npc",
+		"icon": "npc",
+		"label": "Bibliothécaire",
 		"precision": "interval",
 		"textTemplate": "À {place}, on se souvient : « {firstName} était là de {from} à {to}. »"
 	},
 	{
 		"id": "station_agent",
 		"nature": "npc",
+		"icon": "npc",
+		"label": "Agent de gare",
 		"precision": "interval",
 		"textTemplate": "À {place}, un agent confirme : « {firstName} attendait entre {from} et {to}. »"
 	},
 	{
 		"id": "bus_driver",
 		"nature": "npc",
+		"icon": "npc",
+		"label": "Chauffeur de bus",
 		"precision": "instant",
 		"textTemplate": "Le chauffeur : « J’ai vu {firstName} à {place} à {time}. »"
 	},
 	{
 		"id": "park_keeper",
 		"nature": "npc",
+		"icon": "npc",
+		"label": "Gardien du parc",
 		"precision": "interval",
 		"textTemplate": "Le gardien de {place} : « {firstName} se promenait entre {from} et {to}. »"
 	},
 	{
 		"id": "jogger",
 		"nature": "npc",
+		"icon": "npc",
+		"label": "Joggeur",
 		"precision": "instant",
 		"textTemplate": "Un joggeur : « J’ai croisé {firstName} à {place} à {time}. »"
 	},
 	{
 		"id": "dog_walker",
 		"nature": "npc",
+		"icon": "npc",
+		"label": "Promeneur de chien",
 		"precision": "interval",
 		"textTemplate": "Une personne qui promenait son chien : « {firstName} était là de {from} à {to}. »"
 	},
 	{
 		"id": "postal_receipt",
 		"nature": "proof",
+		"icon": "postal_receipt",
+		"label": "Reçu postal",
 		"precision": "instant",
 		"textTemplate": "Un reçu de dépôt de {place} daté de {time}, au nom de {firstName}."
 	},
 	{
 		"id": "clerk",
 		"nature": "npc",
+		"icon": "npc",
+		"label": "Guichetier",
 		"precision": "interval",
 		"textTemplate": "Au guichet de {place}, on se souvient : « {firstName} était là de {from} à {to}. »"
 	},
 	{
 		"id": "usher",
 		"nature": "npc",
+		"icon": "npc",
+		"label": "Personnel de salle",
 		"precision": "interval",
 		"textTemplate": "Le personnel de la salle de {place} : « {firstName} était là de {from} à {to}. »"
 	}

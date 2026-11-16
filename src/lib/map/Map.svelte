@@ -2,6 +2,7 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import {
 		Map as MapLibre,
+		LngLatBounds,
 		Marker,
 		Popup,
 		addProtocol,
@@ -23,7 +24,7 @@
 		Point
 	} from 'geojson';
 	import { GAME_COLORS, styleUrl, type Theme } from './theme.js';
-	import type { PlaceProperties } from './features.js';
+	import type { PlaceProperties, SuspectChip } from './features.js';
 	import type { RouteLabel } from './route-line.js';
 	import type { Bounds } from './zone.js';
 
@@ -39,6 +40,12 @@
 		route?: { line: Feature<LineString>; label: Feature<Point, RouteLabel> } | null;
 		mask?: Feature<MultiPolygon> | null;
 		outline?: Feature<MultiLineString> | null;
+		// Suspects at a time, as round chips with their initial.
+		suspects?: SuspectChip[];
+		onplace?: (osmId: string) => void;
+		onsuspect?: (id: string) => void;
+		// A touch on the map itself, not on a place, a suspect or a decor icon.
+		onmapclick?: () => void;
 	}
 
 	let {
@@ -49,7 +56,11 @@
 		places,
 		route = null,
 		mask = null,
-		outline = null
+		outline = null,
+		suspects = [],
+		onplace,
+		onsuspect,
+		onmapclick
 	}: Props = $props();
 
 	const EMPTY: FeatureCollection = { type: 'FeatureCollection', features: [] };
@@ -63,6 +74,13 @@
 	let loadedTheme: Theme | undefined;
 	let lastBuildings = '';
 	let markers: Marker[] = [];
+	const ATTRIBUTION_SECONDS = 5;
+
+	function foldAttribution() {
+		container
+			?.querySelector('.maplibregl-ctrl-attrib')
+			?.classList.remove('maplibregl-compact-show');
+	}
 
 	const absolute = (path: string) => new URL(path, location.href).href;
 
@@ -182,8 +200,25 @@
 				['num', String(number)],
 				['name', name.toUpperCase()]
 			]);
+			element.addEventListener('click', (event) => {
+				event.stopPropagation(); // not a touch on the map itself
+				onplace?.(f.properties.osmId);
+			});
 			markers.push(
 				new Marker({ element }).setLngLat(f.geometry.coordinates as [number, number]).addTo(m)
+			);
+		}
+		for (const chip of suspects) {
+			const element = pin(
+				`chip${chip.conflict ? ' conflict' : ''}${chip.selected ? ' selected' : ''}`,
+				[['initial', chip.initial]]
+			);
+			element.addEventListener('click', (event) => {
+				event.stopPropagation();
+				onsuspect?.(chip.id);
+			});
+			markers.push(
+				new Marker({ element, offset: [18, -18] }).setLngLat([chip.lon, chip.lat]).addTo(m)
 			);
 		}
 		if (route) {
@@ -276,16 +311,19 @@
 				dragRotate: false,
 				pitchWithRotate: false,
 				touchPitch: false,
-				attributionControl: {
-					compact: false,
-					customAttribution: 'Fiction : lieux réels, personnages imaginaires'
-				}
+				// A button « i »: open when the map appears, folded after a few seconds or on the first drag.
+				attributionControl: { compact: true }
 			});
 			map = m;
+			m.once('load', () => setTimeout(foldAttribution, ATTRIBUTION_SECONDS * 1000));
 			m.on('styledata', () => addGameLayers(m));
 			m.setMissingStyleImageResolver((id) => loadIcon(m, id));
 			m.on('idle', updateBuildings);
 			m.on('click', 'decor-icons', showInfo);
+			m.on('click', (event) => {
+				if (m.queryRenderedFeatures(event.point, { layers: ['decor-icons'] }).length === 0)
+					onmapclick?.();
+			});
 			m.on('mouseenter', 'decor-icons', () => (m.getCanvas().style.cursor = 'pointer'));
 			m.on('mouseleave', 'decor-icons', () => (m.getCanvas().style.cursor = ''));
 			m.on('error', (event) => (error = event.error?.message ?? 'Erreur de carte'));
@@ -316,8 +354,24 @@
 		map.fitBounds(view, { padding: 20, animate: false });
 	});
 
+	// A route that starts or ends out of view brings the map to it.
 	$effect(() => {
-		void [places, route, mask, outline];
+		const line = route?.line.geometry.coordinates;
+		if (!map || !ready || !line) return;
+		const bounds = map.getBounds();
+		const ends = [line[0], line[line.length - 1]] as [number, number][];
+		if (ends.every((end) => bounds.contains(end))) return;
+		map.fitBounds(
+			ends.reduce((box, end) => box.extend(end), new LngLatBounds(ends[0], ends[0])),
+			{
+				padding: 70,
+				maxZoom: 17
+			}
+		);
+	});
+
+	$effect(() => {
+		void [places, route, mask, outline, suspects];
 		if (ready) sync();
 	});
 
@@ -336,6 +390,7 @@
 	style:--shadow={colors.shadow}
 	style:--number={colors.numberFill}
 	style:--number-ink={colors.numberInk}
+	style:--icon-filter={theme === 'dark' ? 'invert(1)' : 'none'}
 >
 	{#if error}<p class="error">{error}</p>{/if}
 </div>
@@ -431,16 +486,55 @@
 		padding: 3px 8px;
 		font-size: 12px;
 	}
-	/* Attribution: always expanded, in the same register. */
+	/* Chips of the suspects at the time of the cursor. */
+	.map :global(.chip) {
+		display: block;
+		width: 26px;
+		height: 26px;
+		box-sizing: border-box;
+		border-radius: 50%;
+		text-align: center;
+		line-height: 21px;
+		font-size: 13px;
+		font-weight: bold;
+		background: var(--paper);
+		color: var(--ink);
+		border: 3px solid var(--ink);
+		cursor: pointer;
+	}
+	.map :global(.chip.conflict) {
+		background: repeating-linear-gradient(45deg, var(--ink) 0 2px, var(--paper) 2px 5px);
+	}
+	.map :global(.chip.conflict .initial) {
+		display: inline-block;
+		line-height: 14px;
+		padding: 1px 4px;
+		border-radius: 50%;
+		background: var(--paper);
+	}
+	.map :global(.chip.selected) {
+		box-shadow:
+			0 0 0 3px var(--paper),
+			0 0 0 6px var(--ink);
+	}
+	.map :global(.pin) {
+		cursor: pointer;
+	}
+	/* Attribution: a button « i » that unfolds the text, in the same register. */
 	.map :global(.maplibregl-ctrl-attrib) {
 		background: var(--paper);
 		color: var(--ink);
-		border-top: 3px solid var(--ink);
+		border: 3px solid var(--ink);
+		box-shadow: 3px 3px 0 var(--shadow);
 		font-family: inherit;
 		font-weight: bold;
 		font-size: 10px;
 	}
 	.map :global(.maplibregl-ctrl-attrib a) {
 		color: inherit;
+	}
+	.map :global(.maplibregl-ctrl-attrib-button) {
+		background-color: var(--paper);
+		filter: var(--icon-filter);
 	}
 </style>

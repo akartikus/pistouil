@@ -7,42 +7,14 @@ import {
 	pedestrianRoutes,
 	type GraphCell
 } from '../engine/pedestrian';
-import type { Catalog, Place, Route } from '../engine/types';
+import type { Place, Route } from '../engine/types';
+import type { Grid } from '../data/places';
 
-// A place as written by tools/data-preparation (see its README).
-export interface RawPlace {
-	osmId: string;
-	name: string;
-	type: string;
-	lat: number;
-	lon: number;
-	openingHours?: string;
-	removed?: boolean;
-}
-
-export interface Grid {
-	latStepE5: number;
-	lonStepE5: number;
-}
+export { toPlaces, type Grid, type RawPlace } from '../data/places';
 
 export interface Center {
 	lat: number;
 	lon: number;
-}
-
-// openingHours is dropped: the catalog's typical hours apply.
-export function toPlaces(raw: RawPlace[], catalog: Catalog): Place[] {
-	const known = new Set(catalog.placeTypes.map((type) => type.id));
-	return raw
-		.filter((place) => known.has(place.type))
-		.map((place) => ({
-			osmId: place.osmId,
-			name: place.name,
-			typeId: place.type,
-			lat: place.lat,
-			lon: place.lon,
-			removed: place.removed ?? false
-		}));
 }
 
 // Same integer arithmetic as the preparation script, so cell limits agree.

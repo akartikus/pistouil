@@ -108,6 +108,17 @@
 		const estimate = first && (first.approximate || !routes.network);
 		return first ? routeFeatures({ ...first, approximate: estimate }, investigation) : null;
 	});
+	// Sample chips and clicks, to check the events of the map.
+	let clicked = $state('');
+	const chips = $derived(
+		investigation.slice(0, 3).map((place, index) => ({
+			id: `s${index}`,
+			initial: 'ABC'[index],
+			lon: place.lon,
+			lat: place.lat,
+			conflict: index === 1
+		}))
+	);
 	const maxBounds = $derived(commune ? zoneBounds(commune.bbox, MARGIN_M) : null);
 	const focus = $derived(commune ? zoneBounds(commune.bbox, 0) : null);
 	const mask = $derived(commune ? communeMask(commune.contour) : null);
@@ -156,6 +167,7 @@
 			? `, trajet ${route.label.properties.approximate ? 'estimé' : 'sur les rues'} de ${route.label.properties.text}`
 			: ''}.
 	</p>
+	{#if clicked}<p class="note">Dernier toucher : {clicked}</p>{/if}
 	{#if data.status === 'missing'}
 		<p class="error">
 			Aucun lieu : copier manifest.json et places/ dans static/dev-data/ (voir
@@ -164,7 +176,19 @@
 	{/if}
 	{#if maxBounds && focus && mask && outline}
 		<div class="frame">
-			<GameMap {tilesUrl} {theme} {maxBounds} {focus} places={features} {route} {mask} {outline} />
+			<GameMap
+				{tilesUrl}
+				{theme}
+				{maxBounds}
+				{focus}
+				places={features}
+				{route}
+				{mask}
+				{outline}
+				suspects={chips}
+				onplace={(id) => (clicked = `lieu ${id}`)}
+				onsuspect={(id) => (clicked = `suspect ${id}`)}
+			/>
 		</div>
 	{/if}
 {/if}

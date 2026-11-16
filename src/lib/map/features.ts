@@ -68,3 +68,14 @@ export function placeFeatures(
 	}
 	return { type: 'FeatureCollection', features };
 }
+
+// A suspect shown on the map at a time, as a round chip with their initial.
+export interface SuspectChip {
+	id: string;
+	initial: string;
+	lon: number;
+	lat: number;
+	// Hatched when the facts about this suspect do not fit.
+	conflict?: boolean;
+	selected?: boolean;
+}

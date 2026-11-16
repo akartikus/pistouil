@@ -285,3 +285,24 @@ function connect(
 		geometry: [point(a), ...trackTo(graph, result, node), point(b)]
 	};
 }
+
+// The point at a fraction (0 to 1) of the way along a line of [lon, lat] points, measured on the ground.
+export function pointAlong(line: [number, number][], fraction: number): [number, number] {
+	const lengths = line.slice(1).map((to, i) => {
+		const from = line[i];
+		return haversineM({ lon: from[0], lat: from[1] }, { lon: to[0], lat: to[1] });
+	});
+	let remaining =
+		lengths.reduce((sum, length) => sum + length, 0) * Math.min(Math.max(fraction, 0), 1);
+	for (let i = 0; i < lengths.length; i++) {
+		if (remaining <= lengths[i] || i === lengths.length - 1) {
+			const t = lengths[i] === 0 ? 0 : Math.min(remaining / lengths[i], 1);
+			return [
+				line[i][0] + (line[i + 1][0] - line[i][0]) * t,
+				line[i][1] + (line[i + 1][1] - line[i][1]) * t
+			];
+		}
+		remaining -= lengths[i];
+	}
+	return line[0];
+}

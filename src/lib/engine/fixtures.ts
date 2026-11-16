@@ -1,22 +1,8 @@
 // Test fixtures: the starter catalog and a fictional set of places.
-import placeTypes from '../../../catalog/place-types.json';
-import clueTypes from '../../../catalog/clue-types.json';
-import compatibilities from '../../../catalog/compatibilities.json';
-import scenarios from '../../../catalog/scenarios.json';
-import items from '../../../catalog/items.json';
-import firstNames from '../../../catalog/first-names.json';
-import testimonyTemplates from '../../../catalog/testimony-templates.json';
 import type { Place, Route } from './types';
+import { rawStarterCatalog } from './starter-catalog';
 
-export const rawStarterCatalog = {
-	placeTypes,
-	clueTypes,
-	compatibilities,
-	scenarios,
-	items,
-	firstNames,
-	testimonyTemplates
-};
+export { rawStarterCatalog };
 
 const place = (osmId: string, name: string, typeId: string, removed = false): Place => ({
 	osmId,
@@ -49,7 +35,7 @@ export const fixtureRoutes: Route[] = fixturePlaces.flatMap((a, i) =>
 
 // A rich set of places: one place of each type of the catalog, with positions in meters.
 // Walking distance is the straight line times 1.3, at 5 km/h (about 83 m per minute).
-const richSpecs: [string, string, string, number, number][] = [
+export const richSpecs: [string, string, string, number, number][] = [
 	['r01', 'Fontaine des Lilas', 'fountain', 400, 300],
 	['r02', 'Parc Mirabeau', 'park', 150, 520],
 	['r03', 'Place des Tilleuls', 'square', 430, 360],

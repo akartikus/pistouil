@@ -27,7 +27,7 @@ SvelteKit statique (adapter-static, `ssr = false`), TypeScript strict, Vitest, M
 | `src/lib/engine` | Génération, solveur, trajets |
 | `src/lib/data` | Chargement, cache, stockage |
 | `src/lib/map` | Composants de carte |
-| `src/lib/game` | État de partie et progression |
+| `src/lib/game` | Zone, session dans un Worker, progression, déduction, révélation, sauvegarde, écrans de jeu |
 | `src/lib/playground` | Logique de la page de test du moteur (`/playground`, développement seulement) |
 | `catalog/` | Catalogue JSON (types de lieux, indices, scénarios, objets) |
 | `tools/data-preparation/` | Scripts Python OSM |

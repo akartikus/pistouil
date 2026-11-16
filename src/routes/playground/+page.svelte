@@ -3,11 +3,10 @@
 	import { rawStarterCatalog, richPlaces, richRoutes } from '#lib/engine/fixtures.js';
 	import type { GraphCell } from '#lib/engine/pedestrian.js';
 	import { LIE_MOTIVES, type Difficulty, type LieMotive, type Place } from '#lib/engine/types.js';
+	import { checkAccusation, discoveredFactIds } from '#lib/game/discovery.js';
 	import {
-		checkAccusation,
 		describeScenarios,
 		describeSnapshot,
-		discoveredFactIds,
 		runPlayground
 	} from '#lib/playground/playground.js';
 	import {

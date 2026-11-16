@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { assembleGraph, pedestrianRoutes, type GraphCell } from './pedestrian';
+import { assembleGraph, pedestrianRoutes, pointAlong, type GraphCell } from './pedestrian';
 import { assertCompleteMatrix } from './routes';
 import type { Place } from './types';
 
@@ -163,5 +163,29 @@ describe('pedestrianRoutes', () => {
 		const [route] = pedestrianRoutes([place('a'), place('b')], graph);
 		expect(route.distanceM).toBe(1);
 		expect(route.minutes).toBe(1);
+	});
+});
+
+describe('pointAlong', () => {
+	const line: [number, number][] = [
+		[0, 0],
+		[0, 0.01],
+		[0.03, 0.01]
+	];
+
+	it('gives the ends of the line at 0 and 1', () => {
+		expect(pointAlong(line, 0)).toEqual([0, 0]);
+		expect(pointAlong(line, 1)).toEqual([0.03, 0.01]);
+	});
+
+	it('measures on the ground: a quarter of 4.4 km is 1.1 km, the corner', () => {
+		const [lon, lat] = pointAlong(line, 0.25);
+		expect(lat).toBeCloseTo(0.01, 4);
+		expect(lon).toBeCloseTo(0, 3);
+	});
+
+	it('stays inside the line for a fraction out of range', () => {
+		expect(pointAlong(line, 2)).toEqual([0.03, 0.01]);
+		expect(pointAlong(line, -1)).toEqual([0, 0]);
 	});
 });

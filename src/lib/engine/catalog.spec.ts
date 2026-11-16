@@ -305,3 +305,29 @@ describe('place types for the map', () => {
 		expect(() => validateCatalog(raw)).not.toThrow();
 	});
 });
+
+describe('clue types for the pieces', () => {
+	const icons = ['receipt', 'bill', 'transport_ticket', 'loan_slip', 'postal_receipt', 'npc'];
+
+	it('give every starter type an icon and a label', () => {
+		for (const type of rawStarterCatalog.clueTypes) {
+			expect(icons, `icon of ${type.id}`).toContain(type.icon);
+			expect(type.label?.trim(), `label of ${type.id}`).toBeTruthy();
+		}
+	});
+
+	it('use an object for a proof and the person pictogram for a PNJ', () => {
+		for (const type of rawStarterCatalog.clueTypes) {
+			expect(type.icon === 'npc').toBe(type.nature === 'npc');
+		}
+	});
+
+	it('accept a type without icon or label', () => {
+		const raw = structuredClone(rawStarterCatalog);
+		for (const type of raw.clueTypes) {
+			delete (type as { icon?: string }).icon;
+			delete (type as { label?: string }).label;
+		}
+		expect(() => validateCatalog(raw)).not.toThrow();
+	});
+});

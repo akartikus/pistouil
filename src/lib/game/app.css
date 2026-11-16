@@ -1,0 +1,109 @@
+/* Brutalist register of docs/design/direction.md: thick black frames, hard shadows, monospace.
+   Colours are those of GAME_COLORS (src/lib/map/theme.ts). */
+:root {
+	--bg: #f2efe7;
+	--paper: #ffffff;
+	--ink: #000000;
+	--accent: #ff8a00;
+	--mystery: #e0007a;
+	--route: #1f4fff;
+	--shadow: #000000;
+	--dim: #555555;
+	--font: 'IBM Plex Mono', 'DejaVu Sans Mono', 'Courier New', monospace;
+}
+:root[data-theme='dark'] {
+	--bg: #15202b;
+	--paper: #000000;
+	--ink: #ffffff;
+	--accent: #ffd400;
+	--mystery: #ff4fa3;
+	--route: #5cc8ff;
+	--shadow: #ffd400;
+	--dim: #aab4c0;
+}
+html,
+body {
+	margin: 0;
+	height: 100%;
+}
+body {
+	background: var(--bg);
+	color: var(--ink);
+	font: 14px/1.4 var(--font);
+}
+h1,
+h2,
+h3 {
+	margin: 0;
+	text-transform: uppercase;
+}
+button,
+input,
+select,
+textarea {
+	font: inherit;
+	color: inherit;
+}
+.box {
+	background: var(--paper);
+	border: 3px solid var(--ink);
+	box-shadow: 5px 5px 0 var(--shadow);
+}
+.btn {
+	font-weight: 700;
+	text-transform: uppercase;
+	background: var(--paper);
+	color: var(--ink);
+	border: 3px solid var(--ink);
+	box-shadow: 3px 3px 0 var(--shadow);
+	padding: 0.5rem 0.8rem;
+	cursor: pointer;
+}
+.btn:active {
+	transform: translate(2px, 2px);
+	box-shadow: 1px 1px 0 var(--shadow);
+}
+.btn.solid {
+	background: var(--ink);
+	color: var(--paper);
+}
+.btn.on {
+	background: var(--accent);
+	color: #000;
+}
+.btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+.label {
+	font-size: 10px;
+	letter-spacing: 0.05em;
+	font-weight: 700;
+	text-transform: uppercase;
+	color: var(--dim);
+}
+.tag {
+	display: inline-block;
+	padding: 1px 6px;
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	background: var(--ink);
+	color: var(--paper);
+}
+.hatch {
+	background: repeating-linear-gradient(45deg, var(--ink) 0 2px, var(--paper) 2px 6px);
+}
+.empty {
+	border: 2.5px dashed var(--dim);
+	color: var(--dim);
+	text-align: center;
+	padding: 0.7rem;
+}
+.sr {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+}
