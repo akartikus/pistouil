@@ -1,5 +1,12 @@
 // Real OSM places for the playground: a development shortcut until the zone loading
 // (brief 05) and the pedestrian routes (brief 03) exist.
+import {
+	assembleGraph,
+	haversineM,
+	minutesFor,
+	pedestrianRoutes,
+	type GraphCell
+} from '../engine/pedestrian';
 import type { Catalog, Place, Route } from '../engine/types';
 
 // A place as written by tools/data-preparation (see its README).
@@ -49,18 +56,6 @@ export function cellsAround(grid: Grid, lat: number, lon: number): string[] {
 	return cells;
 }
 
-const EARTH_RADIUS_M = 6371000;
-
-function haversineM(a: Center, b: Center): number {
-	const rad = Math.PI / 180;
-	const dLat = (b.lat - a.lat) * rad;
-	const dLon = (b.lon - a.lon) * rad;
-	const h =
-		Math.sin(dLat / 2) ** 2 +
-		Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLon / 2) ** 2;
-	return 2 * EARTH_RADIUS_M * Math.asin(Math.sqrt(h));
-}
-
 export function nearestPlaces(places: Place[], center: Center, count: number): Place[] {
 	return places
 		.map((place) => ({ place, distance: haversineM(center, place) }))
@@ -78,8 +73,26 @@ export function estimateRoutes(places: Place[]): Route[] {
 				placeA: a.osmId,
 				placeB: b.osmId,
 				distanceM,
-				minutes: Math.max(1, Math.ceil(distanceM / 83.3))
+				minutes: minutesFor(distanceM)
 			};
 		})
 	);
+}
+
+export interface RealRoutes {
+	routes: Route[];
+	// Whether a pedestrian graph was used.
+	network: boolean;
+	// Pairs whose duration is a straight-line estimate.
+	estimated: number;
+}
+
+// Walks along the streets when graph cells are given, and estimates the pairs they do not connect.
+export function routesFor(places: Place[], cells: GraphCell[]): RealRoutes {
+	if (cells.length === 0) {
+		const routes = estimateRoutes(places);
+		return { routes, network: false, estimated: routes.length };
+	}
+	const routes = pedestrianRoutes(places, assembleGraph(cells));
+	return { routes, network: true, estimated: routes.filter((route) => route.approximate).length };
 }

@@ -216,6 +216,7 @@ classDiagram
     distanceM
     minutes
     geometry
+    approximate
   }
   class Progress {
     discoveredFacts
@@ -242,7 +243,7 @@ classDiagram
 - **Difficulté** (`difficulty`) : nombre d’étapes de déduction, de 1 à 3, choisi avant la génération et vérifié par le solveur.
 - **Suspects** : `difficulty + 2`, soit 3, 4 ou 5. Chaque étape a besoin d’au moins un innocent de plus (un par tour), plus l’auteur ; les prénoms (≥ 12) suffisent largement.
 - **Débloqué par** : un fait sans lien est visible dès le départ ; les autres apparaissent quand le fait qui les débloque est découvert.
-- **Trajet** (`Route`, ses deux lieux sont `placeA` et `placeB`) : uniquement entre deux lieux de l’enquête ; calculé à la génération ; vitesse 5 km/h. La matrice est **complète** : un `Route` pour chaque paire de lieux fournis au moteur, symétrique (`temps(A, B) = temps(B, A)`), `minutes ≥ 1`.
+- **Trajet** (`Route`, ses deux lieux sont `placeA` et `placeB`) : uniquement entre deux lieux de l’enquête ; calculé à la génération ; vitesse 5 km/h. La matrice est **complète** : un `Route` pour chaque paire de lieux fournis au moteur, symétrique (`temps(A, B) = temps(B, A)`), `minutes ≥ 1`. Le tracé (`geometry`, optionnel) est une suite de points `[lon, lat]` de `placeA` à `placeB`. `approximate` (absent = faux) marque un trajet à vol d’oiseau × 1,3, utilisé quand le réseau piéton ne relie pas deux lieux ; le générateur n’en fonde aucune déduction : une fois la scène choisie, il écarte les lieux dont le trajet vers la scène est approximatif.
 - **Progression** (`Progress`) : stockée localement sur l’appareil ; les annotations sont attachées à des lieux.
 
 ## 6. Règles de cohérence

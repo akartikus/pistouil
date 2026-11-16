@@ -59,6 +59,8 @@ Aucun jeu connu ne réunit les trois à la fois :
 | Lieux rangés en cases de 2 km (pas fixes de 0,018° en latitude et 0,025° en longitude, calcul sur entiers) ; sortie déterministe, sans date d’exécution | Peu de fichiers à charger autour du joueur, cases calculables sans table ; sorties comparables à l’octet près |
 | Trajets calculés sur le téléphone (Dijkstra sur le réseau piéton OSM) | Pas de serveur de routage, léger à l’échelle d’une zone |
 | Trajets uniquement entre lieux de l’enquête, calculés à la génération | Le solveur en a besoin ; affichage instantané |
+| Réseau piéton préparé hors ligne : graphe contracté par case de 2 km (JSON compact, nœuds à identifiants OSM, longueurs entières), lieux rattachés au segment de rue le plus proche (au plus 300 m) ; voies du brief plus `unclassified`, `living_street`, `track`, `cycleway`, `primary` | Trajets courts justes (deux boutiques d’une même rue), rues continues d’une case à l’autre, cases d’environ 35 Ko (240 Ko au plus, 63 Ko compressés) à Fuveau |
+| Trajet non relié par le réseau : vol d’oiseau × 1,3 marqué `approximate` ; le générateur écarte, une fois la scène choisie, les lieux dont le trajet vers la scène est approximatif | Aucune déduction fondée sur une estimation, sans toucher au solveur |
 | Tous les lieux visibles sur la carte, deux niveaux (enquête / décor) | Carte vivante, jouable même avec peu de données |
 | Fond de carte vectoriel (PMTiles) stylé par nos soins (MapLibre) | Identité visuelle propre, appliquée à toute commune |
 | PNJ (serveur, gardien) = sources d’indices, pas des personnages | Modèle plus simple, PNJ toujours fiables |
@@ -70,7 +72,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 | Générateur pseudo-aléatoire mulberry32 ; génération retournée en `{ ok, investigation }` ou `{ ok: false, reason }` ; texte de révélation rendu à la génération (`revelationText`, caché jusqu’à l’accusation) | Quelques lignes sans dépendance, reproductible ; l’échec (difficulté inatteignable) est un cas normal, pas une exception ; même principe que les autres textes rendus |
 | Genres de mensonge selon la difficulté : faux alibi (facile), accusation d’un autre suspect (dès la difficulté 2), alibi dans un lieu fermé (difficulté 3) ; preuves vraies mais lointaines ; horaires de semaine et de week-end et jour de l’enquête | Les cas évidents restent à la difficulté facile ; la première contradiction ne désigne plus toujours le coupable ; les horaires, écrits en dur pour tester, seront remplacés par de vrais horaires plus tard |
 | Scénarios composés : une farce générique écrite à la main, complétée par des objets tirés d’une réserve du catalogue (étiquettes, formes avec article) | Beaucoup de farces à partir de peu de textes, sans moteur de grammaire ; ajouter un objet enrichit toutes les enquêtes |
-| Le playground peut tourner sur quelques dizaines de vrais lieux OSM (fichiers copiés dans `static/dev-data/`), avec des trajets estimés à vol d’oiseau, en attendant le chargement réel des cases (brief 05) et le réseau piéton (brief 03) | Essayer le moteur sur de vrais noms et de vraies distances sans rien ajouter au moteur ni au modèle ; `Place` accepte déjà de vrais lieux |
+| Le playground peut tourner sur quelques dizaines de vrais lieux OSM (fichiers copiés dans `static/dev-data/`), avec les trajets du réseau piéton quand `graph/` est copié aussi, sinon des trajets estimés à vol d’oiseau, en attendant le chargement réel des cases (brief 05) | Essayer le moteur sur de vrais noms et de vraies distances sans rien ajouter au moteur ni au modèle ; `Place` accepte déjà de vrais lieux |
 | Nom du jeu : Pistouil | Jeu de mots « piste » + « fouille », court, sans accent, plus facile à protéger qu’un mot courant |
 
 ## 7. Feuille de route
@@ -80,7 +82,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 | 0. Initialisation du projet | — | ☑ |
 | 1. Moteur : génération et solveur | `briefs/01-generation-engine.md` | ☑ |
 | 2. Préparation des données OSM | `briefs/02-osm-data.md` | ☑ |
-| 3. Réseau piéton et trajets | `briefs/03-routes.md` | ☐ |
+| 3. Réseau piéton et trajets | `briefs/03-routes.md` | ☑ |
 | 4. Carte et identité visuelle | `briefs/04-map.md` | ☐ |
 | 5. Boucle de jeu complète | `briefs/05-game-loop.md` | ☐ |
 | 6. Hors-ligne et application mobile | `briefs/06-offline-mobile.md` | ☐ |

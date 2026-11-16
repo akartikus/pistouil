@@ -109,7 +109,10 @@ export interface Route {
 	placeB: string;
 	distanceM: number;
 	minutes: number;
+	// [lon, lat] points from placeA to placeB.
 	geometry?: [number, number][];
+	// Straight-line estimate, not a walk along streets.
+	approximate?: boolean;
 }
 
 // Investigation layer

@@ -13,6 +13,8 @@ from shapely import wkt
 from shapely.geometry import MultiPolygon, Point, mapping
 from shapely.strtree import STRtree
 
+from graph import attach_places, build_graph, read_ways, split_by_cells
+
 # Grid steps in 1e-5 degrees: about 2 km at 43.5 N.
 LAT_STEP_E5 = 1800
 LON_STEP_E5 = 2500
@@ -111,9 +113,13 @@ def mark_removed(places, removed_ids):
     return sorted(wanted - found)
 
 
+def cell_of_e5(lat5, lon5):
+    return lat5 // LAT_STEP_E5, lon5 // LON_STEP_E5
+
+
 def cell_of(lat, lon):
     # Integer arithmetic on rounded coordinates: no float error on cell limits.
-    return round(lat * 100000) // LAT_STEP_E5, round(lon * 100000) // LON_STEP_E5
+    return cell_of_e5(round(lat * 100000), round(lon * 100000))
 
 
 def id_key(place):
@@ -186,6 +192,28 @@ def write_json(path, data):
     path.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
 
 
+def write_graph(extract_path, places, out_dir):
+    """Write the per-cell pedestrian graph; return its figures for the report."""
+    nodes, edges = build_graph(read_ways(extract_path))
+    places = sorted(places, key=id_key)
+    access = attach_places(places, nodes, edges)
+    place_cells = {p["osmId"]: cell_of(p["lat"], p["lon"]) for p in places}
+    cells = split_by_cells(nodes, edges, access, place_cells, cell_of_e5)
+    shutil.rmtree(out_dir / "graph", ignore_errors=True)  # no stale cells from an older run
+    largest = 0
+    for (row, col), content in cells.items():
+        path = out_dir / "graph" / f"{row}_{col}.json"
+        write_json(path, content)
+        largest = max(largest, path.stat().st_size)
+    return {
+        "cells": len(cells),
+        "nodes": len(nodes),
+        "edges": len(edges),
+        "unattachedPlaces": len(places) - len(access),
+        "largestCellBytes": largest,
+    }
+
+
 def run(input_path, catalog_path, removed_path, out_dir):
     input_path, out_dir = Path(input_path), Path(out_dir)
     types = json.loads(Path(catalog_path).read_text(encoding="utf-8"))
@@ -208,7 +236,9 @@ def run(input_path, catalog_path, removed_path, out_dir):
             "places": len(extract.places),
         },
     )
-    write_json(out_dir / "report.json", build_report(extract.places, extract.communes, types, unknown_removed))
+    report = build_report(extract.places, extract.communes, types, unknown_removed)
+    report["graph"] = write_graph(input_path, extract.places, out_dir)
+    write_json(out_dir / "report.json", report)
 
 
 def main():

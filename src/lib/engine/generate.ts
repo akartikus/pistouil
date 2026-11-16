@@ -113,6 +113,17 @@ function forDay(ctx: Context, dayType: DayType): Context {
 	};
 }
 
+// A place linked to the scene only by a straight-line estimate cannot found a deduction.
+function withoutApproximate(ctx: Context, scene: Place): Context {
+	const far = new Set(
+		ctx.routes
+			.filter((route) => route.approximate && [route.placeA, route.placeB].includes(scene.osmId))
+			.flatMap((route) => [route.placeA, route.placeB])
+	);
+	far.delete(scene.osmId);
+	return { ...ctx, usable: ctx.usable.filter((place) => !far.has(place.osmId)) };
+}
+
 // Picks the day, the scenario, the scene and the mystery time. A scene closed that day is skipped.
 function chooseSetting(base: Context, rng: Random): Setting | null {
 	for (const dayType of rng.shuffle<DayType>(['weekday', 'weekend'])) {
@@ -831,7 +842,8 @@ export function generateInvestigation(
 		if (!setting) break;
 		foundSetting = true;
 
-		let candidate = buildCandidate(forDay(base, setting.dayType), rng, setting, options);
+		const day = withoutApproximate(forDay(base, setting.dayType), setting.scene);
+		let candidate = buildCandidate(day, rng, setting, options);
 		if (candidate && !isValid(candidate, base)) {
 			candidate = repairInvestigation(candidate, { places, routes, catalog }) ?? candidate;
 		}

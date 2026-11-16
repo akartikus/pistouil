@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { validateCatalog } from '#lib/engine/catalog.js';
 	import { rawStarterCatalog, richPlaces, richRoutes } from '#lib/engine/fixtures.js';
+	import type { GraphCell } from '#lib/engine/pedestrian.js';
 	import { LIE_MOTIVES, type Difficulty, type LieMotive, type Place } from '#lib/engine/types.js';
 	import {
 		checkAccusation,
@@ -11,8 +12,8 @@
 	} from '#lib/playground/playground.js';
 	import {
 		cellsAround,
-		estimateRoutes,
 		nearestPlaces,
+		routesFor,
 		toPlaces,
 		type Grid,
 		type RawPlace
@@ -30,14 +31,16 @@
 	let centerLon = $state(5.5609);
 	let count = $state(40);
 	// Real places read from static/dev-data (see tools/data-preparation/README.md).
-	let real = $state<{ status: 'loading' | 'missing' | 'ready'; places: Place[] }>({
-		status: 'loading',
-		places: []
-	});
+	let real = $state<{
+		status: 'loading' | 'missing' | 'ready';
+		places: Place[];
+		graph: GraphCell[];
+	}>({ status: 'loading', places: [], graph: [] });
 	let loadToken = 0;
 
 	const places = $derived(source === 'test' ? richPlaces : real.places);
-	const routes = $derived(source === 'test' ? richRoutes : estimateRoutes(real.places));
+	const realRoutes = $derived(routesFor(real.places, real.graph));
+	const routes = $derived(source === 'test' ? richRoutes : realRoutes.routes);
 
 	// A new source or selection starts with every place active.
 	let activePlaceIds = $derived(places.map((place) => place.osmId));
@@ -76,20 +79,29 @@
 		const center = { lat: Number(centerLat), lon: Number(centerLon) };
 		const wanted = Number(count) || 0;
 		const token = ++loadToken;
-		real = { status: 'loading', places: [] };
+		real = { status: 'loading', places: [], graph: [] };
 		(async () => {
 			const manifest = await readJson<{ grid: Grid }>('/dev-data/manifest.json');
-			if (!manifest) return token === loadToken ? (real = { status: 'missing', places: [] }) : null;
+			if (!manifest)
+				return token === loadToken ? (real = { status: 'missing', places: [], graph: [] }) : null;
 			const cells = cellsAround(manifest.grid, center.lat, center.lon);
 			const files = await Promise.all(
 				cells.map((cell) => readJson<RawPlace[]>(`/dev-data/places/${cell}.json`))
+			);
+			// Without graph files the durations stay straight-line estimates.
+			const graph = await Promise.all(
+				cells.map((cell) => readJson<GraphCell>(`/dev-data/graph/${cell}.json`))
 			);
 			if (token !== loadToken) return;
 			const found = toPlaces(
 				files.flatMap((file) => file ?? []),
 				catalog
 			);
-			real = { status: 'ready', places: nearestPlaces(found, center, wanted) };
+			real = {
+				status: 'ready',
+				places: nearestPlaces(found, center, wanted),
+				graph: graph.filter((cell) => cell !== null)
+			};
 		})();
 	});
 
@@ -194,10 +206,17 @@
 				Aucune donnée : copier la sortie du script dans <code>static/dev-data/</code>
 				(voir <code>tools/data-preparation/README.md</code>), ou revenir aux lieux de test.
 			</p>
+		{:else if real.status === 'loading'}
+			<p class="note">Chargement…</p>
+		{:else if realRoutes.network}
+			<p class="note">
+				Durées calculées sur le réseau piéton (5 km/h) : {real.places.length} lieux,
+				{realRoutes.estimated} trajets estimés à vol d’oiseau.
+			</p>
 		{:else}
 			<p class="note">
-				Durées estimées à vol d’oiseau (×1,3, 5 km/h), pas des trajets réels
-				{real.status === 'loading' ? ' : chargement…' : `: ${real.places.length} lieux.`}
+				Durées estimées à vol d’oiseau (×1,3, 5 km/h), pas des trajets réels : {real.places.length}
+				lieux. Copier aussi <code>graph/</code> dans <code>static/dev-data/</code> pour les trajets réels.
 			</p>
 		{/if}
 	{/if}

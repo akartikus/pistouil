@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { cellsAround, estimateRoutes, nearestPlaces, toPlaces, type RawPlace } from './real-places';
+import {
+	cellsAround,
+	estimateRoutes,
+	nearestPlaces,
+	routesFor,
+	toPlaces,
+	type RawPlace
+} from './real-places';
+import type { GraphCell } from '../engine/pedestrian';
 import { validateCatalog } from '../engine/catalog';
 import { rawStarterCatalog } from '../engine/fixtures';
 import { assertCompleteMatrix } from '../engine/routes';
@@ -103,5 +111,35 @@ describe('estimateRoutes', () => {
 		expect(route.distanceM).toBeGreaterThan(1400);
 		expect(route.distanceM).toBeLessThan(1500);
 		expect(route.minutes).toBe(Math.ceil(route.distanceM / 83.3));
+	});
+});
+
+describe('routesFor', () => {
+	const places = [at('a', 43.45, 5.56), at('b', 43.46, 5.56), at('c', 43.47, 5.56)];
+	// a and b on one street, c attached to nothing.
+	const cell: GraphCell = {
+		nodes: [
+			[1, 4345000, 556000],
+			[2, 4346000, 556000]
+		],
+		edges: [[1, 2, 1112, []]],
+		access: { a: [1, 2, 0, 556, 1112], b: [1, 2, 0, 1112, 1112] }
+	};
+
+	it('estimates every pair without a graph, without marking them approximate', () => {
+		const result = routesFor(places, []);
+		expect(result.network).toBe(false);
+		expect(result.estimated).toBe(3);
+		expect(result.routes).toEqual(estimateRoutes(places));
+	});
+
+	it('walks the street where the graph connects places and counts the estimated pairs', () => {
+		const result = routesFor(places, [cell]);
+		expect(result.network).toBe(true);
+		expect(result.estimated).toBe(2);
+		const [ab] = result.routes;
+		expect(ab.approximate).toBeUndefined();
+		expect(ab.distanceM).toBe(556);
+		expect(() => assertCompleteMatrix(places, result.routes)).not.toThrow();
 	});
 });

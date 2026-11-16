@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="hand">
+<node id="10" version="1" lat="43.4500" lon="5.5405"/>
+<node id="11" version="1" lat="43.4505" lon="5.5405"/>
+<node id="12" version="1" lat="43.4510" lon="5.5405"/>
+<node id="20" version="1" lat="43.4600" lon="5.5405"/>
+<node id="21" version="1" lat="43.4610" lon="5.5405"/>
+<node id="30" version="1" lat="43.4620" lon="5.5405"/>
+<node id="31" version="1" lat="43.4630" lon="5.5405"/>
+<node id="40" version="1" lat="43.4640" lon="5.5405"/>
+<node id="41" version="1" lat="43.4650" lon="5.5405"/>
+<node id="50" version="1" lat="43.4500" lon="5.5490"/>
+<node id="51" version="1" lat="43.4500" lon="5.5510"/>
+<node id="1001" version="1" lat="43.4505" lon="5.5406"><tag k="shop" v="bakery"/><tag k="name" v="Boulangerie du Cours"/></node>
+<node id="1002" version="1" lat="43.4600" lon="5.5600"><tag k="amenity" v="cafe"/><tag k="name" v="Café Isolé"/></node>
+<way id="1" version="1"><nd ref="10"/><nd ref="11"/><nd ref="12"/><tag k="highway" v="residential"/></way>
+<way id="2" version="1"><nd ref="20"/><nd ref="21"/><tag k="highway" v="motorway"/></way>
+<way id="3" version="1"><nd ref="30"/><nd ref="31"/><tag k="highway" v="footway"/><tag k="foot" v="no"/></way>
+<way id="4" version="1"><nd ref="40"/><nd ref="41"/><tag k="highway" v="service"/><tag k="access" v="private"/></way>
+<way id="5" version="1"><nd ref="50"/><nd ref="51"/><tag k="highway" v="residential"/><tag k="oneway" v="yes"/></way>
+</osm>

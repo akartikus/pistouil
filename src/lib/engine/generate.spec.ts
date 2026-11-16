@@ -11,7 +11,7 @@ import {
 	richPlaces,
 	richRoutes
 } from './fixtures';
-import type { DayType, Difficulty, Fact, Investigation } from './types';
+import type { DayType, Difficulty, Fact, Investigation, Route } from './types';
 
 const catalog = validateCatalog(structuredClone(rawStarterCatalog));
 const difficulties: Difficulty[] = [1, 2, 3];
@@ -736,5 +736,49 @@ describe('rich places', () => {
 			generateInvestigation(richPlaces, richRoutes, catalog, { seed, difficulty: 3 });
 		}
 		expect((performance.now() - start) / runs).toBeLessThan(200);
+	});
+});
+
+describe('approximate routes', () => {
+	const mark = (routes: Route[], keep: (route: Route) => boolean): Route[] =>
+		routes.map((route) => (keep(route) ? { ...route, approximate: true } : route));
+
+	it('keep a place out when its route to the scene is approximate', () => {
+		let checked = 0;
+		for (let seed = 1; seed <= 20; seed++) {
+			const first = generate(seed, 2, richPlaces, richRoutes);
+			const far = first.placeIds.find((id) => id !== first.sceneId)!;
+			const routes = mark(
+				richRoutes,
+				(route) =>
+					[route.placeA, route.placeB].includes(first.sceneId) &&
+					[route.placeA, route.placeB].includes(far)
+			);
+			const result = generateInvestigation(richPlaces, routes, catalog, { seed, difficulty: 2 });
+			if (!result.ok || result.investigation.sceneId !== first.sceneId) continue;
+			checked++;
+			const { investigation } = result;
+			expect(investigation.placeIds).not.toContain(far);
+			expect(
+				investigation.characters.flatMap((c) => c.segments.map((s) => s.placeId))
+			).not.toContain(far);
+			expect(investigation.facts.map((fact) => fact.placeId)).not.toContain(far);
+		}
+		expect(checked).toBeGreaterThan(0);
+	});
+
+	it('treat a route marked as not approximate like any real route', () => {
+		const routes = richRoutes.map((route) => ({ ...route, approximate: false }));
+		for (let seed = 1; seed <= 10; seed++) {
+			const same = generate(seed, 3, richPlaces, routes);
+			const before = generate(seed, 3, richPlaces, richRoutes);
+			expect({ ...same, routes: [] }).toEqual({ ...before, routes: [] });
+		}
+	});
+
+	it('fail with the usual reason when every route is approximate', () => {
+		const routes = mark(richRoutes, () => true);
+		const result = generateInvestigation(richPlaces, routes, catalog, { seed: 1, difficulty: 2 });
+		expect(result.ok).toBe(false);
 	});
 });
