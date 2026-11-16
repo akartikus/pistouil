@@ -40,7 +40,9 @@ export interface PlaceType {
 	osmTags: string[][];
 	typicalHours: OpeningHours;
 	role: PlaceRole;
+	// Icon family and French label, used by the map only.
 	icon?: string;
+	label?: string;
 }
 
 export interface ClueType {

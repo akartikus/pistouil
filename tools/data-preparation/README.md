@@ -52,10 +52,10 @@ Mesures (extrait PACA complet) : 14 min et 3,9 Go de mémoire au plus ; 8 366 ca
 
 ## Essayer les lieux dans le playground
 
-Pour voir le moteur sur de vrais lieux (`npm run dev`, page `/playground`, source « Vrais lieux »), copier une sortie du script dans `static/dev-data/` (ignoré par git ; `graph/` donne de vrais trajets, sans lui ils sont estimés à vol d'oiseau) :
+Pour voir le moteur sur de vrais lieux (`npm run dev`, page `/playground`, source « Vrais lieux »), copier une sortie du script dans `static/dev-data/` (ignoré par git ; `graph/` donne de vrais trajets, sans lui ils sont estimés à vol d'oiseau ; `communes.json` sert à la page `/map`) :
 
 ```bash
-mkdir -p static/dev-data && cp -r tools/data-preparation/out/manifest.json tools/data-preparation/out/places tools/data-preparation/out/graph static/dev-data/
+mkdir -p static/dev-data && cp -r tools/data-preparation/out/manifest.json tools/data-preparation/out/communes.json tools/data-preparation/out/places tools/data-preparation/out/graph static/dev-data/
 ```
 
 ## Tests

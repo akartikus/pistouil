@@ -29,5 +29,8 @@ __pycache__
 .pytest_cache
 tools/data-preparation/data
 
+# Map tiles extraction output
+tools/map-tiles/out
+
 # Playground: real places copied from tools/data-preparation/out
 static/dev-data

@@ -269,3 +269,39 @@ describe('opening hours by day', () => {
 		expect(() => validateCatalog(raw)).toThrow(new RegExp(raw.placeTypes[0].id));
 	});
 });
+
+describe('place types for the map', () => {
+	const families = [
+		'health',
+		'food',
+		'shop',
+		'culture',
+		'service',
+		'nature',
+		'transport',
+		'leisure',
+		'neutral'
+	];
+
+	it('give every starter type an icon family and a label', () => {
+		for (const type of rawStarterCatalog.placeTypes) {
+			expect(families, `icon of ${type.id}`).toContain(type.icon);
+			expect(type.label?.trim(), `label of ${type.id}`).toBeTruthy();
+		}
+	});
+
+	it('show excluded types with the neutral icon', () => {
+		for (const type of rawStarterCatalog.placeTypes.filter((t) => t.role === 'excluded')) {
+			expect(type.icon).toBe('neutral');
+		}
+	});
+
+	it('accept a type without icon or label', () => {
+		const raw = structuredClone(rawStarterCatalog);
+		for (const type of raw.placeTypes) {
+			delete (type as { icon?: string }).icon;
+			delete (type as { label?: string }).label;
+		}
+		expect(() => validateCatalog(raw)).not.toThrow();
+	});
+});

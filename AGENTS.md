@@ -31,6 +31,7 @@ SvelteKit statique (adapter-static, `ssr = false`), TypeScript strict, Vitest, M
 | `src/lib/playground` | Logique de la page de test du moteur (`/playground`, développement seulement) |
 | `catalog/` | Catalogue JSON (types de lieux, indices, scénarios, objets) |
 | `tools/data-preparation/` | Scripts Python OSM |
+| `tools/map-tiles/` | Extraction des tuiles de la carte (PMTiles) et glyphes |
 | `static/map/` | Style, polices, icônes |
 | `docs/` | Vision, référence, briefs |
 | `guide/` | Guides pratiques (méthode OpenSpec, fonctionnement du moteur) |
