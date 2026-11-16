@@ -63,6 +63,10 @@ Aucun jeu connu ne réunit les trois à la fois :
 | Trajet non relié par le réseau : vol d’oiseau × 1,3 marqué `approximate` ; le générateur écarte, une fois la scène choisie, les lieux dont le trajet vers la scène est approximatif | Aucune déduction fondée sur une estimation, sans toucher au solveur |
 | Tous les lieux visibles sur la carte, deux niveaux (enquête / décor) | Carte vivante, jouable même avec peu de données |
 | Fond de carte vectoriel (PMTiles) stylé par nos soins (MapLibre) | Identité visuelle propre, appliquée à toute commune |
+| Tuiles Protomaps (schéma v4) extraites hors ligne en un PMTiles régional (PACA : 610 Mo au zoom 15, bâtiments individuels à partir de ce zoom) ; MapLibre directement, sans bibliothèque Svelte ; deux styles en fichiers (`static/map/style-light.json` et `style-dark.json`) à structure identique, pour que le changement de thème garde les tuiles ; polices en glyphes (IBM Plex Mono) et icônes PNG par famille embarquées ; adresse des tuiles fournie à l’exécution | Un style maison sur toutes les communes sans préparation, aucune requête externe, thème sombre sans retéléchargement ; l’extraction est un outil de `tools/map-tiles/` |
+| Bâtiment d’un lieu de l’enquête coloré en interrogeant le fond de carte au point du lieu (zoom 15 au moins) ; sans bâtiment, seul le marqueur reste | Les tuiles n’ont pas d’identifiant de bâtiment et nos lieux n’ont qu’un point ; aucun changement du format des lieux |
+| Les types de lieux du catalogue portent `icon` (famille d’icône) et `label` (libellé français) pour la carte | Ajouter un type sans toucher au code de la carte |
+| Direction artistique : carte colorée et lisible, texte et repères (étiquettes, légende, durées, mentions) brutalistes en monospace ; lieux de l’enquête en aplat orange (jaune en sombre), lieu du mystère en magenta (rose en sombre), décor en pastilles de couleur par famille ; thème sombre en soirée | Repérer d’un coup d’œil les lieux de l’enquête sans alourdir la carte, avec une identité propre ; voir `docs/design/direction.md` |
 | PNJ (serveur, gardien) = sources d’indices, pas des personnages | Modèle plus simple, PNJ toujours fiables |
 | Le lieu d’un indice est celui du fait qu’il prouve | Évite une donnée en double |
 | SvelteKit (statique) + TypeScript + Vitest + Capacitor | Un seul code pour web et mobile |
@@ -83,14 +87,14 @@ Aucun jeu connu ne réunit les trois à la fois :
 | 1. Moteur : génération et solveur | `briefs/01-generation-engine.md` | ☑ |
 | 2. Préparation des données OSM | `briefs/02-osm-data.md` | ☑ |
 | 3. Réseau piéton et trajets | `briefs/03-routes.md` | ☑ |
-| 4. Carte et identité visuelle | `briefs/04-map.md` | ☐ |
+| 4. Carte et identité visuelle | `briefs/04-map.md` | ☑ |
 | 5. Boucle de jeu complète | `briefs/05-game-loop.md` | ☐ |
 | 6. Hors-ligne et application mobile | `briefs/06-offline-mobile.md` | ☐ |
 | 7. CI/CD : tests (partie A, dès maintenant), builds mobiles (partie B, après l’étape 6) | `briefs/07-ci-cd.md` | ☐ |
 
 **Phase de rédaction, avant l’étape 1** (avec `/openspec-explore`, sans changement OpenSpec) : ton, 3 scénarios (situation, scène, motifs et textes de révélation), liste d’au moins 12 prénoms, exemples de gabarits d’indices et de témoignages, règles d’écriture (pas d’accord de genre). Contenu encodé en JSON dans `catalog/` au brief 01 (les notes en prose ont été supprimées) ; décisions au §6.
 
-**Phase de design, avant l’étape 4** (avec `/openspec-explore`, sans changement OpenSpec) : direction artistique (palette, police, ton), croquis des trois écrans (carte, carnet, suspects) et premières icônes. Les décisions vont au §6 ; les croquis sont un lien Figma ou des images dans `docs/design/`.
+**Phase de design, avant l’étape 4** (avec `/openspec-explore`, sans changement OpenSpec) : direction artistique (palette, police, ton), croquis des trois écrans (carte, carnet, suspects) et premières icônes. Les décisions vont au §6 ; les croquis sont un lien Figma ou des images dans `docs/design/`. Direction artistique et écran Carte faits (`docs/design/direction.md`) ; les écrans Carnet et Suspects restent à dessiner avant le brief 05.
 
 Jalon de validation après l’étape 5 : **une enquête jouable de bout en bout à Fuveau**, testée par 3 à 5 personnes. Question à trancher : le cœur du jeu est-il amusant ?
 
