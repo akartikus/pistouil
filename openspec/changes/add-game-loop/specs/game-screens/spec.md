@@ -1,0 +1,128 @@
+# Spec Delta
+
+## ADDED Requirements
+
+### Requirement: Écran de départ
+L’écran de départ SHALL proposer « Je me localise » ou la recherche d’une commune, le choix de la difficulté (1 à 3) et la mention de fiction : les lieux sont réels, les personnages et les faits sont imaginaires. Il SHALL proposer de reprendre une enquête sauvegardée.
+
+#### Scenario: Reprise proposée
+- **WHEN** une enquête sauvegardée existe
+- **THEN** l’écran de départ propose de la reprendre ou d’en commencer une autre
+
+### Requirement: Navigation et réglages
+Pendant une enquête, une barre en bas SHALL donner accès aux écrans Carte, Carnet et Suspects, avec le nombre de faits et de suspects, et une roue crantée de l’en-tête SHALL ouvrir les Réglages.
+
+#### Scenario: Changer d’écran
+- **WHEN** le joueur touche « Carnet »
+- **THEN** le Carnet s’affiche et son onglet est marqué actif
+
+### Requirement: Panneau d’un lieu et pièces
+Toucher un lieu retenu sur la carte SHALL ouvrir son panneau et en montrer les pièces. Un fait ne SHALL rejoindre le Carnet, les fiches et le curseur horaire qu’une fois sa pièce touchée par le joueur. Le panneau SHALL présenter les faits comme des pièces : un objet pour une preuve selon son type d’indice, un pictogramme pour un PNJ, la tête du suspect pour un témoignage. Ouvrir une pièce affiche son texte. Le panneau n’affiche aucune aide à la déduction : celles-ci vivent dans le Carnet.
+
+#### Scenario: Ouverture d’un lieu
+- **WHEN** le joueur touche un lieu retenu qui a un ticket de caisse et un témoignage
+- **THEN** le panneau montre un ticket et la tête du témoin, sans que les faits soient encore au Carnet
+
+#### Scenario: Pièce touchée
+- **WHEN** le joueur touche la pièce du témoignage
+- **THEN** son texte s’affiche et le fait rejoint le Carnet, la fiche du suspect et le curseur horaire
+
+#### Scenario: Pièce non touchée
+- **WHEN** le joueur n’a pas touché une pièce du lieu
+- **THEN** son fait n’apparaît ni au Carnet, ni dans une fiche, ni sur le curseur
+
+### Requirement: Aucune étiquette sur les pièces
+Le jeu SHALL ne mettre aucune étiquette de fiabilité ou de nature (« fiable », « preuve », « témoin ») sur une pièce, un fait ou un témoignage : l’objet, le pictogramme ou la tête, le libellé du type et le texte suffisent.
+
+#### Scenario: Preuve et témoignage
+- **WHEN** le joueur ouvre un ticket de caisse puis le témoignage d’un suspect
+- **THEN** aucune des deux cartes ne porte d’étiquette de fiabilité
+
+### Requirement: Trajet entre lieux retenus
+Le panneau d’un lieu SHALL offrir « Vers le lieu du mystère » (trajet direct) et « Trajet vers… », qui liste seulement les lieux retenus, numérotés, le lieu du mystère en tête. Choisir un lieu SHALL tracer l’itinéraire sur la carte avec sa durée, précédée de « ~ » si estimée. La liste SHALL montrer la durée des trajets déjà mesurés et « — » pour les autres.
+
+#### Scenario: Choix d’un trajet
+- **WHEN** le joueur choisit un lieu dans « Trajet vers… »
+- **THEN** l’itinéraire est tracé en pointillés avec sa durée, et le trajet est noté comme mesuré
+
+#### Scenario: Points libres exclus
+- **WHEN** le joueur ouvre « Trajet vers… »
+- **THEN** seuls les lieux de l’enquête sont proposés
+
+### Requirement: Le panneau se ferme après un trajet
+Dès qu’un trajet est choisi, par « Vers le lieu du mystère » ou dans « Trajet vers… », le panneau SHALL se fermer et l’itinéraire rester affiché sur la carte.
+
+#### Scenario: Panneau refermé
+- **WHEN** le joueur choisit « Vers le lieu du mystère » ou un lieu dans « Trajet vers… »
+- **THEN** le panneau se ferme et l’itinéraire reste affiché avec sa durée
+
+### Requirement: Curseur horaire
+La carte SHALL offrir un curseur horaire qui couvre l’heure du mystère et tous les faits découverts, et qui marque sur sa piste les heures où il se passe quelque chose (début et fin des faits découverts, l’heure du mystère d’une marque à part).
+
+#### Scenario: Heures marquées
+- **WHEN** des faits ont été découverts
+- **THEN** leurs heures sont marquées sur le curseur, avec une marque à part pour l’heure du mystère
+
+### Requirement: Suspects sur la carte
+La carte SHALL placer une pastille à initiale par suspect selon les positions de la capability `game-deduction` à l’heure du curseur. Toucher une pastille SHALL ouvrir un panneau : où il est à cette heure, son statut d’alibi, et un bouton vers sa fiche.
+
+#### Scenario: Suspect au curseur
+- **WHEN** le joueur règle le curseur sur 20:40
+- **THEN** chaque suspect localisé à cette heure apparaît à son lieu
+
+### Requirement: Carnet
+Le Carnet SHALL montrer la chronologie des faits découverts (heure, suspect, source), les trajets mesurés, une note libre et les annotations attachées à des lieux, Pendant la partie, il ne montre ni incohérence ni verdict ; une fois la partie terminée, il montre les incohérences reliées à leurs deux faits et, sous les faits concernés, les verdicts d’alibi suffisant. Il SHALL se mettre à jour à chaque lieu ouvert.
+
+#### Scenario: Pendant la partie
+- **WHEN** le joueur consulte le Carnet avant d’avoir accusé
+- **THEN** aucune incohérence ni aucun verdict n’y figure
+
+#### Scenario: Après l’accusation
+- **WHEN** la partie est terminée et que deux faits sont incompatibles
+- **THEN** ils apparaissent hachurés et reliés par une étiquette d’incohérence, avec le trajet et l’écart
+
+### Requirement: Suspects et fiches qui se remplissent
+L’écran Suspects SHALL montrer une carte par suspect avec son statut d’alibi (à vérifier, douteux, vérifié) que le joueur choisit. La fiche SHALL regrouper ce qu’il dit lui-même, ce que les autres disent de lui, les preuves et les témoins, et ne contenir que les faits déjà découverts. Une rubrique vide SHALL afficher « RIEN POUR L’INSTANT » et la fiche « N lieux explorés sur M », sans jamais annoncer combien de pièces restent à trouver.
+
+#### Scenario: Fiche au départ
+- **WHEN** aucun lieu n’a été ouvert
+- **THEN** la fiche ne montre que la tête, le nom et le statut, et ses rubriques sont vides
+
+#### Scenario: Fiche après exploration
+- **WHEN** le joueur ouvre un lieu dont un fait concerne ce suspect
+- **THEN** ce fait apparaît dans la rubrique correspondante de sa fiche
+
+### Requirement: Accusation avec confirmation
+Le bouton « Accuser » d’une fiche SHALL demander une confirmation qui rappelle que l’accusation est définitive. Après confirmation, l’accusation est enregistrée et la révélation se lance.
+
+#### Scenario: Confirmation
+- **WHEN** le joueur touche « Accuser » puis annule
+- **THEN** aucune accusation n’est enregistrée
+
+### Requirement: Réglages et À propos
+L’écran Réglages SHALL permettre de choisir le thème clair ou sombre, rappeler l’enquête (commune, difficulté, graine, version des données), proposer une nouvelle enquête, et afficher À propos : la mention de fiction, « © OpenStreetMap contributors » (licence ODbL), le fond de carte Protomaps et la police IBM Plex Mono (licence OFL).
+
+#### Scenario: Crédits
+- **WHEN** le joueur ouvre À propos
+- **THEN** il y lit la mention de fiction et les crédits des données, du fond de carte et de la police
+
+### Requirement: Textes de l’interface réunis
+Les textes de l’interface (boutons, libellés, messages) SHALL être rédigés en français dans un seul module ; les textes des faits viennent du moteur.
+
+#### Scenario: Un seul endroit
+- **WHEN** on cherche un libellé de l’interface
+- **THEN** il se trouve dans le module des textes et non dans les composants
+
+### Requirement: Toucher la carte referme le panneau
+Toucher la carte en dehors d’un lieu retenu, d’une pastille de suspect et d’un lieu de décor SHALL fermer le panneau ouvert (lieu, suspect ou choix de trajet), sans effacer l’itinéraire affiché.
+
+#### Scenario: Toucher la carte nue
+- **WHEN** un panneau est ouvert et que le joueur touche la carte à un endroit sans lieu
+- **THEN** le panneau se ferme et l’itinéraire éventuel reste affiché
+
+### Requirement: L’avatar ouvre la fiche
+Dans la carte d’un témoignage, toucher la tête du suspect qui témoigne SHALL ouvrir sa fiche, sans bouton supplémentaire. L’écran Suspects garde son lien « Fiche » en haut à droite de chaque carte.
+
+#### Scenario: Toucher l’avatar
+- **WHEN** le joueur ouvre un témoignage et touche la tête du témoin
+- **THEN** la fiche de ce suspect s’affiche

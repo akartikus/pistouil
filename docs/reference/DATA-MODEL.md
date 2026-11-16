@@ -219,11 +219,13 @@ classDiagram
     approximate
   }
   class Progress {
-    discoveredFacts
+    openedPlaces
+    readFacts
+    measuredRoutes
     annotations
     notes
+    alibiStatuses
     accusation
-    resolutionDate
   }
   Investigation "*" --> "1" ScenarioModel
   Investigation "*" --> "*" Place : lieux retenus
@@ -244,7 +246,7 @@ classDiagram
 - **Suspects** : `difficulty + 2`, soit 3, 4 ou 5. Chaque étape a besoin d’au moins un innocent de plus (un par tour), plus l’auteur ; les prénoms (≥ 12) suffisent largement.
 - **Débloqué par** : un fait sans lien est visible dès le départ ; les autres apparaissent quand le fait qui les débloque est découvert.
 - **Trajet** (`Route`, ses deux lieux sont `placeA` et `placeB`) : uniquement entre deux lieux de l’enquête ; calculé à la génération ; vitesse 5 km/h. La matrice est **complète** : un `Route` pour chaque paire de lieux fournis au moteur, symétrique (`temps(A, B) = temps(B, A)`), `minutes ≥ 1`. Le tracé (`geometry`, optionnel) est une suite de points `[lon, lat]` de `placeA` à `placeB`. `approximate` (absent = faux) marque un trajet à vol d’oiseau × 1,3, utilisé quand le réseau piéton ne relie pas deux lieux ; le générateur n’en fonde aucune déduction : une fois la scène choisie, il écarte les lieux dont le trajet vers la scène est approximatif.
-- **Progression** (`Progress`) : stockée localement sur l’appareil ; les annotations sont attachées à des lieux.
+- **Progression** (`Progress`, `src/lib/game/progress.ts`) : stockée localement sur l’appareil, avec la graine, la difficulté, la zone et la version des données (jamais de donnée cachée). `openedPlaces` : les faits découverts s’en déduisent (ouvrir un lieu révèle tous ses faits). `readFacts` : les faits dont le joueur a touché la pièce ; seuls ceux-là entrent au Carnet, dans les fiches et sur le curseur horaire. `measuredRoutes` : les paires de lieux dont le joueur a demandé le trajet ; le jeu ne conclut rien pendant la partie (ni incohérence ni verdict d’alibi) : le joueur déduit lui-même, et le Carnet explique la partie une fois l’accusation faite. `alibiStatuses` : à vérifier, douteux ou vérifié, choisi par le joueur seul. Les annotations sont attachées à des lieux ; l’accusation est unique et définitive.
 
 ## 6. Règles de cohérence
 
