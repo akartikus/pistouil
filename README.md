@@ -13,7 +13,7 @@ npm run lint     # format + lint
 npm run build    # build statique dans build/
 ```
 
-Prérequis : Node.js 20+. Plus tard : Android Studio / Xcode (étape 6), Python 3 + osmium-tool (étape 2).
+Prérequis : Node.js 20+. Pour préparer les données OSM : Python 3 (et `osmium-tool` pour découper un petit extrait), voir `tools/data-preparation/README.md`. Plus tard : Android Studio / Xcode (étape 6).
 
 ## Guides
 

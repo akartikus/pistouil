@@ -55,6 +55,8 @@ Aucun jeu connu ne réunit les trois à la fois :
 | Solo, une enquête par joueur, générée à la demande | Pas de masse critique nécessaire, jeu possible partout |
 | Zone = centre (position ou commune) + rayon adaptatif | S’adapte aux villes denses comme aux villages |
 | Données OSM préparées hors ligne (Geofabrik + osmium), pas d’Overpass | Coût nul, aucune dépendance externe |
+| Lieux OSM : un objet sans nom est écarté (quel que soit son rôle), aucune adresse extraite ; un lieu par objet, représenté par un point ; `opening_hours` transmis en texte brut, sans analyse | Le moteur et les textes exigent un nom ; les adresses manquent justement sur les objets de rue sans nom ; l’analyse des horaires attend les vrais horaires |
+| Lieux rangés en cases de 2 km (pas fixes de 0,018° en latitude et 0,025° en longitude, calcul sur entiers) ; sortie déterministe, sans date d’exécution | Peu de fichiers à charger autour du joueur, cases calculables sans table ; sorties comparables à l’octet près |
 | Trajets calculés sur le téléphone (Dijkstra sur le réseau piéton OSM) | Pas de serveur de routage, léger à l’échelle d’une zone |
 | Trajets uniquement entre lieux de l’enquête, calculés à la génération | Le solveur en a besoin ; affichage instantané |
 | Tous les lieux visibles sur la carte, deux niveaux (enquête / décor) | Carte vivante, jouable même avec peu de données |
@@ -76,7 +78,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 | --- | --- | --- |
 | 0. Initialisation du projet | — | ☑ |
 | 1. Moteur : génération et solveur | `briefs/01-generation-engine.md` | ☑ |
-| 2. Préparation des données OSM | `briefs/02-osm-data.md` | ☐ |
+| 2. Préparation des données OSM | `briefs/02-osm-data.md` | ☑ |
 | 3. Réseau piéton et trajets | `briefs/03-routes.md` | ☐ |
 | 4. Carte et identité visuelle | `briefs/04-map.md` | ☐ |
 | 5. Boucle de jeu complète | `briefs/05-game-loop.md` | ☐ |
