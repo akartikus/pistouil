@@ -126,3 +126,14 @@ Dans la carte d’un témoignage, toucher la tête du suspect qui témoigne SHAL
 #### Scenario: Toucher l’avatar
 - **WHEN** le joueur ouvre un témoignage et touche la tête du témoin
 - **THEN** la fiche de ce suspect s’affiche
+
+### Requirement: Guide de départ
+Au premier lancement, un guide en trois bulles SHALL accompagner le joueur : toucher un lieu numéroté, toucher une pièce, mesurer un trajet vers le lieu du mystère. Chaque bulle passe à la suivante quand le joueur fait l’action ; le guide se passe d’un toucher, ne se montre qu’une fois et se rejoue depuis les Réglages.
+
+#### Scenario: Guide passé
+- **WHEN** le joueur touche « Passer »
+- **THEN** le guide disparaît et ne revient pas au lancement suivant
+
+#### Scenario: Guide rejoué
+- **WHEN** le joueur touche « Revoir le guide » dans les Réglages
+- **THEN** le guide se montre à nouveau à la prochaine ouverture de la carte

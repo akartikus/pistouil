@@ -4,6 +4,7 @@
 	import { game } from '#lib/game/game.svelte.js';
 	import { settings } from '#lib/game/settings.svelte.js';
 	import { texts } from '#lib/game/texts.js';
+	import { tour } from '#lib/game/tour.svelte.js';
 	import { ui } from '#lib/game/ui.svelte.js';
 
 	async function newInvestigation() {
@@ -37,6 +38,10 @@
 				{texts.settings.dark}
 			</button>
 		</div>
+	</section>
+
+	<section class="box pad">
+		<button class="btn" onclick={() => tour.restart()}>{texts.tour.replay}</button>
 	</section>
 
 	{#if game.view}

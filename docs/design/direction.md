@@ -77,6 +77,10 @@ Règles communes : cadres noirs de 3 px, ombres dures décalées, monospace gras
 
 Décidé pour le brief 05 : ouvrir un lieu révèle tous ses faits d’un coup (les liens « débloqué par » restent à l’intérieur d’un lieu), donc la ligne « ??? un fait reste à découvrir » de la première maquette est retirée.
 
+## Prise en main
+
+Un guide en trois bulles accompagne la première partie (toucher un lieu numéroté, toucher une pièce, mesurer un trajet vers le lieu du mystère) ; il se passe d'un toucher et se rejoue depuis les Réglages.
+
 ## Garde-fous
 
 Attribution « © OpenStreetMap contributors » et schéma de tuiles (Protomaps) : sur la carte, un bouton « i » toujours présent (texte déplié quelques secondes à l’affichage de la carte, puis replié), et le texte complet dans À propos, comme l’autorisent les règles d’attribution d’OpenStreetMap. Mention de fiction visible sur l’écran de départ et dans À propos. Aucune photo de bâtiment, aucun logo.

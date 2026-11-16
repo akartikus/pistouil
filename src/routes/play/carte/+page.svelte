@@ -17,6 +17,8 @@
 	import FactCard from '#lib/game/ui/FactCard.svelte';
 	import Head from '#lib/game/ui/Head.svelte';
 	import Piece from '#lib/game/ui/Piece.svelte';
+	import Tour from '#lib/game/ui/Tour.svelte';
+	import { tour } from '#lib/game/tour.svelte.js';
 	import GameMap from '#lib/map/Map.svelte';
 	import { placeFeatures } from '#lib/map/features.js';
 	import { routeFeatures } from '#lib/map/route-line.js';
@@ -35,6 +37,7 @@
 	if (game.view && ui.time === null) ui.time = game.view.investigation.mysteryTime;
 
 	onMount(async () => {
+		tour.begin();
 		communes = await loadCommunes(base, fetch);
 	});
 
@@ -125,6 +128,7 @@
 	});
 
 	async function openPlace(id: string) {
+		tour.advance(1);
 		ui.selectedSuspectId = null;
 		ui.selectedPlaceId = id;
 		ui.selectedPieceId = null;
@@ -141,6 +145,7 @@
 	}
 
 	function select(factId: string) {
+		tour.advance(2);
 		ui.selectedPieceId = factId;
 		game.read(factId);
 	}
@@ -154,6 +159,7 @@
 	async function measure(a: string, b: string) {
 		const result = await game.measure(a, b);
 		if (result) {
+			tour.advance(3);
 			ui.route = result;
 			closePanels();
 		}
@@ -181,16 +187,8 @@
 		/>
 
 		<div class="overlay">
-			<section class="situation box">
-				<p class="label">{formatTime(investigation.mysteryTime)}</p>
-				<p>{investigation.situationText}</p>
-			</section>
-
 			<section class="cursor box">
-				<div class="head">
-					<span class="label">{texts.map.cursor}</span>
-					<span class="time">{formatTime(ui.time ?? investigation.mysteryTime)}</span>
-				</div>
+				<span class="time">{formatTime(ui.time ?? investigation.mysteryTime)}</span>
 				<div class="track">
 					<div class="marks" aria-hidden="true">
 						{#each moments as moment (moment.at)}
@@ -208,6 +206,13 @@
 					/>
 				</div>
 			</section>
+
+			<section class="situation box">
+				<p class="label">{formatTime(investigation.mysteryTime)}</p>
+				<p>{investigation.situationText}</p>
+			</section>
+
+			<Tour />
 
 			{#if place && placeNumber}
 				<section class="sheet box">
@@ -343,50 +348,52 @@
 	.situation p {
 		margin: 0;
 	}
+	/* One thin row at the top: the time, then the track with its marks. */
 	.cursor {
-		margin-top: auto;
-		padding: 0.4rem 0.6rem;
-	}
-	.cursor .head {
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
+		gap: 0.6rem;
+		padding: 0.2rem 0.5rem;
+		box-shadow: 3px 3px 0 var(--shadow);
 	}
 	.time {
 		background: var(--ink);
 		color: var(--paper);
-		padding: 0 0.5rem;
+		padding: 0 0.4rem;
 		font-weight: 700;
-		font-size: 1.1rem;
-	}
-	input[type='range'] {
-		width: 100%;
-		margin: 0;
-		accent-color: var(--ink);
+		font-size: 0.95rem;
 	}
 	.track {
 		position: relative;
-		padding-top: 14px;
+		flex: 1;
+		padding-top: 8px;
+	}
+	input[type='range'] {
+		display: block;
+		width: 100%;
+		height: 16px;
+		margin: 0;
+		accent-color: var(--ink);
 	}
 	.marks {
 		position: absolute;
 		inset: 0 8px auto 8px;
-		height: 14px;
+		height: 8px;
 	}
 	.mark {
 		position: absolute;
 		bottom: 0;
-		width: 4px;
-		height: 12px;
-		margin-left: -2px;
+		width: 3px;
+		height: 8px;
+		margin-left: -1.5px;
 		background: var(--accent);
 		border: 1.5px solid var(--ink);
 		box-sizing: border-box;
 	}
 	.mark.mystery {
-		width: 8px;
-		height: 14px;
-		margin-left: -4px;
+		width: 7px;
+		height: 10px;
+		margin-left: -3.5px;
 		background: var(--mystery);
 	}
 	.alert {
@@ -401,6 +408,7 @@
 		padding: 2px 6px;
 	}
 	.sheet {
+		margin-top: auto;
 		max-height: 52%;
 		overflow: auto;
 	}

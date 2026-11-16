@@ -524,14 +524,18 @@
 	.map :global(.maplibregl-ctrl-attrib) {
 		background: var(--paper);
 		color: var(--ink);
-		border: 3px solid var(--ink);
-		box-shadow: 3px 3px 0 var(--shadow);
+		border: 2px solid var(--ink);
+		box-shadow: 2px 2px 0 var(--shadow);
 		font-family: inherit;
-		font-weight: bold;
-		font-size: 10px;
+		font-weight: normal;
+		font-size: 8px;
+		line-height: 1.2;
 	}
 	.map :global(.maplibregl-ctrl-attrib a) {
 		color: inherit;
+	}
+	.map :global(.maplibregl-ctrl-attrib-inner) {
+		padding: 0 4px;
 	}
 	.map :global(.maplibregl-ctrl-attrib-button) {
 		background-color: var(--paper);

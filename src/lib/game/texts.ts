@@ -111,6 +111,14 @@ export const texts = {
 		newInvestigation: 'Nouvelle enquête'
 	},
 
+	tour: {
+		1: 'Touche un lieu numéroté sur la carte.',
+		2: 'Touche une pièce pour la lire : elle rejoint ton carnet.',
+		3: 'Mesure un trajet vers le lieu du mystère pour comparer les alibis.',
+		skip: 'Passer',
+		replay: 'Revoir le guide'
+	},
+
 	settings: {
 		title: 'Réglages',
 		theme: 'Thème',

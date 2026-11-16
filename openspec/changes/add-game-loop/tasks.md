@@ -47,6 +47,7 @@
 - [x] 5.8 Simplifier l’interface après le premier essai : marquer sur le curseur horaire les heures où il se passe quelque chose, retirer du panneau d’un lieu les aides « si ce fait est vrai… » (elles restent dans le Carnet), retirer toute étiquette « fiable », « preuve » ou « témoin » des pièces et des faits, fermer le panneau en touchant la carte hors des lieux retenus et après le choix d’un trajet
 - [x] 5.9 Ne rien conclure pendant la partie : ni incohérence ni verdict d’alibi dans le Carnet, le panneau d’un suspect ou les pastilles ; la révélation fournit les trajets entre les lieux de l’enquête et le Carnet explique alors la partie, avec un bouton depuis la révélation
 - [x] 5.10 Faits lus : un fait n’entre au Carnet, dans les fiches et sur le curseur qu’une fois sa pièce touchée ; l’avatar d’un témoignage ouvre la fiche du suspect et le bouton « Fiche de … » du panneau disparaît (celui de l’écran Suspects reste)
+- [x] 5.11 Guide de départ en trois bulles (un lieu numéroté, une pièce, un trajet vers le lieu du mystère), passable, montré une seule fois et rejouable depuis les Réglages
 
 ## 6. Vérifications
 
