@@ -21,3 +21,10 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Data preparation (Python)
+tools/data-preparation/.venv
+tools/data-preparation/out
+__pycache__
+.pytest_cache
+tools/data-preparation/data

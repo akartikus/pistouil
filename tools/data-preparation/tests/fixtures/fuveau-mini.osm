@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="hand">
+<node id="100" version="1" lat="43.44" lon="5.54"/>
+<node id="101" version="1" lat="43.44001" lon="5.544"/>
+<node id="102" version="1" lat="43.44" lon="5.548"/>
+<node id="103" version="1" lat="43.44001" lon="5.552"/>
+<node id="104" version="1" lat="43.44" lon="5.556"/>
+<node id="105" version="1" lat="43.44001" lon="5.56"/>
+<node id="106" version="1" lat="43.44" lon="5.564"/>
+<node id="107" version="1" lat="43.44001" lon="5.568"/>
+<node id="108" version="1" lat="43.44" lon="5.572"/>
+<node id="109" version="1" lat="43.44001" lon="5.576"/>
+<node id="110" version="1" lat="43.44" lon="5.58"/>
+<node id="111" version="1" lat="43.443" lon="5.58001"/>
+<node id="112" version="1" lat="43.446" lon="5.58"/>
+<node id="113" version="1" lat="43.449" lon="5.58001"/>
+<node id="114" version="1" lat="43.452" lon="5.58"/>
+<node id="115" version="1" lat="43.455" lon="5.58001"/>
+<node id="116" version="1" lat="43.458" lon="5.58"/>
+<node id="117" version="1" lat="43.461" lon="5.58001"/>
+<node id="118" version="1" lat="43.464" lon="5.58"/>
+<node id="119" version="1" lat="43.467" lon="5.58001"/>
+<node id="120" version="1" lat="43.47" lon="5.58"/>
+<node id="121" version="1" lat="43.47001" lon="5.576"/>
+<node id="122" version="1" lat="43.47" lon="5.572"/>
+<node id="123" version="1" lat="43.47001" lon="5.568"/>
+<node id="124" version="1" lat="43.47" lon="5.564"/>
+<node id="125" version="1" lat="43.47001" lon="5.56"/>
+<node id="126" version="1" lat="43.47" lon="5.556"/>
+<node id="127" version="1" lat="43.47001" lon="5.552"/>
+<node id="128" version="1" lat="43.47" lon="5.548"/>
+<node id="129" version="1" lat="43.47001" lon="5.544"/>
+<node id="130" version="1" lat="43.47" lon="5.54"/>
+<node id="131" version="1" lat="43.467" lon="5.54001"/>
+<node id="132" version="1" lat="43.464" lon="5.54"/>
+<node id="133" version="1" lat="43.461" lon="5.54001"/>
+<node id="134" version="1" lat="43.458" lon="5.54"/>
+<node id="135" version="1" lat="43.455" lon="5.54001"/>
+<node id="136" version="1" lat="43.452" lon="5.54"/>
+<node id="137" version="1" lat="43.449" lon="5.54001"/>
+<node id="138" version="1" lat="43.446" lon="5.54"/>
+<node id="139" version="1" lat="43.443" lon="5.54001"/>
+<node id="140" version="1" lat="43.46" lon="5.55"/>
+<node id="141" version="1" lat="43.46" lon="5.56"/>
+<node id="142" version="1" lat="43.4595" lon="5.56"/>
+<node id="143" version="1" lat="43.4595" lon="5.5505"/>
+<node id="144" version="1" lat="43.4565" lon="5.5505"/>
+<node id="145" version="1" lat="43.4565" lon="5.56"/>
+<node id="146" version="1" lat="43.456" lon="5.56"/>
+<node id="147" version="1" lat="43.456" lon="5.55"/>
+<node id="148" version="1" lat="43.4535" lon="5.56"/>
+<node id="149" version="1" lat="43.4535" lon="5.561"/>
+<node id="150" version="1" lat="43.454" lon="5.562"/>
+<node id="1001" version="1" lat="43.4531" lon="5.5612"><tag k="shop" v="bakery"/><tag k="name" v="Boulangerie du Cours"/><tag k="opening_hours" v="Mo-Sa 07:00-19:30"/><tag k="addr:street" v="Cours Mirabeau"/></node>
+<node id="1002" version="1" lat="43.4532" lon="5.5613"><tag k="amenity" v="bench"/></node>
+<node id="1003" version="1" lat="43.4533" lon="5.5614"><tag k="tourism" v="artwork"/><tag k="artwork_type" v="sculpture"/><tag k="name" v="Sculpture sans type"/></node>
+<node id="1004" version="1" lat="43.4534" lon="5.5615"><tag k="tourism" v="artwork"/><tag k="artwork_type" v="statue"/><tag k="name" v="Statue du Poète"/></node>
+<node id="1005" version="1" lat="43.4536" lon="5.5616"><tag k="shop" v="bakery"/><tag k="amenity" v="cafe"/><tag k="name" v="Café Pain"/></node>
+<node id="1006" version="1" lat="43.4537" lon="5.5617"><tag k="amenity" v="school"/><tag k="name" v="École des Pins"/></node>
+<node id="1007" version="1" lat="43.4538" lon="5.5618"><tag k="shop" v="bakery"/><tag k="name" v="Boulangerie Retirée"/></node>
+<node id="1008" version="1" lat="43.5" lon="5.7"><tag k="shop" v="bakery"/><tag k="name" v="Boulangerie Lointaine"/></node>
+<node id="1009" version="1" lat="43.452" lon="5.55"><tag k="amenity" v="cafe"/><tag k="name" v="Café Limite"/></node>
+<way id="2001" version="1"><nd ref="140"/><nd ref="141"/><nd ref="142"/><nd ref="143"/><nd ref="144"/><nd ref="145"/><nd ref="146"/><nd ref="147"/><nd ref="140"/><tag k="leisure" v="park"/><tag k="name" v="Parc du Croissant"/></way>
+<way id="3001" version="1"><nd ref="148"/><nd ref="149"/><nd ref="150"/><tag k="highway" v="pedestrian"/><tag k="name" v="Rue Piétonne"/></way>
+<way id="9001" version="1"><nd ref="100"/><nd ref="101"/><nd ref="102"/><nd ref="103"/><nd ref="104"/><nd ref="105"/><nd ref="106"/><nd ref="107"/><nd ref="108"/><nd ref="109"/><nd ref="110"/><nd ref="111"/><nd ref="112"/><nd ref="113"/><nd ref="114"/><nd ref="115"/><nd ref="116"/><nd ref="117"/><nd ref="118"/><nd ref="119"/><nd ref="120"/><nd ref="121"/><nd ref="122"/><nd ref="123"/><nd ref="124"/><nd ref="125"/><nd ref="126"/><nd ref="127"/><nd ref="128"/><nd ref="129"/><nd ref="130"/><nd ref="131"/><nd ref="132"/><nd ref="133"/><nd ref="134"/><nd ref="135"/><nd ref="136"/><nd ref="137"/><nd ref="138"/><nd ref="139"/><nd ref="100"/></way>
+<relation id="9100" version="1"><member type="way" ref="9001" role="outer"/><tag k="type" v="boundary"/><tag k="boundary" v="administrative"/><tag k="admin_level" v="8"/><tag k="name" v="Fuveau"/><tag k="ref:INSEE" v="13039"/></relation>
+</osm>

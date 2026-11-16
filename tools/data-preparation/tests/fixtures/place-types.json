@@ -1,0 +1,9 @@
+[
+	{ "id": "bakery", "role": "scene", "osmTags": [["shop=bakery"]] },
+	{ "id": "cafe", "role": "scene", "osmTags": [["amenity=cafe"]] },
+	{ "id": "pedestrian_street", "role": "scene", "osmTags": [["highway=pedestrian"]] },
+	{ "id": "statue", "role": "scene", "osmTags": [["tourism=artwork", "artwork_type=statue"]] },
+	{ "id": "park", "role": "scene", "osmTags": [["leisure=park"]] },
+	{ "id": "bench", "role": "scene", "osmTags": [["amenity=bench"]] },
+	{ "id": "school", "role": "excluded", "osmTags": [["amenity=school"]] }
+]
