@@ -34,7 +34,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 4. **Mystères uniquement dans des lieux publics non sensibles** (places, parcs, mais aussi commerces et services ouverts au public : une farce inoffensive ne nuit pas à leur réputation). Les lieux sensibles (écoles, lieux de culte, hôpitaux, cimetières, monuments aux morts) n’accueillent jamais de mystère : alibis seulement, avec des faits neutres ou positifs. Habitations et aires de jeux sont exclues.
 5. **Personnages toujours fictifs**, jamais le personnel réel d’un lieu.
 6. **Aucune dépendance réseau pendant le jeu.** Données préparées hors ligne, calculs sur le téléphone, jeu jouable hors connexion une fois la zone chargée.
-7. **Garde-fous légaux** : mention de fiction visible, pas de logos de marques, pas de photos de bâtiments, carte stylisée, attribution OpenStreetMap, droit de retrait d’un lieu sur demande.
+7. **Garde-fous légaux** : mention de fiction visible (écran de départ et À propos), pas de logos de marques, pas de photos de bâtiments, carte stylisée, attribution OpenStreetMap (bouton « i » sur la carte, texte complet dans À propos), droit de retrait d’un lieu sur demande.
 8. **Le moteur est du code pur** (aucune dépendance à l’interface), testé et reproductible à partir d’une seed.
 
 ## 5. Périmètre
@@ -67,6 +67,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 | Bâtiment d’un lieu de l’enquête coloré en interrogeant le fond de carte au point du lieu (zoom 15 au moins) ; sans bâtiment, seul le marqueur reste | Les tuiles n’ont pas d’identifiant de bâtiment et nos lieux n’ont qu’un point ; aucun changement du format des lieux |
 | Les types de lieux du catalogue portent `icon` (famille d’icône) et `label` (libellé français) pour la carte | Ajouter un type sans toucher au code de la carte |
 | Direction artistique : carte colorée et lisible, texte et repères (étiquettes, légende, durées, mentions) brutalistes en monospace ; lieux de l’enquête en aplat orange (jaune en sombre), lieu du mystère en magenta (rose en sombre), décor en pastilles de couleur par famille ; thème sombre en soirée | Repérer d’un coup d’œil les lieux de l’enquête sans alourdir la carte, avec une identité propre ; voir `docs/design/direction.md` |
+| La carte est le point d’entrée du jeu : un lieu, une tête de témoin ou la pastille d’un suspect ouvre le bon panneau puis la fiche ; trois versions d’un suspect (ce qu’il dit, ce que les autres disent, preuves et témoins) ; incohérences et alibis suffisants signalés seulement après mesure du trajet par le joueur ; ouvrir un lieu révèle tous ses faits d’un coup ; attribution repliée en « i » avec texte complet dans À propos | Le joueur garde l’initiative de la déduction, la même information est joignable par le lieu, la personne ou l’heure ; voir `docs/design/direction.md` |
 | PNJ (serveur, gardien) = sources d’indices, pas des personnages | Modèle plus simple, PNJ toujours fiables |
 | Le lieu d’un indice est celui du fait qu’il prouve | Évite une donnée en double |
 | SvelteKit (statique) + TypeScript + Vitest + Capacitor | Un seul code pour web et mobile |
@@ -91,6 +92,9 @@ Aucun jeu connu ne réunit les trois à la fois :
 | 5. Boucle de jeu complète | `briefs/05-game-loop.md` | ☐ |
 | 6. Hors-ligne et application mobile | `briefs/06-offline-mobile.md` | ☐ |
 | 7. CI/CD : tests (partie A, dès maintenant), builds mobiles (partie B, après l’étape 6) | `briefs/07-ci-cd.md` | ☐ |
+| 8. Design restant et finitions (brief à rédiger à la fin des autres) | — | ☐ |
+
+**Reporté à l’étape 8** (le design reste tel quel pendant les briefs 05 à 07) : orange de l’enquête jugé trop vif (variantes A à D comparées, couleur du thème sombre comprise) ; vraies illustrations pour les têtes des suspects ; chargement de la police IBM Plex Mono pour le texte HTML de l’interface (aujourd’hui seulement dans les glyphes de la carte) ; écrans manquants (confirmation de l’accusation, démarrage, rejeu de la révélation) ; contraste des bâtiments de décor, revue du jeu d’icônes et finition du thème sombre sur la carte ; régénération des maquettes pour qu’elles redeviennent la référence.
 
 **Phase de rédaction, avant l’étape 1** (avec `/openspec-explore`, sans changement OpenSpec) : ton, 3 scénarios (situation, scène, motifs et textes de révélation), liste d’au moins 12 prénoms, exemples de gabarits d’indices et de témoignages, règles d’écriture (pas d’accord de genre). Contenu encodé en JSON dans `catalog/` au brief 01 (les notes en prose ont été supprimées) ; décisions au §6.
 

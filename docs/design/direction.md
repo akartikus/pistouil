@@ -54,17 +54,29 @@ Un symbole blanc dans une pastille ronde colorée : croix (pharmacie), tasse (ba
 
 ## Écrans
 
-Maquette des trois écrans, en clair : `screens-mockup.png` (source modifiable : `screens-mockup.svg`). L’écran Carte seul, avec de vraies tuiles, est vérifié sur la page `/map` (brief 04).
+Trois maquettes, en clair :
 
-- **Navigation** : barre en bas avec trois onglets (Carte, Carnet, Suspects), onglet actif en orange, nombre de faits et de suspects en pastille noire.
-- **Carte** : panneau d’un lieu de l’enquête (faits découverts, bouton « TRAJET VERS… ») ; **curseur horaire** cadré avec l’heure en grand, qui place sur la carte une pastille à initiale par suspect, là où les faits découverts le situent ; une incohérence est signalée par un bandeau hachuré et par la pastille hachurée du suspect.
-- **Carnet** : deux onglets, chronologie et notes. La chronologie est un fil vertical, heures à gauche, une carte cadrée par fait avec le suspect concerné et sa source (indice, preuve, témoignage) ; deux faits incompatibles sont hachurés et reliés par une étiquette noire « ≠ INCOHÉRENCE ». Une note libre est en bas ; les annotations de lieux s’y rattachent.
-- **Suspects** : une carte par suspect avec sa phrase clé et son statut d’alibi (à vérifier, douteux, vérifié), **choisi par le joueur** : plein noir pour vérifié, hachuré pour douteux, tirets pour à vérifier. Bouton « ACCUSER » noir en bas, à bande hachurée, avec la mention « définitif » ; un écran de confirmation reste à dessiner.
+- `screens-mockup.png` : navigation, Carte avec curseur horaire, Carnet, Suspects (source modifiable : `screens-mockup.svg`). Son bandeau d’incohérence est montré comme automatique : la règle retenue est la suivante, **seulement après mesure du trajet** (voir plus bas et la maquette 3).
+- `screens-mockup-2.png` : panneau d’un lieu avec ses pièces, choix du trajet, fiche d’un suspect (`.svg`).
+- `screens-mockup-3.png` : une tête ouvre sa fiche, un suspect sur la carte, Réglages et À propos (`.svg`).
+
+L’écran Carte seul, avec de vraies tuiles, est vérifié sur la page `/map` (brief 04).
+
+**La carte est le point d’entrée.** Toucher un lieu, une tête de témoin ou la pastille d’un suspect ouvre le bon panneau, puis la fiche ; les onglets Carnet et Suspects servent à relire à son rythme.
+
+- **Navigation** : barre en bas avec trois onglets (Carte, Carnet, Suspects), onglet actif en orange, nombre de faits et de suspects en pastille noire ; une roue crantée dans l’en-tête ouvre les Réglages.
+- **Panneau d’un lieu** : rangée de **pièces** cliquables, un objet pour chaque preuve (ticket de caisse, addition, titre de transport, fiche de prêt, reçu postal), un pictogramme pour chaque PNJ (serveur, gardien, chauffeur, joggeur…), la tête de chaque suspect qui témoigne. Une pièce ouverte prend sa forme : un ticket a la forme d’un ticket, un témoignage porte la tête de celui qui parle, avec un bouton « FICHE DE … ▸ ». Les preuves et les PNJ portent la mention « FIABLE » ; un témoignage de suspect n’en porte jamais, sans quoi le jeu dévoilerait l’auteur. Deux boutons : « VERS LE LIEU DU MYSTÈRE » (trajet direct) et « TRAJET VERS… ».
+- **Choix du trajet** : liste des seuls lieux retenus (numérotés, le lieu du mystère en tête). Choisir un lieu trace l’itinéraire en pointillés bleus avec sa durée (« ~ » si estimé). Les durées déjà mesurées figurent dans la liste, les autres restent à « — » : choisir, c’est mesurer, et chaque mesure est notée dans le carnet.
+- **Curseur horaire** : cadré, avec l’heure en grand ; une pastille à initiale par suspect là où les faits découverts le situent. Toucher une pastille ouvre un panneau (où il est à cette heure, statut d’alibi, bouton « FICHE DE … ▸ »). Une incohérence (bandeau et pastille hachurés) n’apparaît **qu’après mesure** du trajet entre les deux lieux ; elle ne désigne jamais l’auteur.
+- **Carnet** : deux onglets, chronologie et notes. La chronologie est un fil vertical, heures à gauche, une carte cadrée par fait avec le suspect concerné et sa source (indice, preuve, témoignage) ; deux faits dont le trajet a été mesuré et qui sont incompatibles sont hachurés et reliés par une étiquette noire « ≠ INCOHÉRENCE ». Une note libre est en bas ; les annotations de lieux s’y rattachent.
+- **Suspects** : une carte par suspect avec sa phrase clé et son statut d’alibi (à vérifier, douteux, vérifié), **choisi par le joueur** : plein noir pour vérifié, hachuré pour douteux, tirets pour à vérifier. La **fiche** regroupe trois versions : ce qu’il dit lui-même, ce que les autres disent de lui, preuves et témoins. Elle **se remplit au fil de l’enquête** : au départ elle ne montre que sa tête, son nom et son statut d’alibi, puis chaque lieu exploré y ajoute ses pièces ; une rubrique vide affiche un cadre en tirets « RIEN POUR L’INSTANT » (le jeu n’annonce jamais combien de pièces restent à trouver), avec la mention « N LIEUX EXPLORÉS SUR M ». Bouton « ACCUSER » noir en bas, à bande hachurée, avec la mention « définitif » ; un écran de confirmation reste à dessiner.
+- **Têtes** : visages simples dessinés par le code, un par suspect, qui varieront selon son identifiant (lunettes, chapeau, cheveux) ; de vraies illustrations pourront les remplacer plus tard sans changer les écrans.
+- **Réglages et À propos** : thème clair ou sombre, rappel de l’enquête (commune, difficulté, graine, version des données), nouvelle enquête, et le texte de crédits : fiction, données © OpenStreetMap contributors (licence ODbL), fond de carte Protomaps, police IBM Plex Mono (licence OFL).
 
 Règles communes : cadres noirs de 3 px, ombres dures décalées, monospace gras en capitales, aucun état codé par une couleur de la palette réservée (orange de l’enquête, magenta du mystère, bleu du trajet) : les états passent par le plein, le hachuré et les tirets.
 
-À trancher au brief 05 : la ligne « ??? un fait reste à découvrir » du panneau de lieu n’a de sens que s’il existe des liens « débloqué par » entre lieux ; si ouvrir un lieu révèle tous ses faits d’un coup, on la retire.
+Décidé pour le brief 05 : ouvrir un lieu révèle tous ses faits d’un coup (les liens « débloqué par » restent à l’intérieur d’un lieu), donc la ligne « ??? un fait reste à découvrir » de la première maquette est retirée.
 
 ## Garde-fous
 
-Attribution « © OpenStreetMap contributors » et schéma de tuiles toujours visibles, mention de fiction visible, aucune photo de bâtiment, aucun logo.
+Attribution « © OpenStreetMap contributors » et schéma de tuiles (Protomaps) : sur la carte, un bouton « i » toujours présent (texte déplié quelques secondes à l’affichage de la carte, puis replié), et le texte complet dans À propos, comme l’autorisent les règles d’attribution d’OpenStreetMap. Mention de fiction visible sur l’écran de départ et dans À propos. Aucune photo de bâtiment, aucun logo.
