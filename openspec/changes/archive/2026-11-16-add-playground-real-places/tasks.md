@@ -9,8 +9,8 @@
 ## 2. Page
 
 - [x] 2.1 Ajouter au `.gitignore` `static/dev-data` et expliquer dans `tools/data-preparation/README.md` comment y copier `manifest.json` et `places/` (vérifier avec `git status` qu'une copie n'apparaît pas)
-- [ ] 2.2 Dans `src/routes/playground/+page.svelte`, ajouter le choix de source (lieux de test par défaut, vrais lieux), le centre (latitude, longitude) et le nombre de lieux ; lire `manifest.json` et les cases par `fetch` ; réinitialiser les lieux actifs quand la source ou la sélection change ; vérifier à la main avec `npm run dev` que le jeu de test reste inchangé
-- [ ] 2.3 Afficher que les durées sont des estimations à vol d'oiseau et, quand les fichiers manquent, un message qui explique comment les fournir en laissant le jeu de test utilisable ; vérifier à la main avec et sans `static/dev-data`
+- [x] 2.2 Dans `src/routes/playground/+page.svelte`, ajouter le choix de source (lieux de test par défaut, vrais lieux), le centre (latitude, longitude) et le nombre de lieux ; lire `manifest.json` et les cases par `fetch` ; réinitialiser les lieux actifs quand la source ou la sélection change ; vérifier à la main avec `npm run dev` que le jeu de test reste inchangé
+- [x] 2.3 Afficher que les durées sont des estimations à vol d'oiseau et, quand les fichiers manquent, un message qui explique comment les fournir en laissant le jeu de test utilisable ; vérifier à la main avec et sans `static/dev-data`
 - [x] 2.4 Vérifier avec les données PACA copiées dans `static/dev-data` : autour de la mairie de Fuveau (43.4539, 5.5609) avec 40 lieux, générer plusieurs enquêtes (graines et difficultés variées), constater qu'au moins une réussit et que les échecs affichent leur raison ; consigner le résultat dans la description du changement
 
 ## 3. Contrôles et cap
