@@ -202,15 +202,23 @@ Chaque lieu d’un fichier SHALL devenir un `Place` du modèle : `type` devient 
 - **THEN** il est ignoré
 
 ### Requirement: Trajets estimés à vol d’oiseau
-Pour les vrais lieux, la page SHALL fournir au moteur une matrice complète de trajets estimés à partir de la distance à vol d’oiseau, selon la même formule que le jeu de test riche. Ces trajets SHALL être présentés comme des estimations.
+Pour les vrais lieux, la page SHALL fournir au moteur une matrice complète de trajets : calculés sur le réseau piéton (capability `pedestrian-routing`) quand les fichiers de graphe sont disponibles, estimés à vol d’oiseau sinon ou pour une paire non reliée. Elle SHALL indiquer l’origine des durées.
 
 #### Scenario: Matrice complète
 - **WHEN** la page retient N vrais lieux
 - **THEN** il existe un trajet pour chaque paire de ces lieux, de distance et de durée strictement positives
 
+#### Scenario: Réseau piéton disponible
+- **WHEN** les fichiers de graphe sont disponibles pour les cases voisines
+- **THEN** la page calcule les trajets sur le réseau piéton et indique que les durées suivent les rues
+
 #### Scenario: Estimation signalée
-- **WHEN** la page utilise de vrais lieux
-- **THEN** elle indique que les durées sont des estimations à vol d’oiseau
+- **WHEN** les fichiers de graphe sont absents
+- **THEN** la page utilise l’estimation à vol d’oiseau et indique que les durées sont des estimations
+
+#### Scenario: Trajets partiellement estimés
+- **WHEN** le réseau ne relie pas certaines paires de lieux
+- **THEN** la page indique le nombre de trajets estimés à vol d’oiseau
 
 ### Requirement: Fichiers absents signalés
 Quand les fichiers de lieux ne sont pas disponibles, la page SHALL le dire et indiquer comment les fournir, sans planter, et le jeu de lieux de test SHALL rester utilisable.
