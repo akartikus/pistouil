@@ -94,7 +94,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 
 **Phase de rédaction, avant l’étape 1** (avec `/openspec-explore`, sans changement OpenSpec) : ton, 3 scénarios (situation, scène, motifs et textes de révélation), liste d’au moins 12 prénoms, exemples de gabarits d’indices et de témoignages, règles d’écriture (pas d’accord de genre). Contenu encodé en JSON dans `catalog/` au brief 01 (les notes en prose ont été supprimées) ; décisions au §6.
 
-**Phase de design, avant l’étape 4** (avec `/openspec-explore`, sans changement OpenSpec) : direction artistique (palette, police, ton), croquis des trois écrans (carte, carnet, suspects) et premières icônes. Les décisions vont au §6 ; les croquis sont un lien Figma ou des images dans `docs/design/`. Direction artistique et écran Carte faits (`docs/design/direction.md`) ; les écrans Carnet et Suspects restent à dessiner avant le brief 05.
+**Phase de design, avant l’étape 4** (avec `/openspec-explore`, sans changement OpenSpec) : direction artistique (palette, police, ton), croquis des trois écrans (carte, carnet, suspects) et premières icônes. Les décisions vont au §6 ; les croquis sont un lien Figma ou des images dans `docs/design/`. Faite : direction artistique et croquis des trois écrans (`docs/design/direction.md`, `screens-mockup.png`) ; reste l’écran de confirmation de l’accusation, à dessiner avec le brief 05.
 
 Jalon de validation après l’étape 5 : **une enquête jouable de bout en bout à Fuveau**, testée par 3 à 5 personnes. Question à trancher : le cœur du jeu est-il amusant ?
 

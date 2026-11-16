@@ -54,7 +54,16 @@ Un symbole blanc dans une pastille ronde colorée : croix (pharmacie), tasse (ba
 
 ## Écrans
 
-Seul l’écran **Carte** est dessiné (`map-mockup.png`, avec légende). Les écrans **Carnet** et **Suspects** sont à dessiner avant le brief 05, dans le même registre : fonds clairs, cadres noirs épais, texte monospace.
+Maquette des trois écrans, en clair : `screens-mockup.png` (source modifiable : `screens-mockup.svg`). L’écran Carte seul, avec de vraies tuiles, est vérifié sur la page `/map` (brief 04).
+
+- **Navigation** : barre en bas avec trois onglets (Carte, Carnet, Suspects), onglet actif en orange, nombre de faits et de suspects en pastille noire.
+- **Carte** : panneau d’un lieu de l’enquête (faits découverts, bouton « TRAJET VERS… ») ; **curseur horaire** cadré avec l’heure en grand, qui place sur la carte une pastille à initiale par suspect, là où les faits découverts le situent ; une incohérence est signalée par un bandeau hachuré et par la pastille hachurée du suspect.
+- **Carnet** : deux onglets, chronologie et notes. La chronologie est un fil vertical, heures à gauche, une carte cadrée par fait avec le suspect concerné et sa source (indice, preuve, témoignage) ; deux faits incompatibles sont hachurés et reliés par une étiquette noire « ≠ INCOHÉRENCE ». Une note libre est en bas ; les annotations de lieux s’y rattachent.
+- **Suspects** : une carte par suspect avec sa phrase clé et son statut d’alibi (à vérifier, douteux, vérifié), **choisi par le joueur** : plein noir pour vérifié, hachuré pour douteux, tirets pour à vérifier. Bouton « ACCUSER » noir en bas, à bande hachurée, avec la mention « définitif » ; un écran de confirmation reste à dessiner.
+
+Règles communes : cadres noirs de 3 px, ombres dures décalées, monospace gras en capitales, aucun état codé par une couleur de la palette réservée (orange de l’enquête, magenta du mystère, bleu du trajet) : les états passent par le plein, le hachuré et les tirets.
+
+À trancher au brief 05 : la ligne « ??? un fait reste à découvrir » du panneau de lieu n’a de sens que s’il existe des liens « débloqué par » entre lieux ; si ouvrir un lieu révèle tous ses faits d’un coup, on la retire.
 
 ## Garde-fous
 
