@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { validateCatalog } from '#lib/engine/catalog.js';
 	import { rawStarterCatalog, richPlaces, richRoutes } from '#lib/engine/fixtures.js';
-	import { LIE_MOTIVES, type Difficulty, type LieMotive } from '#lib/engine/types.js';
+	import { LIE_MOTIVES, type Difficulty, type LieMotive, type Place } from '#lib/engine/types.js';
 	import {
 		checkAccusation,
 		describeScenarios,
@@ -9,6 +9,14 @@
 		discoveredFactIds,
 		runPlayground
 	} from '#lib/playground/playground.js';
+	import {
+		cellsAround,
+		estimateRoutes,
+		nearestPlaces,
+		toPlaces,
+		type Grid,
+		type RawPlace
+	} from '#lib/playground/real-places.js';
 
 	const catalog = validateCatalog(rawStarterCatalog);
 	const scenarios = describeScenarios(catalog);
@@ -17,7 +25,22 @@
 	let difficulty = $state<Difficulty>(2);
 	let scenarioId = $state('');
 	let motive = $state('');
-	let activePlaceIds = $state(richPlaces.map((place) => place.osmId));
+	let source = $state<'test' | 'real'>('test');
+	let centerLat = $state(43.4539);
+	let centerLon = $state(5.5609);
+	let count = $state(40);
+	// Real places read from static/dev-data (see tools/data-preparation/README.md).
+	let real = $state<{ status: 'loading' | 'missing' | 'ready'; places: Place[] }>({
+		status: 'loading',
+		places: []
+	});
+	let loadToken = 0;
+
+	const places = $derived(source === 'test' ? richPlaces : real.places);
+	const routes = $derived(source === 'test' ? richRoutes : estimateRoutes(real.places));
+
+	// A new source or selection starts with every place active.
+	let activePlaceIds = $derived(places.map((place) => place.osmId));
 	let tab = $state<'simulation' | 'snapshot'>('simulation');
 	let allPlaces = $state(false);
 	let reveal = $state(false);
@@ -29,7 +52,7 @@
 	);
 
 	const run = $derived(
-		runPlayground(richPlaces, richRoutes, catalog, {
+		runPlayground(places, routes, catalog, {
 			seed: Number(seed) || 0,
 			difficulty,
 			scenarioId: scenarioId || null,
@@ -37,6 +60,38 @@
 			activePlaceIds
 		})
 	);
+
+	async function readJson<T>(url: string): Promise<T | null> {
+		try {
+			const response = await fetch(url);
+			return response.ok ? ((await response.json()) as T) : null;
+		} catch {
+			return null; // missing file, or the dev server answered with a page
+		}
+	}
+
+	// The count nearest places of the cells around the center.
+	$effect(() => {
+		if (source !== 'real') return;
+		const center = { lat: Number(centerLat), lon: Number(centerLon) };
+		const wanted = Number(count) || 0;
+		const token = ++loadToken;
+		real = { status: 'loading', places: [] };
+		(async () => {
+			const manifest = await readJson<{ grid: Grid }>('/dev-data/manifest.json');
+			if (!manifest) return token === loadToken ? (real = { status: 'missing', places: [] }) : null;
+			const cells = cellsAround(manifest.grid, center.lat, center.lon);
+			const files = await Promise.all(
+				cells.map((cell) => readJson<RawPlace[]>(`/dev-data/places/${cell}.json`))
+			);
+			if (token !== loadToken) return;
+			const found = toPlaces(
+				files.flatMap((file) => file ?? []),
+				catalog
+			);
+			real = { status: 'ready', places: nearestPlaces(found, center, wanted) };
+		})();
+	});
 
 	// A new investigation starts a new attempt.
 	$effect(() => {
@@ -110,15 +165,52 @@
 		</label>
 	</section>
 
+	<section class="controls">
+		<label>
+			Lieux
+			<select bind:value={source}>
+				<option value="test">Lieux de test</option>
+				<option value="real">Vrais lieux (OSM)</option>
+			</select>
+		</label>
+		{#if source === 'real'}
+			<label>
+				Latitude
+				<input type="number" step="0.0001" bind:value={centerLat} />
+			</label>
+			<label>
+				Longitude
+				<input type="number" step="0.0001" bind:value={centerLon} />
+			</label>
+			<label>
+				Nombre de lieux
+				<input type="number" min="1" bind:value={count} />
+			</label>
+		{/if}
+	</section>
+	{#if source === 'real'}
+		{#if real.status === 'missing'}
+			<p class="error">
+				Aucune donnée : copier la sortie du script dans <code>static/dev-data/</code>
+				(voir <code>tools/data-preparation/README.md</code>), ou revenir aux lieux de test.
+			</p>
+		{:else}
+			<p class="note">
+				Durées estimées à vol d’oiseau (×1,3, 5 km/h), pas des trajets réels
+				{real.status === 'loading' ? ' : chargement…' : `: ${real.places.length} lieux.`}
+			</p>
+		{/if}
+	{/if}
+
 	<fieldset>
 		<legend>Lieux actifs</legend>
 		<div class="buttons">
-			<button type="button" onclick={() => (activePlaceIds = richPlaces.map((p) => p.osmId))}>
+			<button type="button" onclick={() => (activePlaceIds = places.map((p) => p.osmId))}>
 				Tout cocher
 			</button>
 			<button type="button" onclick={() => (activePlaceIds = [])}>Tout décocher</button>
 		</div>
-		{#each richPlaces as place (place.osmId)}
+		{#each places as place (place.osmId)}
 			<label class="place">
 				<input type="checkbox" bind:group={activePlaceIds} value={place.osmId} />
 				{place.name} <small>({place.typeId}{place.removed ? ', retiré' : ''})</small>
@@ -337,7 +429,7 @@
 			{#if !run.ok}
 				<p class="error">Génération échouée : <code>{run.reason}</code></p>
 			{:else}
-				{@const snapshot = describeSnapshot(run.investigation, richPlaces)}
+				{@const snapshot = describeSnapshot(run.investigation, places)}
 				<h3>Choix</h3>
 				<table>
 					<tbody>

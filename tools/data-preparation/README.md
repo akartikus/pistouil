@@ -31,6 +31,14 @@ Options : `--catalog` (défaut `../../catalog/place-types.json`) et `--removed` 
 
 Case : `ligne = floor(lat × 100000 / 1800)`, `colonne = floor(lon × 100000 / 2500)` (coordonnées arrondies à 5 décimales).
 
+## Essayer les lieux dans le playground
+
+Pour voir le moteur sur de vrais lieux (`npm run dev`, page `/playground`, source « Vrais lieux »), copier une sortie du script dans `static/dev-data/` (ignoré par git) :
+
+```bash
+mkdir -p static/dev-data && cp -r tools/data-preparation/out/manifest.json tools/data-preparation/out/places static/dev-data/
+```
+
 ## Tests
 
 ```bash

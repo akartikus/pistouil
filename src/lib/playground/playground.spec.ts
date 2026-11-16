@@ -20,6 +20,7 @@ import {
 	richRoutes
 } from '../engine/fixtures';
 import { missingPairs } from '../engine/routes';
+import { estimateRoutes, toPlaces, type RawPlace } from './real-places';
 import { formatTime } from '../engine/render';
 import type { Investigation } from '../engine/types';
 
@@ -412,5 +413,53 @@ describe('day and opening hours', () => {
 		const value = (name: string) => snapshot.choices.find((choice) => choice.name === name)?.value;
 		expect(value('dayType')).toBe(investigation.dayType);
 		expect(['alibi', 'framing', 'closed']).toContain(value('lieKind'));
+	});
+});
+
+describe('real places', () => {
+	// A few dozen places like the ones written by the OSM preparation, around one center.
+	const kinds = [
+		'park',
+		'fountain',
+		'square',
+		'cafe',
+		'bakery',
+		'pharmacy',
+		'library',
+		'bus_stop',
+		'bar',
+		'restaurant',
+		'post_office',
+		'town_hall',
+		'school',
+		'place_of_worship'
+	];
+	const raw: RawPlace[] = Array.from({ length: 36 }, (_, i) => ({
+		osmId: `n${i + 1}`,
+		name: `Lieu ${i + 1}`,
+		type: kinds[i % kinds.length],
+		lat: 43.4531 + (i % 6) * 0.0008,
+		lon: 5.5612 + Math.floor(i / 6) * 0.001
+	}));
+	const places = toPlaces(raw, catalog);
+	const routes = estimateRoutes(places);
+
+	it('runs on converted places and estimated routes without a matrix error', () => {
+		const result = runPlayground(
+			places,
+			routes,
+			catalog,
+			options({ activePlaceIds: places.map((place) => place.osmId) })
+		);
+		expect(result.matrix.places).toHaveLength(places.length);
+		if (!result.ok) expect(typeof result.reason).toBe('string');
+	});
+
+	it('generates an investigation for at least one seed', () => {
+		const ids = places.map((place) => place.osmId);
+		const results = [1, 2, 3, 4, 5].map((seed) =>
+			runPlayground(places, routes, catalog, options({ seed, activePlaceIds: ids }))
+		);
+		expect(results.some((result) => result.ok)).toBe(true);
 	});
 });

@@ -28,3 +28,6 @@ tools/data-preparation/out
 __pycache__
 .pytest_cache
 tools/data-preparation/data
+
+# Playground: real places copied from tools/data-preparation/out
+static/dev-data
