@@ -10,7 +10,7 @@ SvelteKit statique (adapter-static, `ssr = false`), TypeScript strict, Vitest, M
 
 ## Règles à ne jamais enfreindre
 
-- En mode hors ligne, aucune requête réseau pendant une partie (seuls les fichiers de l’application et de la zone téléchargée sont lus).
+- Aucune requête réseau pendant une partie : seuls les fichiers de l’application sont lus.
 - Mystères uniquement sur des lieux de rôle `scene` (publics, non sensibles) ; personnages toujours fictifs ; seul l'auteur ment.
 - Pas de logos ni de photos de bâtiments.
 - `src/lib/engine` est du code pur : ni Svelte, ni DOM, ni carte, ni réseau, ni `Math.random`.

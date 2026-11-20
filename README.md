@@ -20,6 +20,7 @@ Prérequis : Node.js 20+. Pour préparer les données OSM : Python 3 (et `osmium
 - [`guide/OPENSPEC.md`](guide/OPENSPEC.md) : la méthode de travail, pas à pas.
 - [`guide/ENGINE.md`](guide/ENGINE.md) : comment fonctionne le moteur (couches, faits, solveur, règles).
 - [`guide/ARCHITECTURE.md`](guide/ARCHITECTURE.md) : l'architecture et les structures de données (couches, fichiers de données, Worker, sauvegarde, livraison).
+- [`guide/ADD-COMMUNE.md`](guide/ADD-COMMUNE.md) : ajouter une commune, et ce qui passerait en ligne.
 
 ## Travailler avec OpenSpec
 
@@ -53,7 +54,7 @@ Le workflow `.github/workflows/build-android.yml` produit un APK **debug** (sans
 3. À la fin, l'APK est dans les *Artifacts* de l'exécution (`pistouil-debug-apk`), conservé 7 jours. Le télécharger, le décompresser et l'installer sur le téléphone.
 
 - Durée mesurée : environ 2 minutes (runner Linux, donc environ 2 minutes facturées par build). Un seul build à la fois ; durée maximale : 10 minutes.
-- Limite actuelle : l'APK ne contient aucune donnée. Le jeu lit l'index des communes, les lieux et les tuiles de la carte depuis `VITE_DATA_URL` et `VITE_TILES_URL` (fixés à la construction, défaut `/dev-data`) ; tant que ces données ne sont pas hébergées et que ces adresses ne sont pas fournies au build, la recherche d'une commune ne charge rien et la carte reste vide. L'hébergement des données est hors du brief 07.
+- L'APK contient les données de Fuveau (environ 12 Mo : manifeste, lieux, graphe piéton, tuiles de la carte, dans `static/data/fuveau/`) : le jeu se joue sans connexion, aucune variable n'est à fournir au build. Elles se régénèrent avec `tools/embedded-data/build.sh` (voir son README et `guide/ADD-COMMUNE.md`). Données dérivées d'OpenStreetMap (licence ODbL), fond de carte Protomaps : l'attribution est visible dans l'application et reste à conserver.
 - Le workflow ne lit aucun secret. La version de l'application reste `1.0` (`versionCode 1`).
 
 ## Documents
