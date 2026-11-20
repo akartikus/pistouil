@@ -92,8 +92,8 @@ Aucun jeu connu ne réunit les trois à la fois :
 | 3. Réseau piéton et trajets | `briefs/03-routes.md` | ☑ |
 | 4. Carte et identité visuelle | `briefs/04-map.md` | ☑ |
 | 5. Boucle de jeu complète | `briefs/05-game-loop.md` | ☑ |
-| 6. Hors-ligne et application mobile | `briefs/06-offline-mobile.md` | ☐ |
-| 7. CI/CD : tests (partie A, faite), build Android (partie B, faite : APK debug ; ses données arrivent avec `embed-fuveau-data`), build iOS (partie C, reportée : pas de compte Apple Developer) | `briefs/07-ci-cd.md` | ☐ |
+| 6. Hors-ligne et application mobile : jeu hors ligne par construction, données de Fuveau embarquées (PWA vérifiée en mode avion sur navigateur ; APK Android à vérifier sur téléphone ; iOS reporté, pas de compte Apple Developer ; téléchargement de zones abandonné, voir `guide/ADD-COMMUNE.md`) | `briefs/06-offline-mobile.md` | ☐ |
+| 7. CI/CD : tests (partie A, faite), build Android (partie B, faite : APK debug, avec les données de Fuveau), build iOS (partie C, reportée : pas de compte Apple Developer) | `briefs/07-ci-cd.md` | ☐ |
 | 8. Design restant et finitions (brief à rédiger à la fin des autres) | — | ☐ |
 
 **Reporté à l’étape 8** (le design reste tel quel pendant les briefs 05 à 07) : orange de l’enquête jugé trop vif (variantes A à D comparées, couleur du thème sombre comprise) ; vraies illustrations pour les têtes des suspects ; chargement de la police IBM Plex Mono pour le texte HTML de l’interface (aujourd’hui seulement dans les glyphes de la carte) ; écrans manquants (confirmation de l’accusation, démarrage, rejeu de la révélation) ; contraste des bâtiments de décor, revue du jeu d’icônes et finition du thème sombre sur la carte ; régénération des maquettes pour qu’elles redeviennent la référence ; icônes et écran de lancement des applications Android et iOS (aujourd’hui ceux de Capacitor par défaut).
