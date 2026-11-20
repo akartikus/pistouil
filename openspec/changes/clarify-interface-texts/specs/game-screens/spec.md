@@ -13,6 +13,17 @@ Les textes de l’interface SHALL n’employer que des mots que le joueur compre
 - **WHEN** le jeu ne peut pas lancer ou reprendre une enquête
 - **THEN** le message dit ce qui s’est passé et ce que le joueur peut faire
 
+### Requirement: Boutons de trajet expliqués
+Dans le panneau d’un lieu, les boutons « Vers le lieu du mystère » et « Trajet vers… » SHALL être précédés d’une courte étiquette qui dit à quoi ils servent : « Calculer le trajet à pied ».
+
+#### Scenario: Étiquette au-dessus des boutons
+- **WHEN** le joueur ouvre le panneau d’un lieu de l’enquête
+- **THEN** l’étiquette « Calculer le trajet à pied » s’affiche juste au-dessus des boutons de trajet
+
+#### Scenario: Lieu du mystère
+- **WHEN** le joueur ouvre le panneau du lieu du mystère, où seul « Trajet vers… » est proposé
+- **THEN** l’étiquette « Calculer le trajet à pied » s’affiche aussi au-dessus de ce bouton
+
 ### Requirement: Localisation grisée tant qu’elle n’est pas disponible
 Tant que la localisation n’a pas été validée sur appareil, le bouton « Je me localise » SHALL être grisé et sans effet, avec la mention « Bientôt disponible » ; le bouton « Fuveau » SHALL rester utilisable.
 

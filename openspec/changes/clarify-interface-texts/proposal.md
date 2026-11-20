@@ -9,6 +9,7 @@ Les textes de l'interface emploient des mots du métier que le joueur ne connaî
 - **Vocabulaire sans jargon** : un guide de vocabulaire (`docs/design/wording.md`) fixe un mot par notion (indice et témoignage, lieu du mystère, temps de marche, numéro de l'enquête) et les mots à éviter. Tous les textes de `texts.ts` sont relus avec lui : guide, messages d'erreur, verdicts, carnet, fiches, Réglages. Les libellés de boutons déjà clairs ne changent pas.
 - **Guide de départ réécrit** : trois bulles qui disent quoi faire et pourquoi (une farce a eu lieu, quoi toucher, comment vérifier un alibi).
 - **Réglages lisibles** : « numéro de l'enquête » au lieu de « graine » ; la date des données en français (« 15 novembre 2026 ») au lieu du nom du fichier source.
+- **Boutons de trajet expliqués** : une étiquette « Calculer le trajet à pied » au-dessus de « Vers le lieu du mystère » et « Trajet vers… » dans le panneau d'un lieu, pour dire à quoi ils servent.
 - **« Je me localise » grisé** tant que la localisation n'est pas validée sur appareil, avec la mention « Bientôt disponible ». Un seul réglage dans le code à repasser à `true` ensuite.
 - **Horaires d'ouverture en français** : jours, heures, fermetures, jours fériés, mois et dates traduits (`lun.–sam. 8h30–20h ; dim. 8h30–12h30 ; fermé les jours fériés`), dans le panneau d'un lieu de décor.
 - **Garde-fou** : un test vérifie qu'aucun texte de l'interface n'emploie un terme interne interdit.

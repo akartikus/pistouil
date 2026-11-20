@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import type { Difficulty } from '#lib/engine/types.js';
 	import { game } from '#lib/game/game.svelte.js';
+	import { LOCATE_AVAILABLE } from '#lib/game/features.js';
 	import { locate as locateDevice, needsExplanation } from '#lib/game/locate.js';
 	import { isFinished, type SavedGame } from '#lib/game/save.js';
 	import { shippedCommune } from '#lib/game/shipped.js';
@@ -127,9 +128,14 @@
 					<p>{texts.start.locateWhy}</p>
 					<button class="btn solid wide" onclick={locate}>{texts.start.locateContinue}</button>
 				{:else}
-					<button class="btn solid wide" onclick={askLocation} disabled={locating}>
+					<button
+						class="btn solid wide"
+						onclick={askLocation}
+						disabled={locating || !LOCATE_AVAILABLE}
+					>
 						{locating ? texts.start.locating : texts.start.locate}
 					</button>
+					{#if !LOCATE_AVAILABLE}<p class="note">{texts.start.locateSoon}</p>{/if}
 				{/if}
 				<button
 					class="btn solid wide"

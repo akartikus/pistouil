@@ -52,7 +52,9 @@
 					.settings.seed}
 				{game.view.investigation.seed}
 			</p>
-			<p>{texts.settings.dataVersion} : {game.view.dataVersion}</p>
+			<p>
+				{texts.settings.dataVersion} : {texts.settings.dataValue(game.view.dataVersion)}
+			</p>
 			<p>
 				{texts.settings.status} : {game.revelation
 					? texts.settings.finished
