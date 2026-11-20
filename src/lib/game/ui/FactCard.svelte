@@ -82,14 +82,14 @@
 		background: var(--paper);
 	}
 	.card.hatched > header {
-		background: var(--ink);
+		background: var(--strong);
 	}
 	header {
 		display: flex;
 		justify-content: space-between;
 		padding: 3px 8px;
-		background: var(--ink);
-		color: var(--paper);
+		background: var(--strong);
+		color: var(--on-strong);
 		font-weight: 700;
 		font-size: 11px;
 		text-transform: uppercase;

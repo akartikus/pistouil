@@ -131,7 +131,7 @@
 			id: 'building-outline',
 			type: 'line',
 			source: 'buildings-highlight',
-			paint: { 'line-color': colors.ink, 'line-width': 3 }
+			paint: { 'line-color': colors.frame, 'line-width': 3 }
 		});
 		m.addLayer({
 			id: 'route-line',
@@ -395,6 +395,7 @@
 	style:--shadow={colors.shadow}
 	style:--number={colors.numberFill}
 	style:--number-ink={colors.numberInk}
+	style:--frame={colors.frame}
 	style:--icon-filter={theme === 'dark' ? 'invert(1)' : 'none'}
 >
 	{#if error}<p class="error">{error}</p>{/if}
@@ -434,7 +435,7 @@
 		font-size: 15px;
 		background: var(--number);
 		color: var(--number-ink);
-		border: 2px solid var(--ink);
+		border: 2px solid var(--frame);
 	}
 	.map :global(.pin.mystery .num) {
 		background: var(--mystery);
@@ -450,7 +451,7 @@
 		font-size: 10.5px;
 		background: var(--paper);
 		color: var(--ink);
-		border: 2px solid var(--ink);
+		border: 2px solid var(--frame);
 		box-shadow: 3px 3px 0 var(--shadow);
 	}
 	.map :global(.route-label .text) {
@@ -460,7 +461,7 @@
 		font-weight: bold;
 		background: var(--number);
 		color: var(--number-ink);
-		border: 2px solid var(--ink);
+		border: 2px solid var(--frame);
 		box-shadow: 3px 3px 0 var(--shadow);
 	}
 	.map :global(.route-label.approximate .text::before) {
@@ -471,7 +472,7 @@
 		border-radius: 0;
 		background: var(--paper);
 		color: var(--ink);
-		border: 3px solid var(--ink);
+		border: 3px solid var(--frame);
 		box-shadow: 5px 5px 0 var(--shadow);
 	}
 	.map :global(.info-popup .maplibregl-popup-tip) {
@@ -504,7 +505,7 @@
 		font-weight: bold;
 		background: var(--paper);
 		color: var(--ink);
-		border: 3px solid var(--ink);
+		border: 3px solid var(--frame);
 		cursor: pointer;
 	}
 	.map :global(.chip.conflict) {
@@ -520,7 +521,7 @@
 	.map :global(.chip.selected) {
 		box-shadow:
 			0 0 0 3px var(--paper),
-			0 0 0 6px var(--ink);
+			0 0 0 6px var(--frame);
 	}
 	.map :global(.pin) {
 		cursor: pointer;
@@ -529,7 +530,7 @@
 	.map :global(.maplibregl-ctrl-attrib) {
 		background: var(--paper);
 		color: var(--ink);
-		border: 2px solid var(--ink);
+		border: 2px solid var(--frame);
 		box-shadow: 2px 2px 0 var(--shadow);
 		font-family: inherit;
 		font-weight: normal;

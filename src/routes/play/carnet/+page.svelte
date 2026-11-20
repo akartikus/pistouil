@@ -157,7 +157,7 @@
 		padding: 0 0 0 4.2rem;
 		display: grid;
 		gap: 0.7rem;
-		border-left: 3px solid var(--ink);
+		border-left: 3px solid var(--frame);
 		margin-left: 3.4rem;
 	}
 	.timeline li {
@@ -177,7 +177,7 @@
 	.verdict {
 		margin: 4px 0 0;
 		padding: 0.3rem 0.5rem;
-		border: 2.5px solid var(--ink);
+		border: 2.5px solid var(--frame);
 		font-size: 12px;
 		font-weight: 700;
 	}

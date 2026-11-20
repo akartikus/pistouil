@@ -44,7 +44,7 @@
 		width: 4.6rem;
 		padding: 0.3rem 0.2rem;
 		background: var(--paper);
-		border: 3px solid var(--ink);
+		border: 3px solid var(--frame);
 		cursor: pointer;
 		font-size: 9px;
 		font-weight: 700;
@@ -53,8 +53,8 @@
 		text-align: center;
 	}
 	.piece.selected {
-		background: var(--ink);
-		color: var(--paper);
+		background: var(--solid);
+		color: var(--on-solid);
 		box-shadow: 3px 3px 0 var(--shadow);
 	}
 	img {

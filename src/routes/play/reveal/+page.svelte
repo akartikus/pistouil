@@ -159,7 +159,7 @@
 	}
 	.stage {
 		position: relative;
-		border: 3px solid var(--ink);
+		border: 3px solid var(--frame);
 	}
 	.stage :global(.map) {
 		position: absolute;
@@ -181,8 +181,8 @@
 		text-decoration: none;
 	}
 	.clock {
-		background: var(--ink);
-		color: var(--paper);
+		background: var(--strong);
+		color: var(--on-strong);
 		padding: 0 0.5rem;
 		font-weight: 700;
 	}

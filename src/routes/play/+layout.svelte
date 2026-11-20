@@ -68,8 +68,9 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 0.5rem 0.8rem;
-		background: var(--ink);
-		color: var(--paper);
+		background: var(--strong);
+		color: var(--on-strong);
+		border-bottom: 3px solid var(--frame);
 	}
 	h1 {
 		font-size: 1.1rem;
@@ -105,7 +106,7 @@
 	}
 	nav {
 		display: flex;
-		border-top: 3px solid var(--ink);
+		border-top: 3px solid var(--frame);
 		background: var(--paper);
 	}
 	nav a {
@@ -116,7 +117,7 @@
 		text-transform: uppercase;
 		text-decoration: none;
 		color: var(--ink);
-		border-right: 3px solid var(--ink);
+		border-right: 3px solid var(--frame);
 		position: relative;
 	}
 	nav a:last-child {
@@ -129,8 +130,8 @@
 	.badge {
 		margin-left: 4px;
 		padding: 0 5px;
-		background: var(--ink);
-		color: var(--paper);
+		background: var(--strong);
+		color: var(--on-strong);
 		font-size: 11px;
 	}
 </style>
