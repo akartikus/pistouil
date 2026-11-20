@@ -7,7 +7,7 @@
 - [x] 1.3 Créer `.github/workflows/build-android.yml` (`workflow_dispatch`, garde `master` en première étape, `concurrency` sans annulation, `timeout-minutes`, `permissions: contents: read`, Node 22, JDK 21, tests, build, sync, Gradle, `upload-artifact` avec `retention-days` court) ; vérifier que `npx prettier --check .github` passe
 - [x] 1.4 Lancer le workflow depuis une branche autre que `master` ; vérifier qu'il échoue tout de suite avec le message explicite
 - [x] 1.5 Lancer le workflow depuis `master` ; vérifier qu'un APK est en artefact, l'installer sur un téléphone Android et vérifier que l'application démarre
-- [ ] 1.6 Vérifier qu'un push sans lancement manuel ne démarre aucun build, et noter la durée et les minutes consommées de l'exécution 1.5
+- [x] 1.6 Vérifier qu'un push sans lancement manuel ne démarre aucun build, et noter la durée et les minutes consommées de l'exécution 1.5
 
 ## 2. Documentation
 
