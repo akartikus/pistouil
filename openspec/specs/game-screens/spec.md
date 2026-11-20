@@ -6,11 +6,15 @@
 ## Requirements
 
 ### Requirement: Navigation et réglages
-Pendant une enquête, une barre en bas SHALL donner accès aux écrans Carte, Carnet et Suspects, avec le nombre de faits et de suspects, et une roue crantée de l’en-tête SHALL ouvrir les Réglages.
+Pendant une enquête, une barre en bas SHALL donner accès aux écrans Carte, Carnet et Suspects, avec le nombre de faits et de suspects. L’en-tête SHALL porter une roue crantée qui ouvre les Réglages et, à côté, un bouton qui mène à l’écran de départ pour commencer une nouvelle enquête, sans rien supprimer.
 
 #### Scenario: Changer d’écran
 - **WHEN** le joueur touche « Carnet »
 - **THEN** le Carnet s’affiche et son onglet est marqué actif
+
+#### Scenario: Nouvelle enquête depuis l’en-tête
+- **WHEN** le joueur touche le bouton de nouvelle enquête de l’en-tête, en cours de partie ou après l’accusation
+- **THEN** l’écran de départ s’affiche, qui propose de reprendre l’enquête ou d’en commencer une nouvelle, et l’enquête enregistrée reste intacte tant que le joueur n’en commence pas une autre
 
 ### Requirement: Panneau d’un lieu et pièces
 Toucher un lieu retenu sur la carte SHALL ouvrir son panneau et en montrer les pièces. Un fait ne SHALL rejoindre le Carnet, les fiches et le curseur horaire qu’une fois sa pièce touchée par le joueur. Le panneau SHALL présenter les faits comme des pièces : un objet pour une preuve selon son type d’indice, un pictogramme pour un PNJ, la tête du suspect pour un témoignage. Ouvrir une pièce affiche son texte. Le panneau n’affiche aucune aide à la déduction : celles-ci vivent dans le Carnet.
@@ -132,7 +136,7 @@ Au premier lancement, un guide en trois bulles SHALL accompagner le joueur : tou
 - **THEN** le guide se montre à nouveau à la prochaine ouverture de la carte
 
 ### Requirement: Écran de départ à deux boutons
-L’écran de départ SHALL proposer deux boutons, « Je me localise » et « Fuveau » (la seule commune disponible pour le moment), le choix de la difficulté (1 à 3) et la mention de fiction : les lieux sont réels, les personnages et les faits sont imaginaires. Quand une enquête est sauvegardée, il SHALL indiquer son état et proposer de la reprendre ou d’en revoir la révélation. Il SHALL toujours proposer une nouvelle enquête.
+L’écran de départ SHALL proposer deux boutons, « Je me localise » et « Fuveau » (la seule commune disponible pour le moment), le choix de la difficulté (1 à 3) et la mention de fiction : les lieux sont réels, les personnages et les faits sont imaginaires. Quand une enquête est sauvegardée, il SHALL indiquer son état et montrer côte à côte un bouton pour la reprendre ou en revoir la révélation et un bouton « Nouvelle enquête ».
 
 #### Scenario: Deux boutons de départ
 - **WHEN** le joueur ouvre l’écran de départ pour une nouvelle enquête
@@ -140,15 +144,19 @@ L’écran de départ SHALL proposer deux boutons, « Je me localise » et « Fu
 
 #### Scenario: Reprise proposée
 - **WHEN** une enquête sauvegardée est en cours
-- **THEN** l’écran de départ indique qu’elle est en cours et propose de la reprendre, et propose aussi une nouvelle enquête
+- **THEN** l’écran de départ indique qu’elle est en cours et montre côte à côte « Reprendre l’enquête » et « Nouvelle enquête »
 
 #### Scenario: Enquête terminée
 - **WHEN** l’enquête sauvegardée a déjà une accusation
-- **THEN** l’écran de départ indique qu’elle est terminée, propose d’en revoir la révélation et non de la reprendre, et propose aussi une nouvelle enquête
+- **THEN** l’écran de départ indique qu’elle est terminée et montre côte à côte « Revoir la révélation » et « Nouvelle enquête », sans proposer de la reprendre
 
 #### Scenario: Nouvelle enquête avec une sauvegarde
-- **WHEN** le joueur commence une nouvelle enquête alors qu’une autre est sauvegardée
-- **THEN** la nouvelle remplace la sauvegarde, et l’écran l’avait annoncé
+- **WHEN** le joueur touche « Nouvelle enquête » alors qu’une enquête est sauvegardée
+- **THEN** la difficulté, « Je me localise » et « Fuveau » s’affichent avec la mention qu’elles remplacent l’enquête enregistrée, et rien n’est supprimé tant que le joueur n’en commence pas une
+
+#### Scenario: Aucune sauvegarde
+- **WHEN** aucune enquête n’est sauvegardée
+- **THEN** la difficulté, « Je me localise » et « Fuveau » sont affichées d’emblée
 
 ### Requirement: Réglages sans mode hors ligne et À propos
 L’écran Réglages SHALL permettre de choisir le thème clair ou sombre, rappeler l’enquête (commune, difficulté, graine, version des données, état en cours ou terminée), proposer une nouvelle enquête, et afficher À propos : la mention de fiction, « © OpenStreetMap contributors » (licence ODbL), le fond de carte Protomaps et la police IBM Plex Mono (licence OFL).
