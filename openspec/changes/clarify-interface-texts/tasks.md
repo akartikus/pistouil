@@ -18,7 +18,9 @@
 - [x] 3.2 Afficher dans les Réglages « enquête n° … » et la date des données en français ; vérifier dans Chromium avec une enquête en cours
 - [x] 3.3 Vérifier dans Chromium, à 375 et 390 px de large, les trois bulles du guide (aucun débordement) et le panneau d'un lieu de décor avec des horaires, en français
 
-- [x] 3.4 Ajouter l'étiquette « Calculer le trajet à pied » au-dessus des boutons « Vers le lieu du mystère » et « Trajet vers… » du panneau d'un lieu (`texts.ts`, `src/routes/play/carte/+page.svelte`) ; vérifier dans Chromium (375 × 667) sur un lieu ordinaire et sur le lieu du mystère
+- [x] 3.4 Ajouter l'étiquette « Calculer le trajet à pied » au-dessus des boutons « Vers le lieu du mystère » et « Vers un autre lieu » du panneau d'un lieu (`texts.ts`, `src/routes/play/carte/+page.svelte`) ; vérifier dans Chromium (375 × 667) sur un lieu ordinaire et sur le lieu du mystère
+
+- [x] 3.5 Renommer le bouton « Trajet vers… » en « Vers un autre lieu » (`texts.ts`) ; vérifier dans Chromium (375 × 667) que les deux boutons s'affichent sous l'étiquette et que « Vers un autre lieu » ouvre la liste des lieux
 
 ## 4. Documentation et cap
 

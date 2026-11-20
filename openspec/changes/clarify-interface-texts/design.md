@@ -41,7 +41,8 @@ Tous les textes de l'interface sont dans `src/lib/game/texts.ts` (aucun texte en
 | Carte | Preuves et témoins | Indices et témoignages |
 | Carte | Rien ici. | Aucun indice ici. |
 | Carte | Seuls les lieux de l'enquête sont proposés. | Seuls les lieux numérotés de l'enquête sont proposés. |
-| Panneau d'un lieu | (deux boutons sans explication) | Étiquette « Calculer le trajet à pied » au-dessus de « Vers le lieu du mystère » et « Trajet vers… » |
+| Panneau d'un lieu | Trajet vers… | Vers un autre lieu |
+| Panneau d'un lieu | (deux boutons sans explication) | Étiquette « Calculer le trajet à pied » au-dessus de « Vers le lieu du mystère » et « Vers un autre lieu » |
 | Carte | Curseur horaire | Choisir l'heure |
 | Carte | Position inconnue à cette heure. | On ne sait pas où se trouve cette personne à cette heure-là. |
 | Verdicts | …ne peuvent pas être vrais tous les deux. (`N min de trajet, mais M min d'écart`) | Il faut N min à pied, mais il ne s'est passé que M min : ces deux indices ne peuvent pas être vrais tous les deux. |

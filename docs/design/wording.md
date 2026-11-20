@@ -18,7 +18,7 @@ Les textes de l'interface sont dans `src/lib/game/texts.ts`. Ils s'adressent à 
 | Ce qu'une personne raconte | **témoignage** | pièce, témoin (pour un texte) |
 | Le lieu où la farce a eu lieu | **lieu du mystère** | scène |
 | Le temps que prend un trajet à pied | **temps de marche**, « N min à pied » | trajet mesuré, durée de trajet |
-| Calculer ce temps | étiquette « Calculer le trajet à pied », boutons « Vers le lieu du mystère » et « Trajet vers… » | mesurer, relever |
+| Calculer ce temps | étiquette « Calculer le trajet à pied », boutons « Vers le lieu du mystère » et « Vers un autre lieu » | mesurer, relever |
 | L'identifiant d'une enquête | **numéro de l'enquête** (« enquête n° … ») | graine, seed |
 | Les lieux du jeu | **lieux**, « données OpenStreetMap du 15 novembre 2026 » | données, extrait, fichier, `.pbf` |
 | La personne qui dit la vérité ou ment | **suspect**, « la personne » quand le genre est inconnu | il, lui |

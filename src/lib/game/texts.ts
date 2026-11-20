@@ -65,7 +65,7 @@ export const texts = {
 		nothingHere: 'Aucun indice ici.',
 		routeLabel: 'Calculer le trajet à pied',
 		toMystery: 'Vers le lieu du mystère',
-		tripTo: 'Trajet vers…',
+		tripTo: 'Vers un autre lieu',
 		tripFrom: (name: string) => `Trajet depuis ${name} vers…`,
 		mystery: 'Lieu du mystère',
 		onlyRetained: 'Seuls les lieux numérotés de l’enquête sont proposés.',

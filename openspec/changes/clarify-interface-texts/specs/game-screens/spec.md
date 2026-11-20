@@ -14,14 +14,14 @@ Les textes de l’interface SHALL n’employer que des mots que le joueur compre
 - **THEN** le message dit ce qui s’est passé et ce que le joueur peut faire
 
 ### Requirement: Boutons de trajet expliqués
-Dans le panneau d’un lieu, les boutons « Vers le lieu du mystère » et « Trajet vers… » SHALL être précédés d’une courte étiquette qui dit à quoi ils servent : « Calculer le trajet à pied ».
+Dans le panneau d’un lieu, les boutons « Vers le lieu du mystère » et « Vers un autre lieu » SHALL être précédés d’une courte étiquette qui dit à quoi ils servent : « Calculer le trajet à pied ».
 
 #### Scenario: Étiquette au-dessus des boutons
 - **WHEN** le joueur ouvre le panneau d’un lieu de l’enquête
 - **THEN** l’étiquette « Calculer le trajet à pied » s’affiche juste au-dessus des boutons de trajet
 
 #### Scenario: Lieu du mystère
-- **WHEN** le joueur ouvre le panneau du lieu du mystère, où seul « Trajet vers… » est proposé
+- **WHEN** le joueur ouvre le panneau du lieu du mystère, où seul « Vers un autre lieu » est proposé
 - **THEN** l’étiquette « Calculer le trajet à pied » s’affiche aussi au-dessus de ce bouton
 
 ### Requirement: Localisation grisée tant qu’elle n’est pas disponible
@@ -66,6 +66,24 @@ L’écran Réglages SHALL permettre de choisir le thème clair ou sombre, rappe
 #### Scenario: Date des données
 - **WHEN** le joueur ouvre les Réglages avec une enquête en cours
 - **THEN** la date des données s’écrit en français, comme « 15 novembre 2026 », sans nom de fichier
+
+### Requirement: Trajet entre lieux retenus
+Le panneau d’un lieu SHALL offrir « Vers le lieu du mystère » (trajet direct) et « Vers un autre lieu », qui liste seulement les lieux retenus, numérotés, le lieu du mystère en tête. Choisir un lieu SHALL tracer l’itinéraire sur la carte avec sa durée, précédée de « ~ » si estimée. La liste SHALL montrer la durée des trajets déjà mesurés et « — » pour les autres.
+
+#### Scenario: Choix d’un trajet
+- **WHEN** le joueur choisit un lieu dans « Vers un autre lieu »
+- **THEN** l’itinéraire est tracé en pointillés avec sa durée, et le trajet est noté comme mesuré
+
+#### Scenario: Points libres exclus
+- **WHEN** le joueur ouvre « Vers un autre lieu »
+- **THEN** seuls les lieux de l’enquête sont proposés
+
+### Requirement: Le panneau se ferme après un trajet
+Dès qu’un trajet est choisi, par « Vers le lieu du mystère » ou dans « Vers un autre lieu », le panneau SHALL se fermer et l’itinéraire rester affiché sur la carte.
+
+#### Scenario: Panneau refermé
+- **WHEN** le joueur choisit « Vers le lieu du mystère » ou un lieu dans « Vers un autre lieu »
+- **THEN** le panneau se ferme et l’itinéraire reste affiché avec sa durée
 
 ### Requirement: Suspects et fiches qui se remplissent
 L’écran Suspects SHALL montrer une carte par suspect avec son statut d’alibi (à vérifier, douteux, vérifié) que le joueur choisit. La fiche SHALL regrouper ce que le suspect dit, ce que les autres en disent, les indices et témoignages, et ne contenir que les faits déjà découverts. Une rubrique vide SHALL afficher « RIEN POUR L’INSTANT » et la fiche « N lieux explorés sur M », sans jamais annoncer combien d’indices restent à trouver.
