@@ -34,6 +34,15 @@ Chaque étape de la feuille de route (`docs/VISION.md` §7) est un brief (`docs/
 
 Règles : un brief = un changement ; si un principe de `VISION.md` est remis en cause, trancher d'abord dans `VISION.md` ; un imprévu = un nouveau brief, pas un ajout au changement en cours. Un ajustement demandé hors brief (outil de test, correction, contenu) est aussi un changement OpenSpec, nommé d’après son objet.
 
+## Tests automatiques
+
+Le workflow `.github/workflows/test.yml` s'exécute sur chaque pull request (ouverte ou mise à jour) et sur chaque push sur `master`, jamais sur un push de branche sans pull request. Il lance `npm ci`, `npm run check`, `npm run lint`, `npm run test` puis `npm run build` ; l'échec d'une étape fait échouer le workflow.
+
+- Durée mesurée : 1 à 2 minutes par exécution (runner Linux, facturé une minute entamée par minute).
+- Un nouveau commit sur une pull request annule l'exécution en cours ; durée maximale : 10 minutes.
+- Le workflow ne lit aucun secret et n'a que le droit de lire le dépôt.
+- Protection de `master` (fusion par pull request, workflow au vert) : à activer dans les réglages GitHub (*Settings → Branches*) si le plan le permet ; sinon, vérifier que le statut est vert avant de fusionner.
+
 ## Documents
 
 | Fichier | Rôle |
