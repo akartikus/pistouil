@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { boundsAround, cellsCovering, communeMask, communeOutline, zoneBounds } from './zone';
+import {
+	boundsAround,
+	cellsCovering,
+	communeMask,
+	communeOutline,
+	insideContour,
+	zoneBounds
+} from './zone';
 
 const bbox = { minLat: 43.4, minLon: 5.5, maxLat: 43.5, maxLon: 5.6 };
 
@@ -89,5 +96,36 @@ describe('cellsCovering', () => {
 			maxLon: 5.512
 		});
 		expect(cells).toEqual(['2411_220']);
+	});
+});
+
+describe('insideContour', () => {
+	const square = { type: 'MultiPolygon' as const, coordinates: [[ring(5.5, 43.4, 0.1)]] };
+
+	it('accepts a point inside the contour', () => {
+		expect(insideContour({ lat: 43.45, lon: 5.55 }, square)).toBe(true);
+	});
+
+	it('refuses a point just outside the contour', () => {
+		expect(insideContour({ lat: 43.45, lon: 5.6001 }, square)).toBe(false);
+		expect(insideContour({ lat: 43.3999, lon: 5.55 }, square)).toBe(false);
+	});
+
+	it('refuses a point in an enclave of the commune', () => {
+		const withEnclave = {
+			type: 'MultiPolygon' as const,
+			coordinates: [[ring(5.5, 43.4, 0.1), ring(5.52, 43.42, 0.02)]]
+		};
+		expect(insideContour({ lat: 43.43, lon: 5.53 }, withEnclave)).toBe(false);
+		expect(insideContour({ lat: 43.41, lon: 5.51 }, withEnclave)).toBe(true);
+	});
+
+	it('accepts a point in any part of a commune made of several parts', () => {
+		const two = {
+			type: 'MultiPolygon' as const,
+			coordinates: [[ring(5.5, 43.4, 0.1)], [ring(5.8, 43.4, 0.1)]]
+		};
+		expect(insideContour({ lat: 43.45, lon: 5.85 }, two)).toBe(true);
+		expect(insideContour({ lat: 43.45, lon: 5.7 }, two)).toBe(false);
 	});
 });

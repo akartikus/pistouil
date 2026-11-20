@@ -29,6 +29,10 @@ mkdir -p static/dev-data/map && cp tools/map-tiles/out/zone.pmtiles static/dev-d
 
 Les bâtiments individuels n'existent qu'à partir du zoom 15 (en dessous, ils sont fusionnés) : c'est ce niveau qui permet de colorer le bâtiment d'un lieu.
 
+## Tuiles embarquées d'une commune
+
+Le jeu ne lit plus l'extrait régional : il embarque le PMTiles d'une seule commune. `tools/embedded-data/build.sh` appelle ce script avec le rectangle de la commune élargi de 3,3 km (voir `tools/embedded-data/README.md`, Fuveau : 6,9 Mo). L'extrait régional ci-dessus ne sert plus qu'à la page de développement `/map`.
+
 ## Poids mesuré
 
 Build Protomaps du 2026-11-16, PACA (rectangle `4.2,42.9,7.8,45.2`), zoom 15 au plus : **610 Mo** (609 895 275 octets, 128 520 tuiles). Au zoom 14 le fichier ferait 289 Mo, mais les bâtiments y sont fusionnés : on garde le zoom 15, nécessaire pour colorer le bâtiment d'un lieu. Le CLI lit l'archive source par requêtes de plages d'octets : l'extraction a transféré 640 Mo en quelques minutes.

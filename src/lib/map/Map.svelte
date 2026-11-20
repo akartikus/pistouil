@@ -13,8 +13,7 @@
 		type StyleSpecification
 	} from 'maplibre-gl';
 	import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
-	import { Protocol, type Source } from 'pmtiles';
-	import { StoredPMTiles } from '../data/tiles.js';
+	import { PMTiles, Protocol, type Source } from 'pmtiles';
 	import { onMount } from 'svelte';
 	import type {
 		Feature,
@@ -32,7 +31,7 @@
 	interface Props {
 		// Address of the PMTiles file.
 		tilesUrl: string;
-		// The archive as downloaded for the offline mode; the network address is not used then.
+		// The archive read by the app itself; the network address is not used then.
 		source?: Source;
 		theme: Theme;
 		// Limits of the zone: the player cannot pan outside.
@@ -299,7 +298,7 @@
 		// The worker is bundled by Vite, the way MapLibre documents for bundlers.
 		setWorkerUrl(workerUrl);
 		const protocol = new Protocol();
-		if (source) protocol.add(new StoredPMTiles(source));
+		if (source) protocol.add(new PMTiles(source));
 		addProtocol('pmtiles', protocol.tile);
 		let disposed = false;
 		(async () => {

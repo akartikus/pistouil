@@ -5,13 +5,13 @@
 
 ## 1. L’objectif final
 
-Un jeu mobile et web d’enquête **en solo**, dont chaque mystère est **généré automatiquement à partir des vrais lieux** autour du joueur (ou d’une commune qu’il choisit). Le joueur résout l’énigme **par déduction**, en confrontant des alibis aux **vrais temps de marche** entre les lieux, sans avoir à se déplacer.
+Un jeu mobile et web d’enquête **en solo**, dont chaque mystère est **généré automatiquement à partir des vrais lieux** autour du joueur (pour le moment, ceux de Fuveau, d’autres communes viendront). Le joueur résout l’énigme **par déduction**, en confrontant des alibis aux **vrais temps de marche** entre les lieux, sans avoir à se déplacer.
 
 Le ton est **absurde et farceur, sans malveillance** : pas de crimes, mais des farces loufoques, inoffensives et réversibles, dans des lieux publics non sensibles (« Qui a étendu une culotte à pois sur une corde à linge au milieu de la place ? », « Qui a lâché 200 canards en plastique dans la fontaine ? »). La logique, elle, reste implacable.
 
 ## 2. L’expérience du joueur
 
-1. Il se localise ou choisit une commune (ex. Fuveau).
+1. Il se localise ou choisit Fuveau, la seule commune disponible pour le moment.
 2. Le jeu génère un mystère avec les lieux réels du coin : une scène dans un lieu public non sensible, d’autres lieux comme alibis.
 3. Il explore la carte : chaque lieu de l’enquête révèle des faits (ticket de caisse, serveur, témoignages).
 4. Il mesure les trajets à pied entre les lieux et repère l’alibi impossible.
@@ -22,7 +22,7 @@ Le ton est **absurde et farceur, sans malveillance** : pas de crimes, mais des f
 
 Aucun jeu connu ne réunit les trois à la fois :
 
-- **des enquêtes générées pour n’importe quel lieu**, sans écriture manuelle par ville ;
+- **des enquêtes générées pour n’importe quel lieu**, sans écriture manuelle par ville (le moteur le permet ; la première version ne couvre que Fuveau) ;
 - **une vraie déduction logique**, fondée sur la géographie réelle ;
 - **un jeu depuis le canapé**, sans déplacement obligatoire.
 
@@ -33,7 +33,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 3. **Seul l’auteur ment**, une seule fois, sur lui-même ou sur un autre suspect, et pour une raison bienveillante révélée à la fin (farce, malentendu ou erreur).
 4. **Mystères uniquement dans des lieux publics non sensibles** (places, parcs, mais aussi commerces et services ouverts au public : une farce inoffensive ne nuit pas à leur réputation). Les lieux sensibles (écoles, lieux de culte, hôpitaux, cimetières, monuments aux morts) n’accueillent jamais de mystère : alibis seulement, avec des faits neutres ou positifs. Habitations et aires de jeux sont exclues.
 5. **Personnages toujours fictifs**, jamais le personnel réel d’un lieu.
-6. **Aucune dépendance réseau pendant le jeu en mode hors ligne.** Données préparées hors ligne, calculs sur le téléphone, jeu jouable hors connexion une fois la zone (environ 2 km autour d’une commune) téléchargée, sur choix du joueur. Sans ce mode, le joueur est connecté et la carte est chargée normalement.
+6. **Aucune requête réseau pendant le jeu.** Données préparées hors ligne, calculs sur le téléphone, données de la zone et carte fournies avec l’application : le jeu se joue sans connexion, toujours.
 7. **Garde-fous légaux** : mention de fiction visible (écran de départ et À propos), pas de logos de marques, pas de photos de bâtiments, carte stylisée, attribution OpenStreetMap (bouton « i » sur la carte, texte complet dans À propos), droit de retrait d’un lieu sur demande.
 8. **Le moteur est du code pur** (aucune dépendance à l’interface), testé et reproductible à partir d’une seed.
 
@@ -53,7 +53,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 | Décision | Raison |
 | --- | --- |
 | Solo, une enquête par joueur, générée à la demande | Pas de masse critique nécessaire, jeu possible partout |
-| Zone = centre (position ou commune) + rayon adaptatif | S’adapte aux villes denses comme aux villages |
+| Zone = centre (Fuveau, ou une position dans son contour) + rayon adaptatif (500 m, 1 km, 2 km) | S’adapte aux villes denses comme aux villages |
 | Données OSM préparées hors ligne (Geofabrik + osmium), pas d’Overpass | Coût nul, aucune dépendance externe |
 | Lieux OSM : un objet sans nom est écarté (quel que soit son rôle), aucune adresse extraite ; un lieu par objet, représenté par un point ; `opening_hours` transmis en texte brut, sans analyse | Le moteur et les textes exigent un nom ; les adresses manquent justement sur les objets de rue sans nom ; l’analyse des horaires attend les vrais horaires |
 | Lieux rangés en cases de 2 km (pas fixes de 0,018° en latitude et 0,025° en longitude, calcul sur entiers) ; sortie déterministe, sans date d’exécution | Peu de fichiers à charger autour du joueur, cases calculables sans table ; sorties comparables à l’octet près |
@@ -63,13 +63,13 @@ Aucun jeu connu ne réunit les trois à la fois :
 | Trajet non relié par le réseau : vol d’oiseau × 1,3 marqué `approximate` ; le générateur écarte, une fois la scène choisie, les lieux dont le trajet vers la scène est approximatif | Aucune déduction fondée sur une estimation, sans toucher au solveur |
 | Tous les lieux visibles sur la carte, deux niveaux (enquête / décor) | Carte vivante, jouable même avec peu de données |
 | Fond de carte vectoriel (PMTiles) stylé par nos soins (MapLibre) | Identité visuelle propre, appliquée à toute commune |
-| Tuiles Protomaps (schéma v4) extraites hors ligne en un PMTiles régional (PACA : 610 Mo au zoom 15, bâtiments individuels à partir de ce zoom) ; MapLibre directement, sans bibliothèque Svelte ; deux styles en fichiers (`static/map/style-light.json` et `style-dark.json`) à structure identique, pour que le changement de thème garde les tuiles ; polices en glyphes (IBM Plex Mono) et icônes PNG par famille embarquées ; adresse des tuiles fournie à l’exécution | Un style maison sur toutes les communes sans préparation, aucune requête externe, thème sombre sans retéléchargement ; l’extraction est un outil de `tools/map-tiles/` |
+| Tuiles Protomaps (schéma v4) extraites hors ligne en un PMTiles limité à la zone du jeu (`fuveau.pmtiles`, lu en entier en mémoire, fourni avec l’application ; l’extrait régional PACA ferait 610 Mo au zoom 15 ; bâtiments individuels à partir de ce zoom) ; MapLibre directement, sans bibliothèque Svelte ; deux styles en fichiers (`static/map/style-light.json` et `style-dark.json`) à structure identique, pour que le changement de thème garde les tuiles ; polices en glyphes (IBM Plex Mono) et icônes PNG par famille embarquées ; adresse unique `/data/fuveau` | Un style maison sur toutes les communes sans préparation, aucune requête externe, thème sombre sans retéléchargement ; l’extraction est un outil de `tools/map-tiles/` |
 | Bâtiment d’un lieu de l’enquête coloré en interrogeant le fond de carte au point du lieu (zoom 15 au moins) ; sans bâtiment, seul le marqueur reste | Les tuiles n’ont pas d’identifiant de bâtiment et nos lieux n’ont qu’un point ; aucun changement du format des lieux |
 | Les types de lieux du catalogue portent `icon` (famille d’icône) et `label` (libellé français) pour la carte | Ajouter un type sans toucher au code de la carte |
 | Direction artistique : carte colorée et lisible, texte et repères (étiquettes, légende, durées, mentions) brutalistes en monospace ; lieux de l’enquête en aplat orange (jaune en sombre), lieu du mystère en magenta (rose en sombre), décor en pastilles de couleur par famille ; thème sombre en soirée | Repérer d’un coup d’œil les lieux de l’enquête sans alourdir la carte, avec une identité propre ; voir `docs/design/direction.md` |
 | La carte est le point d’entrée du jeu : un lieu, une tête de témoin ou la pastille d’un suspect ouvre le bon panneau puis la fiche ; trois versions d’un suspect (ce qu’il dit, ce que les autres disent, preuves et témoins) ; aucune incohérence ni aucun verdict d’alibi pendant la partie, expliqués dans le Carnet à la fin ; ouvrir un lieu révèle tous ses faits d’un coup ; attribution repliée en « i » avec texte complet dans À propos | Le joueur garde l’initiative de la déduction, la même information est joignable par le lieu, la personne ou l’heure ; voir `docs/design/direction.md` |
-| Enquête générée dans un Web Worker qui garde l’enquête complète : l’interface ne reçoit qu’une projection (jamais auteur, mensonge, vraie soirée ni texte de révélation avant l’accusation) et la sauvegarde ne contient que la graine, la zone, la version des données et la progression ; au plus 40 lieux utilisables, les plus proches du centre, dans le moteur (rayon 500 m, 1, 2, puis 4 km) ; le jeu ne conclut rien pendant la partie (sinon il désignerait le menteur : le faux alibi est démenti par un témoin du même lieu) | Aucune donnée cachée lisible côté interface ; matrice de trajets de taille bornée ; la déduction reste au joueur |
-| Mode hors ligne choisi par le joueur (désactivé par défaut) : une zone = disque de 2 km autour du centre d’une commune, téléchargée une seule fois (cases de ±3 km, tuiles de ±3,3 km du zoom 0 au zoom 15, index des communes une fois) ; dans ce mode, enquête centrée sur la commune et rayon limité à 2 km, reprise refusée plutôt que régénérée autrement ; tuiles lues dans la zone par une source PMTiles qui rejoue les plages d’octets enregistrées ; stockage par `@capacitor/filesystem` (fichiers en natif, IndexedDB sur le web) ; sans ce mode, rien n’est gardé | Zone de Fuveau mesurée à 6,2 Mo (3,2 Mo de tuiles, 1,4 Mo d’index, 1,6 Mo de cases) : léger sur un téléphone ; le joueur connecté n’a rien à télécharger |
+| Enquête générée dans un Web Worker qui garde l’enquête complète : l’interface ne reçoit qu’une projection (jamais auteur, mensonge, vraie soirée ni texte de révélation avant l’accusation) et la sauvegarde ne contient que la graine, la zone, la version des données et la progression ; au plus 40 lieux utilisables, les plus proches du centre, dans le moteur (rayon 500 m, 1 km, puis 2 km) ; le jeu ne conclut rien pendant la partie (sinon il désignerait le menteur : le faux alibi est démenti par un témoin du même lieu) | Aucune donnée cachée lisible côté interface ; matrice de trajets de taille bornée ; la déduction reste au joueur |
+| Données de Fuveau embarquées dans l’application (`static/data/fuveau/` : manifeste, entrée de la commune, cases de lieux, cases de graphe, `fuveau.pmtiles`), couvrant le contour de la commune agrandi de 3 km ; « Je me localise » accepté seulement dans le contour ; ni mode hors ligne ni zones téléchargées, le jeu est hors ligne par construction ; données produites par une commande documentée (`tools/embedded-data/`), guide `guide/ADD-COMMUNE.md` pour ajouter une commune | Un APK de moins de 50 Mo sans hébergement à mettre en place ; le choix d’autres communes, l’hébergement en ligne et le téléchargement par zone (étudié dans `add-offline-mobile`, archivé) reviendront avec une deuxième commune |
 | PNJ (serveur, gardien) = sources d’indices, pas des personnages | Modèle plus simple, PNJ toujours fiables |
 | Le lieu d’un indice est celui du fait qu’il prouve | Évite une donnée en double |
 | SvelteKit (statique) + TypeScript + Vitest + Capacitor | Un seul code pour web et mobile |
@@ -92,8 +92,8 @@ Aucun jeu connu ne réunit les trois à la fois :
 | 3. Réseau piéton et trajets | `briefs/03-routes.md` | ☑ |
 | 4. Carte et identité visuelle | `briefs/04-map.md` | ☑ |
 | 5. Boucle de jeu complète | `briefs/05-game-loop.md` | ☑ |
-| 6. Hors-ligne et application mobile | `briefs/06-offline-mobile.md` | ☐ |
-| 7. CI/CD : tests (partie A, faite), build Android (partie B, faite : APK debug sans données, leur hébergement reste à décider), build iOS (partie C, reportée : pas de compte Apple Developer) | `briefs/07-ci-cd.md` | ☐ |
+| 6. Hors-ligne et application mobile : jeu hors ligne par construction, données de Fuveau embarquées (PWA vérifiée en mode avion sur navigateur ; APK Android à vérifier sur téléphone ; iOS reporté, pas de compte Apple Developer ; téléchargement de zones abandonné, voir `guide/ADD-COMMUNE.md`) | `briefs/06-offline-mobile.md` | ☐ |
+| 7. CI/CD : tests (partie A, faite), build Android (partie B, faite : APK debug, avec les données de Fuveau), build iOS (partie C, reportée : pas de compte Apple Developer) | `briefs/07-ci-cd.md` | ☐ |
 | 8. Design restant et finitions (brief à rédiger à la fin des autres) | — | ☐ |
 
 **Reporté à l’étape 8** (le design reste tel quel pendant les briefs 05 à 07) : orange de l’enquête jugé trop vif (variantes A à D comparées, couleur du thème sombre comprise) ; vraies illustrations pour les têtes des suspects ; chargement de la police IBM Plex Mono pour le texte HTML de l’interface (aujourd’hui seulement dans les glyphes de la carte) ; écrans manquants (confirmation de l’accusation, démarrage, rejeu de la révélation) ; contraste des bâtiments de décor, revue du jeu d’icônes et finition du thème sombre sur la carte ; régénération des maquettes pour qu’elles redeviennent la référence ; icônes et écran de lancement des applications Android et iOS (aujourd’hui ceux de Capacitor par défaut).

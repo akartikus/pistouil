@@ -5,7 +5,6 @@ import { validateCatalog } from '../engine/catalog';
 import { rawStarterCatalog, richSpecs } from '../engine/fixtures';
 import { estimateRoutes } from '../playground/real-places';
 import type { RawPlace } from '../data/places';
-import { OutsideZone } from '../data/files';
 import type { Request } from './protocol';
 
 const catalog = validateCatalog(structuredClone(rawStarterCatalog));
@@ -30,10 +29,6 @@ const raw: RawPlace[] = richSpecs.map(([osmId, name, type, x, y], i) => ({
 
 const source = (places: RawPlace[] = raw, overrides: Partial<DataSource> = {}): DataSource => ({
 	manifest: async () => manifest,
-	communes: async () => [
-		{ name: 'Fuveau', insee: '13040', center },
-		{ name: 'Rousset', insee: '13086', center: { lat: 43.48, lon: 5.62 } }
-	],
 	places: async () => places,
 	graph: async () => [],
 	...overrides
@@ -91,16 +86,15 @@ describe('startSession', () => {
 		expect(view.investigation.places[0].number).toBe(1);
 	});
 
-	it('fails with neighbouring communes when the zone is too empty', async () => {
-		const request = { ...startRequest(), insee: '13040' } as Extract<Request, { type: 'start' }>;
-		const result = await startSession(deps(source([])), request);
+	it('fails when the zone is too empty', async () => {
+		const result = await startSession(
+			deps(source([])),
+			startRequest() as Extract<Request, { type: 'start' }>
+		);
 		expect(result).toMatchObject({
 			ok: false,
 			reply: { type: 'failed', reason: 'not-enough-places' }
 		});
-		if (result.ok) return;
-		if (result.reply.type !== 'failed') throw new Error('expected a failure');
-		expect(result.reply.neighbors.map((commune) => commune.name)).toEqual(['Rousset']);
 	});
 
 	it('fails when the data is missing', async () => {
@@ -262,45 +256,31 @@ describe('resume', () => {
 	});
 });
 
-describe('offline mode', () => {
-	const zone = { insee: '13040', cells: [] };
-	const offlineStart = { ...startRequest(), zone } as Extract<Request, { type: 'start' }>;
-
-	it('plays from the downloaded zone like from the network', async () => {
-		const result = await startSession(deps(), offlineStart);
-		expect(result.ok).toBe(true);
-	});
-
+describe('the zone', () => {
 	it('does not widen the zone beyond 2 km', async () => {
 		// Two scenes nearby, the other usable places 3.5 km away.
 		const far = raw.map((place, i) =>
 			i < 2 ? place : { ...place, lat: place.lat + 3500 / 111195 }
 		);
-		const online = await startSession(deps(source(far)), startRequest() as typeof offlineStart);
-		expect(online).toMatchObject({ ok: true, view: { radiusM: 4000 } });
-		const offline = await startSession(deps(source(far)), offlineStart);
-		expect(offline).toMatchObject({ ok: false, reply: { reason: 'not-enough-places' } });
+		const result = await startSession(
+			deps(source(far)),
+			startRequest() as Extract<Request, { type: 'start' }>
+		);
+		expect(result).toMatchObject({ ok: false, reply: { reason: 'not-enough-places' } });
 	});
 
-	it('asks for a connection when a cell is outside the downloaded zone', async () => {
-		const outside = source(raw, {
-			places: async () => Promise.reject(new OutsideZone())
-		});
-		const result = await startSession(deps(outside), offlineStart);
-		expect(result).toMatchObject({ ok: false, reply: { reason: 'needs-connection' } });
-	});
-
-	it('asks for a connection rather than replaying a 4 km investigation with fewer places', async () => {
+	it('refuses to resume a save whose centre has no data, instead of replaying another investigation', async () => {
 		const { view } = await started();
 		const saved = {
 			version: 1,
 			seed: 5,
 			difficulty: 2 as const,
-			zone: { center, radiusM: 4000, name: 'Fuveau' },
+			// Aix-en-Provence: no cell of the shipped data covers it.
+			zone: { center: { lat: 43.5297, lon: 5.4474 }, radiusM: 500, name: 'Aix-en-Provence' },
 			dataVersion: dataVersionOf(manifest),
 			progress: view.progress
 		};
-		const result = await startSession(deps(), { type: 'resume', saved, zone });
-		expect(result).toMatchObject({ ok: false, reply: { reason: 'needs-connection' } });
+		const result = await startSession(deps(source([])), { type: 'resume', saved });
+		expect(result).toMatchObject({ ok: false, reply: { reason: 'data-changed' } });
 	});
 });

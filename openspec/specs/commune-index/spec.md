@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Fournit un index des communes pour retrouver un lieu de départ à partir de son nom (« Fuveau »), sans aucune API externe. Produit par le script de préparation des données OSM.
+Décrit chaque commune de l’extrait (nom, code INSEE, centre, rectangle englobant, contour) pour en tirer son centre et son contour sans aucune API externe. Produit par le script de préparation des données OSM ; l’application n’embarque que l’entrée de Fuveau.
 
 ## Requirements
 

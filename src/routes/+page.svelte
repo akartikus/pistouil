@@ -3,19 +3,16 @@
 	import { resolve } from '$app/paths';
 	import { Geolocation } from '@capacitor/geolocation';
 	import { onMount } from 'svelte';
-	import { zoneContaining, type ZoneEntry, type ZonePlan } from '#lib/data/zones.js';
 	import type { Difficulty } from '#lib/engine/types.js';
 	import { game } from '#lib/game/game.svelte.js';
 	import { locate as locateDevice, needsExplanation } from '#lib/game/locate.js';
-	import { offline } from '#lib/game/offline.svelte.js';
 	import { isFinished, type SavedGame } from '#lib/game/save.js';
-	import { settings } from '#lib/game/settings.svelte.js';
+	import { shippedCommune } from '#lib/game/shipped.js';
 	import { texts } from '#lib/game/texts.js';
-	import { neighborCommunes, type Center, type CommuneSummary } from '#lib/game/zone.js';
-	import type { Commune } from '#lib/map/zone.js';
+	import type { Center } from '#lib/game/zone.js';
+	import { insideContour, type Commune } from '#lib/map/zone.js';
 
-	let communes = $state<Commune[]>([]);
-	let query = $state('');
+	let fuveau = $state<Commune | null>(null);
 	let difficulty = $state<Difficulty>(2);
 	let saved = $state<SavedGame | null>(null);
 	// With a saved investigation, the choices of a new one open on the button.
@@ -23,71 +20,20 @@
 	let message = $state('');
 	let locating = $state(false);
 	let explaining = $state(false);
-	// Offline mode: the commune to download first, its plan once measured, the progress.
-	let proposed = $state<CommuneSummary | null>(null);
-	let plan = $state.raw<ZonePlan | null>(null);
-	let progress = $state<number | null>(null);
-	let downloading: AbortController | null = null;
-
-	const plain = (text: string) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-	const matches = $derived(
-		query.trim().length < 2
-			? []
-			: communes.filter((c) => plain(c.name).startsWith(plain(query.trim()))).slice(0, 6)
-	);
 
 	onMount(async () => {
-		communes = await offline.communes();
+		try {
+			fuveau = await shippedCommune();
+		} catch {
+			message = texts.failure['data-missing'];
+		}
 		const result = await game.loadSave();
 		saved = result.status === 'ok' ? result.game : null;
 	});
 
-	async function play(center: Center, name: string, insee?: string, zone?: ZoneEntry) {
-		await game.start(center, name, insee, difficulty, zone);
+	async function play(center: Center, name: string) {
+		await game.start(center, name, difficulty);
 		if (game.phase === 'playing') await goto(resolve('/play/carte'));
-	}
-
-	// Offline, an investigation is centred on a downloaded commune, downloaded first if needed.
-	async function begin(commune: CommuneSummary) {
-		message = '';
-		if (!settings.offline) return play(commune.center, commune.name, commune.insee);
-		const zone = offline.zones.find((candidate) => candidate.insee === commune.insee);
-		if (zone) return play(zone.center, zone.name, zone.insee, zone);
-		await propose(commune);
-	}
-
-	async function propose(commune: CommuneSummary) {
-		proposed = commune;
-		plan = null;
-		try {
-			plan = await offline.plan(commune);
-		} catch {
-			proposed = null;
-			message = texts.start.downloadFailed;
-		}
-	}
-
-	async function download() {
-		if (!plan) return;
-		downloading = new AbortController();
-		progress = 0;
-		try {
-			await offline.download(plan, (done, total) => (progress = done / total), downloading.signal);
-			const commune = plan.commune;
-			proposed = null;
-			await begin(commune);
-		} catch {
-			if (!downloading.signal.aborted) message = texts.start.downloadFailed;
-		} finally {
-			progress = null;
-			downloading = null;
-		}
-	}
-
-	function cancel() {
-		downloading?.abort();
-		proposed = null;
-		plan = null;
 	}
 
 	async function locate() {
@@ -100,13 +46,12 @@
 			message = texts.start.locationRefused;
 			return;
 		}
-		if (!settings.offline) return play(point, texts.start.locate);
-		const zone = zoneContaining(offline.zones, point);
-		if (zone) return play(zone.center, zone.name, zone.insee, zone);
-		const [nearest] = neighborCommunes(communes, point, '', 1);
-		if (!nearest) return;
-		await propose(nearest);
-		message = texts.start.outsideZones(nearest.name);
+		// Only Fuveau has data for now: a position elsewhere cannot start an investigation.
+		if (!fuveau || !insideContour(point, fuveau.contour)) {
+			message = texts.start.outsideFuveau;
+			return;
+		}
+		await play(point, fuveau.name);
 	}
 
 	async function askLocation() {
@@ -137,12 +82,7 @@
 	{:else if game.phase === 'failed' && game.failure}
 		<section class="box pad">
 			<p>{texts.failure[game.failure.reason]}</p>
-			{#each game.failure.neighbors as neighbor (neighbor.insee)}
-				<button class="btn" onclick={() => begin(neighbor)}>
-					{neighbor.name}
-				</button>
-			{/each}
-			{#if game.failure.reason === 'data-changed' || game.failure.reason === 'needs-connection'}
+			{#if game.failure.reason === 'data-changed'}
 				<button class="btn solid" onclick={startOver}>{texts.start.newInvestigation}</button>
 			{/if}
 			<button class="btn" onclick={() => game.dismiss()}>{texts.failure.back}</button>
@@ -182,24 +122,7 @@
 				</div>
 			</section>
 
-			{#if proposed}
-				<section class="box pad">
-					<p>{texts.start.downloadAsk(proposed.name)}</p>
-					{#if progress !== null}
-						<p class="label">{texts.start.downloading(Math.round(progress * 100))}</p>
-					{:else if plan}
-						<button class="btn solid wide" onclick={download}>
-							{texts.start.download(texts.size(plan.bytes, plan.estimated))}
-						</button>
-					{:else}
-						<p class="label">{texts.start.measuring}</p>
-					{/if}
-					<button class="btn" onclick={cancel}>{texts.start.cancel}</button>
-				</section>
-			{/if}
-
 			<section class="box pad">
-				{#if settings.offline}<p class="label">{texts.start.offlineOn}</p>{/if}
 				{#if explaining}
 					<p>{texts.start.locateWhy}</p>
 					<button class="btn solid wide" onclick={locate}>{texts.start.locateContinue}</button>
@@ -208,16 +131,13 @@
 						{locating ? texts.start.locating : texts.start.locate}
 					</button>
 				{/if}
-				<p class="label">{texts.start.searchCommune}</p>
-				<input bind:value={query} placeholder={texts.start.communePlaceholder} />
-				{#each matches as commune (commune.insee)}
-					<button class="btn wide" onclick={() => begin(commune)}>
-						{commune.name}
-					</button>
-				{/each}
-				{#if query.trim().length >= 2 && matches.length === 0 && communes.length > 0}
-					<p class="label">{texts.start.noCommune}</p>
-				{/if}
+				<button
+					class="btn solid wide"
+					onclick={() => fuveau && play(fuveau.center, fuveau.name)}
+					disabled={!fuveau}
+				>
+					{texts.start.fuveau}
+				</button>
 				{#if message}<p class="error">{message}</p>{/if}
 			</section>
 		{/if}
@@ -255,11 +175,6 @@
 	.wide {
 		width: 100%;
 		text-align: left;
-	}
-	input {
-		padding: 0.5rem;
-		border: 3px solid var(--ink);
-		background: var(--paper);
 	}
 	.note {
 		margin: 0;

@@ -1,7 +1,7 @@
 # offline-tiles Specification
 
 ## Purpose
-Fournir les tuiles de la carte depuis la zone téléchargée en mode hors ligne, depuis le réseau sinon, sans jamais laisser la carte vide.
+Fournir les tuiles de la carte depuis le fichier de Fuveau livré avec l’application, sans aucune requête réseau, sans jamais laisser la carte vide.
 
 ## Requirements
 

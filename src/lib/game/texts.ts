@@ -7,9 +7,10 @@ export const texts = {
 	start: {
 		locate: 'Je me localise',
 		locating: 'Localisation…',
-		locationRefused: 'Position refusée. Cherche plutôt une commune.',
-		searchCommune: 'Ou cherche une commune',
-		communePlaceholder: 'Fuveau…',
+		locationRefused: 'Position refusée. Choisis plutôt Fuveau.',
+		outsideFuveau:
+			'Seule Fuveau est disponible pour le moment, et ta position est en dehors. Choisis plutôt Fuveau.',
+		fuveau: 'Fuveau',
 		difficulty: 'Difficulté',
 		difficulties: { 1: 'Facile', 2: 'Moyenne', 3: 'Difficile' } as Record<number, string>,
 		resume: 'Reprendre l’enquête',
@@ -20,37 +21,19 @@ export const texts = {
 		replaces: 'Elle remplace l’enquête enregistrée.',
 		newInvestigation: 'Nouvelle enquête',
 		loading: 'Préparation de l’enquête…',
-		noCommune: 'Aucune commune de ce nom.',
 		locateWhy:
 			'Ta position sert seulement à choisir le lieu de l’enquête. Elle reste sur ton téléphone et n’est jamais envoyée.',
-		locateContinue: 'Continuer',
-		offlineOn: 'Mode hors ligne activé',
-		downloadAsk: (name: string) =>
-			`Pour jouer hors ligne à ${name}, télécharge une seule fois sa zone (environ 2 km autour du centre).`,
-		measuring: 'Calcul de la taille…',
-		download: (size: string) => `Télécharger (${size})`,
-		downloading: (percent: number) => `Téléchargement… ${percent} %`,
-		cancel: 'Annuler',
-		downloadFailed: 'Téléchargement impossible. Vérifie ta connexion et réessaie.',
-		outsideZones: (name: string) =>
-			`Ta position n’est dans aucune zone téléchargée. La commune la plus proche est ${name}.`
+		locateContinue: 'Continuer'
 	},
 
-	// A size in megabytes, the French way: « 6,2 Mo ».
-	size: (bytes: number, estimated = false) =>
-		`${estimated ? 'environ ' : ''}${(bytes / 1e6).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} Mo`,
-
 	failure: {
-		'not-enough-places':
-			'Il n’y a pas assez de lieux publics ici pour monter une enquête. Essaie une commune voisine :',
-		'no-scene': 'Aucun lieu de la zone ne convient pour la farce. Essaie une autre commune.',
+		'not-enough-places': 'Il n’y a pas assez de lieux publics ici pour monter une enquête.',
+		'no-scene': 'Aucun lieu de la zone ne convient pour la farce.',
 		'difficulty-unreachable':
-			'Impossible de monter une enquête à cette difficulté ici. Essaie une autre difficulté ou une autre commune.',
+			'Impossible de monter une enquête à cette difficulté ici. Essaie une autre difficulté.',
 		'data-missing': 'Les données du jeu sont introuvables. Réessaie plus tard.',
 		'data-changed':
 			'Les données ont changé depuis ta dernière partie : cette enquête ne peut plus être rejouée à l’identique.',
-		'needs-connection':
-			'Cette enquête demande une connexion : elle sort de tes zones téléchargées. Désactive le mode hors ligne dans les Réglages, ou commence une autre enquête.',
 		back: 'Retour'
 	},
 
@@ -162,14 +145,6 @@ export const texts = {
 		finished: 'Terminée',
 		dataVersion: 'Données',
 		newInvestigation: 'Nouvelle enquête',
-		offline: 'Mode hors ligne',
-		offlineText: 'Télécharge une seule fois la zone d’une commune pour y jouer sans connexion.',
-		on: 'Activé',
-		off: 'Désactivé',
-		zones: 'Zones téléchargées',
-		noZone: 'Aucune zone. Choisis une commune à l’écran de départ pour la télécharger.',
-		remove: 'Supprimer',
-		notKept: 'Ton navigateur peut effacer les zones et la partie en cours s’il manque de place.',
 		about: 'À propos',
 		fictionTitle: 'Fiction',
 		dataTitle: 'Données',

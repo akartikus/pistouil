@@ -1,6 +1,5 @@
 import { Preferences } from '@capacitor/preferences';
 import type { Difficulty, Route } from '../engine/types';
-import { zoneContaining, type ZoneEntry } from '../data/zones';
 import { createGameClient, type GameClient } from './client';
 import { measuredKey, minutesByPair, type MeasuredMinutes } from './deduction';
 import {
@@ -25,9 +24,7 @@ import {
 	type SavedGame,
 	type StoragePort
 } from './save';
-import { offline } from './offline.svelte';
-import { settings } from './settings.svelte';
-import type { Center, CommuneSummary } from './zone';
+import type { Center } from './zone';
 
 // Capacitor preferences keep the save on the device (the browser storage on the web).
 const storage: StoragePort = {
@@ -38,7 +35,6 @@ const storage: StoragePort = {
 
 export interface Failure {
 	reason: FailureReason;
-	neighbors: CommuneSummary[];
 }
 
 // The state of the interface: the projection from the Worker, and what the player did.
@@ -55,8 +51,6 @@ export class Game {
 	private seed = 0;
 	private difficulty: Difficulty = 2;
 	zone = $state<{ center: Center; name: string }>({ center: { lat: 0, lon: 0 }, name: '' });
-	// Whether the game in progress reads the downloaded zones; fixed at its start.
-	offline = $state(false);
 
 	// The facts the player has read, by touching their piece.
 	readFacts = $derived(this.facts.filter((fact) => this.progress?.readFactIds.includes(fact.id)));
@@ -71,43 +65,23 @@ export class Game {
 	);
 
 	private worker() {
-		return (this.client ??= createGameClient((path) => offline.read(path)));
+		return (this.client ??= createGameClient());
 	}
 
 	loadSave(): Promise<LoadResult> {
 		return loadGame(storage);
 	}
 
-	// In offline mode, `zone` is the downloaded zone the investigation is centred on.
-	async start(
-		center: Center,
-		name: string,
-		insee: string | undefined,
-		difficulty: Difficulty,
-		zone?: ZoneEntry
-	) {
+	async start(center: Center, name: string, difficulty: Difficulty) {
 		// A random seed is fine here: the interface is not the engine.
 		const seed = Math.floor(Math.random() * 1_000_000_000);
 		this.zone = { center, name };
-		const request = { type: 'start' as const, center, name, insee, difficulty, seed };
-		await this.begin(zone ? { ...request, zone: offlineZone(zone) } : request, seed, difficulty);
+		await this.begin({ type: 'start', center, name, difficulty, seed }, seed, difficulty);
 	}
 
 	async resume(saved: SavedGame) {
 		this.zone = { center: saved.zone.center, name: saved.zone.name };
-		if (!settings.offline)
-			return this.begin({ type: 'resume', saved }, saved.seed, saved.difficulty);
-		const zone = zoneContaining(offline.zones, saved.zone.center);
-		if (!zone) {
-			this.phase = 'failed';
-			this.failure = { reason: 'needs-connection', neighbors: [] };
-			return;
-		}
-		await this.begin(
-			{ type: 'resume', saved, zone: offlineZone(zone) },
-			saved.seed,
-			saved.difficulty
-		);
+		await this.begin({ type: 'resume', saved }, saved.seed, saved.difficulty);
 	}
 
 	private async begin(
@@ -117,13 +91,12 @@ export class Game {
 	) {
 		this.phase = 'loading';
 		this.failure = null;
-		this.offline = !!request.zone;
 		this.seed = seed;
 		this.difficulty = difficulty;
 		const reply = await this.worker().request($state.snapshot(request) as typeof request);
 		if (reply.type !== 'started') {
 			this.phase = 'failed';
-			this.failure = reply.type === 'failed' ? reply : { reason: 'data-missing', neighbors: [] };
+			this.failure = { reason: reply.type === 'failed' ? reply.reason : 'data-missing' };
 			return;
 		}
 		this.view = reply.view;
@@ -218,7 +191,5 @@ export class Game {
 		});
 	}
 }
-
-const offlineZone = (zone: ZoneEntry) => ({ insee: zone.insee, cells: zone.cells });
 
 export const game = new Game();

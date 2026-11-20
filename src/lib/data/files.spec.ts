@@ -1,12 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-	createCellLoader,
-	createZoneSource,
-	loadCommunes,
-	loadManifest,
-	OutsideZone,
-	type FetchLike
-} from './files';
+import { createCellLoader, loadCommune, loadManifest, type FetchLike } from './files';
 
 const manifest = {
 	source: 'a.osm.pbf',
@@ -39,13 +32,15 @@ describe('loadManifest', () => {
 	});
 });
 
-describe('loadCommunes', () => {
-	it('reads the index of communes, empty when it is missing', async () => {
-		const list = [{ name: 'Fuveau', insee: '13040' }];
-		expect(
-			await loadCommunes('https://data.example', host({ '/communes.json': list }).fetchFn)
-		).toEqual(list);
-		expect(await loadCommunes('https://data.example', host({}).fetchFn)).toEqual([]);
+describe('loadCommune', () => {
+	it('reads the entry of the commune from the base address', async () => {
+		const commune = { name: 'Fuveau', insee: '13040' };
+		const { fetchFn } = host({ '/commune.json': commune });
+		expect(await loadCommune('https://data.example', fetchFn)).toEqual(commune);
+	});
+
+	it('fails with a clear message when the data is not there', async () => {
+		await expect(loadCommune('https://data.example', host({}).fetchFn)).rejects.toThrow(/commune/);
 	});
 });
 
@@ -81,31 +76,5 @@ describe('createCellLoader', () => {
 		});
 		const loader = createCellLoader('https://data.example', fetchFn);
 		expect(await loader.places(['2413_221'])).toEqual([]);
-	});
-});
-
-describe('createZoneSource', () => {
-	const files: Record<string, string> = {
-		'zones/13040/manifest.json': JSON.stringify(manifest),
-		'zones/13040/places/1_1.json': JSON.stringify([{ osmId: 'n1' }]),
-		'communes.json': '[{"name":"Fuveau"}]'
-	};
-	const read = async (path: string) => files[path] ?? null;
-	const source = createZoneSource({ insee: '13040', cells: ['1_1', '1_2'] }, read);
-
-	it('reads the manifest, the communes and the cells of the downloaded zone', async () => {
-		expect(await source.manifest()).toEqual(manifest);
-		expect(await source.communes()).toEqual([{ name: 'Fuveau' }]);
-		expect(await source.places(['1_1'])).toEqual([{ osmId: 'n1' }]);
-	});
-
-	it('reads a cell of the zone without a file as empty', async () => {
-		expect(await source.places(['1_2'])).toEqual([]);
-		expect(await source.graph(['1_1', '1_2'])).toEqual([]);
-	});
-
-	it('refuses a cell outside the zone instead of reading it as empty', async () => {
-		await expect(source.places(['1_1', '9_9'])).rejects.toBeInstanceOf(OutsideZone);
-		await expect(source.graph(['9_9'])).rejects.toBeInstanceOf(OutsideZone);
 	});
 });

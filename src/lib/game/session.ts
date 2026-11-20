@@ -3,8 +3,7 @@ import { haversineM } from '../engine/pedestrian';
 import type { GraphCell } from '../engine/pedestrian';
 import type { Catalog, Investigation, Place, Route } from '../engine/types';
 import { toPlaces, type RawPlace } from '../data/places';
-import { OutsideZone, type Manifest } from '../data/files';
-import { ZONE_RADIUS_M } from '../data/zones';
+import type { Manifest } from '../data/files';
 import { cellsCovering, zoneBounds } from '../map/zone';
 import { checkAccusation } from './discovery';
 import type { Evening } from './evening';
@@ -19,12 +18,11 @@ import type {
 	SessionView
 } from './protocol';
 import { dataChanged, dataVersionOf } from './save';
-import { buildZone, neighborCommunes, OFFLINE_RADII_M, RADII_M, type CommuneSummary } from './zone';
+import { buildZone, RADII_M } from './zone';
 
 // Where the game data comes from (the real one reads files; tests give their own).
 export interface DataSource {
 	manifest(): Promise<Manifest>;
-	communes(): Promise<CommuneSummary[]>;
 	places(cells: string[]): Promise<RawPlace[]>;
 	graph(cells: string[]): Promise<GraphCell[]>;
 }
@@ -82,8 +80,8 @@ function revelation(session: Session, suspectId: string): Revelation {
 	};
 }
 
-function failure(reason: FailureReason, neighbors: CommuneSummary[] = []): Failure {
-	return { ok: false, reply: { type: 'failed', reason, neighbors } };
+function failure(reason: FailureReason): Failure {
+	return { ok: false, reply: { type: 'failed', reason } };
 }
 
 function viewOf(
@@ -114,16 +112,7 @@ export async function startSession(
 	deps: SessionDeps,
 	request: StartRequest | ResumeRequest
 ): Promise<StartResult> {
-	// Offline, a save made with a wider zone would give another investigation: never replay it.
-	if (request.type === 'resume' && request.zone && request.saved.zone.radiusM > ZONE_RADIUS_M) {
-		return failure('needs-connection');
-	}
-	try {
-		return await load(deps, request);
-	} catch (error) {
-		if (error instanceof OutsideZone) return failure('needs-connection');
-		throw error;
-	}
+	return load(deps, request);
 }
 
 async function load(
@@ -147,27 +136,19 @@ async function load(
 
 	// Widen the area read from the files until the zone is complete for its radius.
 	let raw: RawPlace[] = [];
-	const radii = request.zone ? OFFLINE_RADII_M : RADII_M;
-	let zone = buildZone([], catalog, center, radii);
-	for (const [step, radius] of radii.entries()) {
+	let zone = buildZone([], catalog, center);
+	for (const [step, radius] of RADII_M.entries()) {
 		const [[minLon, minLat], [maxLon, maxLat]] = zoneBounds(
 			{ minLat: center.lat, minLon: center.lon, maxLat: center.lat, maxLon: center.lon },
 			radius + GRAPH_MARGIN_M
 		);
 		raw = await source.places(cellsCovering(manifest.grid, { minLat, minLon, maxLat, maxLon }));
-		zone = buildZone(toPlaces(raw, catalog), catalog, center, radii);
+		zone = buildZone(toPlaces(raw, catalog), catalog, center);
 		if (zone.ok && zone.radiusM <= radius) break;
-		if (step === radii.length - 1) break;
+		if (step === RADII_M.length - 1) break;
 	}
-	if (!zone.ok)
-		return failure(
-			'not-enough-places',
-			neighborCommunes(
-				await source.communes(),
-				center,
-				request.type === 'start' ? (request.insee ?? '') : ''
-			)
-		);
+	// A save whose centre has no data (another commune than the one shipped) cannot be replayed.
+	if (!zone.ok) return failure(request.type === 'resume' ? 'data-changed' : 'not-enough-places');
 
 	const lats = zone.places.map((place) => place.lat);
 	const lons = zone.places.map((place) => place.lon);

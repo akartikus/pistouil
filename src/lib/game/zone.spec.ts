@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildZone, neighborCommunes, MAX_PLACES, OFFLINE_RADII_M } from './zone';
+import { buildZone, MAX_PLACES, RADII_M } from './zone';
 import { validateCatalog } from '../engine/catalog';
 import { rawStarterCatalog } from '../engine/fixtures';
 import type { Place } from '../engine/types';
@@ -43,14 +43,10 @@ describe('buildZone', () => {
 		});
 	});
 
-	it('stops at 2 km in offline mode', () => {
+	it('stops at 2 km', () => {
 		const places = [...scenes(2, 100), ...scenes(6, 3500, 'far')];
-		expect(buildZone(places, catalog, center)).toMatchObject({ ok: true, radiusM: 4000 });
-		expect(buildZone(places, catalog, center, OFFLINE_RADII_M)).toMatchObject({
-			ok: false,
-			reason: 'not-enough-places'
-		});
-		expect(OFFLINE_RADII_M.at(-1)).toBe(2000);
+		expect(buildZone(places, catalog, center)).toEqual({ ok: false, reason: 'not-enough-places' });
+		expect(RADII_M).toEqual([500, 1000, 2000]);
 	});
 
 	it('needs at least 2 scenes, not only usable places', () => {
@@ -93,25 +89,10 @@ describe('buildZone', () => {
 		]);
 	});
 
-	it('gives up beyond 4 km', () => {
-		expect(buildZone(scenes(8, 4500), catalog, center)).toEqual({
+	it('gives up beyond 2 km', () => {
+		expect(buildZone(scenes(8, 2500), catalog, center)).toEqual({
 			ok: false,
 			reason: 'not-enough-places'
 		});
-	});
-});
-
-describe('neighborCommunes', () => {
-	const communes = [
-		{ name: 'Fuveau', insee: '13040', center: { lat: 43.45, lon: 5.56 } },
-		{ name: 'Rousset', insee: '13086', center: { lat: 43.48, lon: 5.62 } },
-		{ name: 'Gréasque', insee: '13049', center: { lat: 43.43, lon: 5.58 } },
-		{ name: 'Peynier', insee: '13072', center: { lat: 43.5, lon: 5.65 } },
-		{ name: 'Marseille', insee: '13055', center: { lat: 43.3, lon: 5.37 } }
-	];
-
-	it('gives the 3 nearest other communes', () => {
-		const names = neighborCommunes(communes, center, '13040').map((commune) => commune.name);
-		expect(names).toEqual(['Gréasque', 'Rousset', 'Peynier']);
 	});
 });
