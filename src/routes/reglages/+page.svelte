@@ -110,8 +110,8 @@
 		gap: 0.5rem;
 	}
 	.about h2 {
-		background: var(--ink);
-		color: var(--paper);
+		background: var(--strong);
+		color: var(--on-strong);
 		padding: 0.3rem 0.8rem;
 		font-size: 1rem;
 	}

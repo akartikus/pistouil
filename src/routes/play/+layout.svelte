@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import { game } from '#lib/game/game.svelte.js';
 	import { texts } from '#lib/game/texts.js';
+	import Attribution from '#lib/game/ui/Attribution.svelte';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
@@ -23,6 +24,10 @@
 			count: game.view?.investigation.suspects.length ?? 0
 		}
 	]);
+	// The credit of the map shows wherever the map does.
+	const showsMap = $derived(
+		!page.url.pathname.includes('/carnet') && !page.url.pathname.includes('/suspects')
+	);
 	const title = $derived(
 		page.url.pathname.includes('/carnet')
 			? texts.nav.notebook
@@ -37,7 +42,10 @@
 {#if game.phase === 'playing'}
 	<div class="shell">
 		<header>
-			<h1>{title}</h1>
+			<div class="title">
+				<h1>{title}</h1>
+				{#if showsMap}<Attribution />{/if}
+			</div>
 			<div class="actions">
 				<a class="new" href={resolve('/')} aria-label={texts.nav.newFull}>{texts.nav.newShort}</a>
 				<a class="gear" href={resolve('/reglages')} aria-label={texts.nav.settings}>⚙</a>
@@ -63,13 +71,21 @@
 		max-width: 48rem;
 		margin: 0 auto;
 	}
+	.title {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+	}
 	header {
+		position: relative;
+		z-index: 10;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		padding: 0.5rem 0.8rem;
-		background: var(--ink);
-		color: var(--paper);
+		background: var(--strong);
+		color: var(--on-strong);
+		border-bottom: 3px solid var(--frame);
 	}
 	h1 {
 		font-size: 1.1rem;
@@ -105,7 +121,7 @@
 	}
 	nav {
 		display: flex;
-		border-top: 3px solid var(--ink);
+		border-top: 3px solid var(--frame);
 		background: var(--paper);
 	}
 	nav a {
@@ -116,7 +132,7 @@
 		text-transform: uppercase;
 		text-decoration: none;
 		color: var(--ink);
-		border-right: 3px solid var(--ink);
+		border-right: 3px solid var(--frame);
 		position: relative;
 	}
 	nav a:last-child {
@@ -129,8 +145,8 @@
 	.badge {
 		margin-left: 4px;
 		padding: 0 5px;
-		background: var(--ink);
-		color: var(--paper);
+		background: var(--strong);
+		color: var(--on-strong);
 		font-size: 11px;
 	}
 </style>

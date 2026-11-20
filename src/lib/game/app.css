@@ -9,17 +9,28 @@
 	--route: #1f4fff;
 	--shadow: #000000;
 	--dim: #555555;
+	/* Roles that --ink used to cover: frames, bars and chips, solid buttons. */
+	--frame: #000000;
+	--strong: #000000;
+	--on-strong: #ffffff;
+	--solid: #000000;
+	--on-solid: #ffffff;
 	--font: 'IBM Plex Mono', 'DejaVu Sans Mono', 'Courier New', monospace;
 }
 :root[data-theme='dark'] {
 	--bg: #15202b;
-	--paper: #000000;
-	--ink: #ffffff;
+	--paper: #0b1218;
+	--ink: #e6ecf2;
 	--accent: #ffd400;
 	--mystery: #ff4fa3;
 	--route: #5cc8ff;
-	--shadow: #ffd400;
-	--dim: #aab4c0;
+	--shadow: #3b4e63;
+	--dim: #9fb0c1;
+	--frame: #8195aa;
+	--strong: #1f2e3e;
+	--on-strong: #e6ecf2;
+	--solid: #ffd400;
+	--on-solid: #000000;
 }
 html,
 body {
@@ -46,7 +57,7 @@ textarea {
 }
 .box {
 	background: var(--paper);
-	border: 3px solid var(--ink);
+	border: 3px solid var(--frame);
 	box-shadow: 5px 5px 0 var(--shadow);
 }
 .btn {
@@ -54,7 +65,7 @@ textarea {
 	text-transform: uppercase;
 	background: var(--paper);
 	color: var(--ink);
-	border: 3px solid var(--ink);
+	border: 3px solid var(--frame);
 	box-shadow: 3px 3px 0 var(--shadow);
 	padding: 0.5rem 0.8rem;
 	cursor: pointer;
@@ -64,8 +75,8 @@ textarea {
 	box-shadow: 1px 1px 0 var(--shadow);
 }
 .btn.solid {
-	background: var(--ink);
-	color: var(--paper);
+	background: var(--solid);
+	color: var(--on-solid);
 }
 .btn.on {
 	background: var(--accent);
@@ -74,6 +85,11 @@ textarea {
 .btn:disabled {
 	opacity: 0.5;
 	cursor: not-allowed;
+}
+/* A faded accent would turn muddy: a disabled solid button is a plain bar. */
+.btn.solid:disabled {
+	background: var(--strong);
+	color: var(--on-strong);
 }
 .label {
 	font-size: 10px;
@@ -88,8 +104,8 @@ textarea {
 	font-size: 10px;
 	font-weight: 700;
 	text-transform: uppercase;
-	background: var(--ink);
-	color: var(--paper);
+	background: var(--strong);
+	color: var(--on-strong);
 }
 .hatch {
 	background: repeating-linear-gradient(45deg, var(--ink) 0 2px, var(--paper) 2px 6px);

@@ -32,3 +32,10 @@ describe('dataDateText', () => {
 		expect(dataDateText('test.osm.pbf@not-a-date')).toBe('test.osm.pbf@not-a-date');
 	});
 });
+
+describe('the attribution of the map', () => {
+	it('keeps the formula of the licence', () => {
+		expect(texts.map.attribution).toContain('© OpenStreetMap contributors');
+		expect(texts.map.attribution).toContain('Protomaps');
+	});
+});

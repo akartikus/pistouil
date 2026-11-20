@@ -173,6 +173,7 @@
 		<GameMap
 			tilesUrl={TILES_URL}
 			source={shippedTiles()}
+			attribution={false}
 			theme={settings.theme}
 			{maxBounds}
 			{focus}
@@ -358,8 +359,8 @@
 		box-shadow: 3px 3px 0 var(--shadow);
 	}
 	.time {
-		background: var(--ink);
-		color: var(--paper);
+		background: var(--strong);
+		color: var(--on-strong);
 		padding: 0 0.4rem;
 		font-weight: 700;
 		font-size: 0.95rem;
@@ -374,7 +375,7 @@
 		width: 100%;
 		height: 16px;
 		margin: 0;
-		accent-color: var(--ink);
+		accent-color: var(--frame);
 	}
 	.marks {
 		position: absolute;
@@ -388,7 +389,7 @@
 		height: 8px;
 		margin-left: -1.5px;
 		background: var(--accent);
-		border: 1.5px solid var(--ink);
+		border: 1.5px solid var(--frame);
 		box-sizing: border-box;
 	}
 	.mark.mystery {
@@ -461,8 +462,8 @@
 		flex: 1;
 	}
 	.num {
-		background: var(--ink);
-		color: var(--paper);
+		background: var(--strong);
+		color: var(--on-strong);
 		padding: 0 6px;
 	}
 </style>

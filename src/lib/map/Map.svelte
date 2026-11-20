@@ -33,6 +33,8 @@
 		tilesUrl: string;
 		// The archive read by the app itself; the network address is not used then.
 		source?: Source;
+		// The built-in credit of MapLibre; the game shows its own, in the header.
+		attribution?: boolean;
 		theme: Theme;
 		// Limits of the zone: the player cannot pan outside.
 		maxBounds: Bounds;
@@ -53,6 +55,7 @@
 	let {
 		tilesUrl,
 		source,
+		attribution = true,
 		theme,
 		maxBounds,
 		focus,
@@ -131,7 +134,7 @@
 			id: 'building-outline',
 			type: 'line',
 			source: 'buildings-highlight',
-			paint: { 'line-color': colors.ink, 'line-width': 3 }
+			paint: { 'line-color': colors.frame, 'line-width': 3 }
 		});
 		m.addLayer({
 			id: 'route-line',
@@ -317,10 +320,11 @@
 				pitchWithRotate: false,
 				touchPitch: false,
 				// A button « i »: open when the map appears, folded after a few seconds or on the first drag.
-				attributionControl: { compact: true }
+				attributionControl: attribution ? { compact: true } : false
 			});
 			map = m;
-			m.once('load', () => setTimeout(foldAttribution, ATTRIBUTION_SECONDS * 1000));
+			if (attribution)
+				m.once('load', () => setTimeout(foldAttribution, ATTRIBUTION_SECONDS * 1000));
 			m.on('styledata', () => addGameLayers(m));
 			m.setMissingStyleImageResolver((id) => loadIcon(m, id));
 			m.on('idle', updateBuildings);
@@ -391,6 +395,7 @@
 	style:--mystery-ink={colors.mysteryNumberInk}
 	style:--route={colors.route}
 	style:--ink={colors.ink}
+	style:--frame={colors.frame}
 	style:--paper={colors.paper}
 	style:--shadow={colors.shadow}
 	style:--number={colors.numberFill}
@@ -434,7 +439,7 @@
 		font-size: 15px;
 		background: var(--number);
 		color: var(--number-ink);
-		border: 2px solid var(--ink);
+		border: 2px solid var(--frame);
 	}
 	.map :global(.pin.mystery .num) {
 		background: var(--mystery);
@@ -450,7 +455,7 @@
 		font-size: 10.5px;
 		background: var(--paper);
 		color: var(--ink);
-		border: 2px solid var(--ink);
+		border: 2px solid var(--frame);
 		box-shadow: 3px 3px 0 var(--shadow);
 	}
 	.map :global(.route-label .text) {
@@ -460,7 +465,7 @@
 		font-weight: bold;
 		background: var(--number);
 		color: var(--number-ink);
-		border: 2px solid var(--ink);
+		border: 2px solid var(--frame);
 		box-shadow: 3px 3px 0 var(--shadow);
 	}
 	.map :global(.route-label.approximate .text::before) {
@@ -471,7 +476,7 @@
 		border-radius: 0;
 		background: var(--paper);
 		color: var(--ink);
-		border: 3px solid var(--ink);
+		border: 3px solid var(--frame);
 		box-shadow: 5px 5px 0 var(--shadow);
 	}
 	.map :global(.info-popup .maplibregl-popup-tip) {
@@ -504,7 +509,7 @@
 		font-weight: bold;
 		background: var(--paper);
 		color: var(--ink);
-		border: 3px solid var(--ink);
+		border: 3px solid var(--frame);
 		cursor: pointer;
 	}
 	.map :global(.chip.conflict) {
@@ -520,7 +525,7 @@
 	.map :global(.chip.selected) {
 		box-shadow:
 			0 0 0 3px var(--paper),
-			0 0 0 6px var(--ink);
+			0 0 0 6px var(--frame);
 	}
 	.map :global(.pin) {
 		cursor: pointer;
@@ -529,7 +534,7 @@
 	.map :global(.maplibregl-ctrl-attrib) {
 		background: var(--paper);
 		color: var(--ink);
-		border: 2px solid var(--ink);
+		border: 2px solid var(--frame);
 		box-shadow: 2px 2px 0 var(--shadow);
 		font-family: inherit;
 		font-weight: normal;

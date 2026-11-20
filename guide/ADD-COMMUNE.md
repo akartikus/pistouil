@@ -37,4 +37,4 @@ Fuveau pèse environ 12 Mo (tuiles 6,9 Mo, graphe 4,7 Mo, lieux 0,1 Mo). Avec un
 
 ## 4. Attribution
 
-Les données sont dérivées d'OpenStreetMap (licence ODbL) et le fond de carte de Protomaps. L'attribution reste visible dans l'application (bouton « i » de la carte et écran À propos). Le dépôt et l'APK redistribuent une base dérivée : à revoir avant d'ouvrir le dépôt au public.
+Les données sont dérivées d'OpenStreetMap (licence ODbL) et le fond de carte de Protomaps. L'attribution reste visible dans l'application (bouton « i » de l’en-tête des écrans de carte et écran À propos). Le dépôt et l'APK redistribuent une base dérivée : à revoir avant d'ouvrir le dépôt au public.

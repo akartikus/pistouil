@@ -51,8 +51,8 @@
 		display: flex;
 		justify-content: space-between;
 		padding: 0.3rem 0.6rem;
-		background: var(--ink);
-		color: var(--paper);
+		background: var(--strong);
+		color: var(--on-strong);
 		text-transform: uppercase;
 	}
 	header a {
@@ -82,19 +82,20 @@
 		cursor: pointer;
 	}
 	.status.chosen {
-		color: var(--paper);
-		background: var(--ink);
-		border: 2px solid var(--ink);
+		color: var(--on-solid);
+		background: var(--solid);
+		border: 2px solid var(--solid);
 	}
 	.status.chosen.to-check {
 		background: var(--paper);
 		color: var(--ink);
+		border-color: var(--frame);
 		border-style: dashed;
 	}
 	.status.chosen.doubtful {
 		background: repeating-linear-gradient(45deg, var(--ink) 0 2px, var(--paper) 2px 6px);
 		color: var(--ink);
-		border-color: var(--ink);
+		border-color: var(--frame);
 		text-shadow:
 			0 0 3px var(--paper),
 			0 0 3px var(--paper),

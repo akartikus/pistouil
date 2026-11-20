@@ -36,13 +36,26 @@ Règle : aucune couleur de famille de lieux ne reprend l’orange / jaune de l�
 | Lieux de l’enquête | `#FF8A00` | `#FFD400` |
 | Lieu du mystère | `#E0007A` | `#FF4FA3` |
 | Trajet | `#1F4FFF` | `#5CC8FF` |
-| Cadres, ombres, carrés numérotés | noir, texte blanc | jaune, texte noir (ombre des cadres : jaune) |
+| Panneaux | `#FFFFFF` | `#0B1218` (quasi noir) |
+| Texte | noir | `#E6ECF2` (blanc cassé) |
+| Cadres | noir | `#8195AA` (ardoise) |
+| Ombres dures | noir | `#3B4E63` (ardoise sombre) |
+| Barres et pastilles (en-têtes, heure, compteurs) | noir, texte blanc | `#1F2E3E` (ardoise relevée), texte `#E6ECF2` |
+| Boutons pleins et sélection | noir, texte blanc | jaune `#FFD400`, texte noir |
+| Carrés numérotés | noir, texte blanc | jaune, texte noir |
 
 Familles de lieux (pastilles de décor, couleurs des icônes de `static/map/icons/`) : santé `#2FA36B`, restauration `#A8623C`, commerces `#00A39B`, culture et éducation `#7B4FD0`, services `#5E7186`, nature `#3F8F3F`, transport `#2B7A9B`, loisirs `#9A7B1E`, neutre (lieux sensibles et exclus) `#8A8A8A`, générique `#6B6B6B`. Le bleu de la maquette pour la culture a été remplacé par un violet, trop proche du bleu du trajet. On peut ajouter d’autres couleurs de famille pour rendre le jeu plus vivant.
 
 ## Thème sombre
 
 Même structure, fond bleu nuit, aplats de l’enquête en jaune et du mystère en rose. Il est prévu pour assombrir la carte au fil de la soirée (`setPaintProperty`, brief 04).
+
+Équilibre des couleurs (changement `balance-dark-theme`) : en clair, le noir fait à la fois le texte, les cadres et les aplats ; recopié tel quel en sombre, le blanc éblouissait (cadres à 21:1, grands aplats blancs, ombres jaunes). Les rôles sont donc séparés (`--ink`, `--frame`, `--shadow`, `--strong`, `--solid`) :
+
+- **Le noir reste dominant** : panneaux quasi noirs, cadres épais et ombres dures conservés, mais en ardoise (cadres à 6:1 sur les panneaux).
+- **Le jaune est la seule couleur forte** : bouton principal ou sélectionné, onglet actif, bulle d’aide, liens sur barres, lieux de l’enquête. Il ne sert plus aux cadres ni aux ombres.
+- **Pas de grand aplat blanc** : en sombre, la hiérarchie vient de l’élévation (ardoise plus claire que le fond), pas de l’inversion.
+- Les contrastes (texte 7:1, cadres 3:1, jaune 7:1) sont vérifiés par `src/lib/game/colors.spec.ts`, qui lit `src/lib/game/app.css`.
 
 ## Police
 
@@ -83,4 +96,4 @@ Un guide en trois bulles accompagne la première partie (toucher un lieu numéro
 
 ## Garde-fous
 
-Attribution « © OpenStreetMap contributors » et schéma de tuiles (Protomaps) : sur la carte, un bouton « i » toujours présent (texte déplié quelques secondes à l’affichage de la carte, puis replié), et le texte complet dans À propos, comme l’autorisent les règles d’attribution d’OpenStreetMap. Mention de fiction visible sur l’écran de départ et dans À propos. Aucune photo de bâtiment, aucun logo.
+Attribution « © OpenStreetMap contributors » et schéma de tuiles (Protomaps) : dans l’en-tête des écrans qui montrent la carte, à côté du titre, un bouton « i » toujours présent (texte déplié quelques secondes à l’affichage de l’écran, puis replié), et le texte complet dans À propos, comme l’autorisent les règles d’attribution d’OpenStreetMap. Mention de fiction visible sur l’écran de départ et dans À propos. Aucune photo de bâtiment, aucun logo.
