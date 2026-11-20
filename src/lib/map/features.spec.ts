@@ -67,12 +67,12 @@ describe('placeFeatures', () => {
 		expect(result.features).toHaveLength(0);
 	});
 
-	it('passes the raw opening hours and puts coordinates in [lon, lat] order', () => {
+	it('writes the opening hours in French and puts coordinates in [lon, lat] order', () => {
 		const [feature] = placeFeatures([place('a', 'bakery')], catalog, {
 			investigationIds: [],
 			hours: { a: 'Mo-Sa 07:00-19:30' }
 		}).features;
-		expect(feature.properties.hours).toBe('Mo-Sa 07:00-19:30');
+		expect(feature.properties.hours).toBe('lun.–sam. 7h–19h30');
 		expect(feature.geometry.coordinates).toEqual([5.56, 43.45]);
 	});
 });

@@ -1,4 +1,17 @@
 // Every text of the interface, in French. The texts of the facts come from the engine.
+// The words follow docs/design/wording.md: no term of the engine or of the code.
+
+// The date of the data in French, from a data version like `source.osm.pbf@2026-11-15T21:22:28Z`.
+export function dataDateText(version: string): string {
+	const date = new Date(version.split('@')[1] ?? '');
+	if (Number.isNaN(date.getTime())) return version;
+	return date.toLocaleDateString('fr-FR', {
+		day: 'numeric',
+		month: 'long',
+		year: 'numeric',
+		timeZone: 'UTC'
+	});
+}
 
 export const texts = {
 	appName: 'Pistouil',
@@ -7,9 +20,10 @@ export const texts = {
 	start: {
 		locate: 'Je me localise',
 		locating: 'Localisation…',
-		locationRefused: 'Position refusée. Choisis plutôt Fuveau.',
+		locationRefused: 'Impossible de te localiser. Touche « Fuveau » pour jouer.',
 		outsideFuveau:
-			'Seule Fuveau est disponible pour le moment, et ta position est en dehors. Choisis plutôt Fuveau.',
+			'Pour le moment, on ne peut jouer qu’à Fuveau, et tu n’y es pas. Touche « Fuveau » pour jouer.',
+		locateSoon: 'Bientôt disponible',
 		fuveau: 'Fuveau',
 		difficulty: 'Difficulté',
 		difficulties: { 1: 'Facile', 2: 'Moyenne', 3: 'Difficile' } as Record<number, string>,
@@ -28,12 +42,12 @@ export const texts = {
 
 	failure: {
 		'not-enough-places': 'Il n’y a pas assez de lieux publics ici pour monter une enquête.',
-		'no-scene': 'Aucun lieu de la zone ne convient pour la farce.',
+		'no-scene': 'Aucun lieu des environs ne convient pour y organiser la farce.',
 		'difficulty-unreachable':
 			'Impossible de monter une enquête à cette difficulté ici. Essaie une autre difficulté.',
-		'data-missing': 'Les données du jeu sont introuvables. Réessaie plus tard.',
+		'data-missing': 'Impossible de charger les lieux du jeu. Ferme puis rouvre l’application.',
 		'data-changed':
-			'Les données ont changé depuis ta dernière partie : cette enquête ne peut plus être rejouée à l’identique.',
+			'Cette enquête ne peut plus être reprise : les lieux du jeu ont changé depuis. Commence-en une nouvelle.',
 		back: 'Retour'
 	},
 
@@ -47,17 +61,18 @@ export const texts = {
 	},
 
 	map: {
-		pieces: 'Preuves et témoins',
-		nothingHere: 'Rien ici.',
+		pieces: 'Indices et témoignages',
+		nothingHere: 'Aucun indice ici.',
+		routeLabel: 'Calculer le trajet à pied',
 		toMystery: 'Vers le lieu du mystère',
 		tripTo: 'Trajet vers…',
 		tripFrom: (name: string) => `Trajet depuis ${name} vers…`,
 		mystery: 'Lieu du mystère',
-		onlyRetained: 'Seuls les lieux de l’enquête sont proposés.',
+		onlyRetained: 'Seuls les lieux numérotés de l’enquête sont proposés.',
 		noted: 'Chaque trajet affiché est noté dans le carnet.',
-		cursor: 'Curseur horaire',
+		cursor: 'Choisir l’heure',
 		unknown: 'inconnu',
-		notAnywhere: 'Position inconnue à cette heure.',
+		notAnywhere: 'On ne sait pas où se trouve cette personne à cette heure-là.',
 		openFile: (name: string) => `Fiche de ${name} ▸`,
 		close: 'Fermer'
 	},
@@ -69,25 +84,25 @@ export const texts = {
 
 	verdict: {
 		measured: (trip: number, gap: number) =>
-			`${trip} min de trajet, mais ${gap} min d’écart : les deux faits ne peuvent pas être vrais tous les deux.`,
+			`Il faut ${trip} min à pied, mais ${gap} min seulement séparent ces deux indices : ils ne peuvent pas être vrais tous les deux.`,
 		tooFar: (name: string, trip: number, gap: number) =>
-			`Si ce fait est vrai, ${name} ne peut pas être à la scène (${trip} min de trajet, ${gap} min d’écart).`,
+			`Si cet indice est vrai, ${name} n’a pas pu être au lieu du mystère : il faut ${trip} min à pied, mais ${gap} min seulement séparent cet indice du mystère.`,
 		couldReach: (name: string, trip: number, gap: number) =>
-			`Si ce fait est vrai, ${name} aurait pu être à la scène (${trip} min de trajet, ${gap} min d’écart).`
+			`Si cet indice est vrai, ${name} aurait pu être au lieu du mystère : ${trip} min à pied pour ${gap} min d’écart.`
 	},
 
 	notebook: {
 		chronology: 'Chronologie',
 		notes: 'Notes',
-		empty: 'Aucun fait pour l’instant. Ouvre un lieu sur la carte.',
+		empty: 'Aucun indice pour l’instant. Touche un lieu sur la carte.',
 		explained: 'Partie terminée : les incohérences et les alibis sont maintenant expliqués.',
 		freeNote: 'Note libre',
 		notePlaceholder: 'Qui avait un motif ? Qui ment ?',
 		measured: 'Trajets mesurés',
-		annotations: 'Annotations de lieux',
+		annotations: 'Notes sur les lieux',
 		inconsistency: 'Incohérence',
-		unseen: 'Non vu pendant la partie',
-		facts: (count: number) => `${count} fait${count > 1 ? 's' : ''}`
+		unseen: 'Pas découvert pendant la partie',
+		facts: (count: number) => `${count} indice${count > 1 ? 's' : ''}`
 	},
 
 	suspects: {
@@ -98,14 +113,14 @@ export const texts = {
 			string
 		>,
 		file: 'Fiche',
-		saysHimself: 'Ce qu’il dit lui-même',
-		othersSay: 'Ce que les autres disent de lui',
-		proofs: 'Preuves et témoins',
+		saysHimself: 'Ce que la personne dit',
+		othersSay: 'Ce que les autres en disent',
+		proofs: 'Indices et témoignages',
 		nothing: 'Rien pour l’instant',
 		fillsUp: 'La fiche se remplit en explorant les lieux.',
 		explored: (count: number, total: number) => `${count} lieux explorés sur ${total}`,
 		accuse: (name: string) => `Accuser ${name}`,
-		definitive: 'Définitif : la révélation se lance.',
+		definitive: 'Définitif : la révélation s’affiche aussitôt.',
 		confirmTitle: (name: string) => `Accuser ${name} ?`,
 		confirmText: 'Une accusation est définitive, juste ou non.',
 		confirm: 'Oui, j’accuse',
@@ -120,15 +135,15 @@ export const texts = {
 		replay: 'Rejouer la soirée',
 		play: 'Lecture',
 		pause: 'Pause',
-		explain: 'Comprendre : revoir le carnet expliqué',
+		explain: 'Comprendre : voir le carnet avec les explications',
 		toMap: 'Voir sur la carte',
 		newInvestigation: 'Nouvelle enquête'
 	},
 
 	tour: {
-		1: 'Touche un lieu numéroté sur la carte.',
-		2: 'Touche une pièce pour la lire : elle rejoint ton carnet.',
-		3: 'Mesure un trajet vers le lieu du mystère pour comparer les alibis.',
+		1: 'Une farce a eu lieu ! Touche un lieu numéroté pour chercher des indices.',
+		2: 'Touche un indice ou un témoignage pour le lire. Il sera noté dans ton carnet.',
+		3: 'Touche « Vers le lieu du mystère » pour voir le temps de marche : un alibi trop juste est suspect.',
 		skip: 'Passer',
 		replay: 'Revoir le guide'
 	},
@@ -139,18 +154,22 @@ export const texts = {
 		light: 'Clair',
 		dark: 'Sombre',
 		investigation: 'Enquête',
-		seed: 'graine',
+		seed: 'enquête n°',
 		status: 'État',
 		ongoing: 'En cours',
 		finished: 'Terminée',
-		dataVersion: 'Données',
+		dataVersion: 'Lieux',
+		dataValue: (version: string) => {
+			const date = dataDateText(version);
+			return date === version ? version : `données OpenStreetMap du ${date}`;
+		},
 		newInvestigation: 'Nouvelle enquête',
 		about: 'À propos',
 		fictionTitle: 'Fiction',
 		dataTitle: 'Données',
 		dataText: '© OpenStreetMap contributors, licence ODbL 1.0',
 		mapTitle: 'Fond de carte',
-		mapText: 'Protomaps, tuiles dérivées d’OpenStreetMap',
+		mapText: 'Protomaps, d’après les données d’OpenStreetMap',
 		fontTitle: 'Police',
 		fontText: 'IBM Plex Mono, licence OFL',
 		back: 'Retour'
