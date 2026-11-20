@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Pistouil</string>
+    <string name="title_activity_main">Pistouil</string>
+    <string name="package_name">dev.sitraka.pistouil</string>
+    <string name="custom_url_scheme">dev.sitraka.pistouil</string>
+</resources>

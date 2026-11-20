@@ -1,8 +1,11 @@
+import { ZONE_RADIUS_M } from '../data/zones';
 import { haversineM } from '../engine/pedestrian';
 import type { Catalog, Place } from '../engine/types';
 
 // The radius grows through these steps until the zone holds enough places.
 export const RADII_M = [500, 1000, 2000, 4000];
+// In offline mode the zone stays inside the downloaded one.
+export const OFFLINE_RADII_M = RADII_M.filter((radius) => radius <= ZONE_RADIUS_M);
 export const MIN_USABLE = 6;
 export const MIN_SCENES = 2;
 // The route matrix is quadratic: the engine gets at most this many places.
@@ -17,7 +20,12 @@ export type ZoneResult =
 	{ ok: true; radiusM: number; places: Place[] } | { ok: false; reason: 'not-enough-places' };
 
 // The nearest usable places of the first radius that holds enough of them, nearest first.
-export function buildZone(places: Place[], catalog: Catalog, center: Center): ZoneResult {
+export function buildZone(
+	places: Place[],
+	catalog: Catalog,
+	center: Center,
+	radii = RADII_M
+): ZoneResult {
 	const roles = new Map(catalog.placeTypes.map((type) => [type.id, type.role]));
 	const usable = places
 		.filter((place) => !place.removed && ['scene', 'alibi'].includes(roles.get(place.typeId) ?? ''))
@@ -28,7 +36,7 @@ export function buildZone(places: Place[], catalog: Catalog, center: Center): Zo
 		}))
 		.sort((a, b) => a.distance - b.distance || (a.place.osmId < b.place.osmId ? -1 : 1));
 
-	for (const radiusM of RADII_M) {
+	for (const radiusM of radii) {
 		const within = usable.filter((entry) => entry.distance <= radiusM);
 		if (within.length < MIN_USABLE || within.filter((entry) => entry.scene).length < MIN_SCENES)
 			continue;

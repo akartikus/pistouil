@@ -50,3 +50,29 @@ export function createCellLoader(base: string, fetchFn: FetchLike) {
 		}
 	};
 }
+
+// A cell the offline game needs but the downloaded zone does not hold.
+export class OutsideZone extends Error {}
+
+// The same files, read from a downloaded zone (see zones.ts) through `read`.
+export function createZoneSource(
+	zone: { insee: string; cells: string[] },
+	read: (path: string) => Promise<string | null>
+) {
+	const dir = `zones/${zone.insee}`;
+	const readCells = async <T>(kind: 'places' | 'graph', cells: string[]) => {
+		if (cells.some((cell) => !zone.cells.includes(cell))) throw new OutsideZone();
+		const files = await Promise.all(cells.map((cell) => read(`${dir}/${kind}/${cell}.json`)));
+		return files.filter((file) => file !== null).map((file) => JSON.parse(file) as T);
+	};
+	return {
+		async manifest(): Promise<Manifest> {
+			const text = await read(`${dir}/manifest.json`);
+			if (text === null) throw new Error(`No manifest in ${dir}`);
+			return JSON.parse(text);
+		},
+		communes: async (): Promise<Commune[]> => JSON.parse((await read('communes.json')) ?? '[]'),
+		places: async (cells: string[]) => (await readCells<RawPlace[]>('places', cells)).flat(),
+		graph: (cells: string[]) => readCells<GraphCell>('graph', cells)
+	};
+}

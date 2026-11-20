@@ -3,7 +3,8 @@ import { haversineM } from '../engine/pedestrian';
 import type { GraphCell } from '../engine/pedestrian';
 import type { Catalog, Investigation, Place, Route } from '../engine/types';
 import { toPlaces, type RawPlace } from '../data/places';
-import type { Manifest } from '../data/files';
+import { OutsideZone, type Manifest } from '../data/files';
+import { ZONE_RADIUS_M } from '../data/zones';
 import { cellsCovering, zoneBounds } from '../map/zone';
 import { checkAccusation } from './discovery';
 import type { Evening } from './evening';
@@ -18,7 +19,7 @@ import type {
 	SessionView
 } from './protocol';
 import { dataChanged, dataVersionOf } from './save';
-import { buildZone, neighborCommunes, RADII_M, type CommuneSummary } from './zone';
+import { buildZone, neighborCommunes, OFFLINE_RADII_M, RADII_M, type CommuneSummary } from './zone';
 
 // Where the game data comes from (the real one reads files; tests give their own).
 export interface DataSource {
@@ -112,6 +113,22 @@ export async function startSession(
 	deps: SessionDeps,
 	request: StartRequest | ResumeRequest
 ): Promise<StartResult> {
+	// Offline, a save made with a wider zone would give another investigation: never replay it.
+	if (request.type === 'resume' && request.zone && request.saved.zone.radiusM > ZONE_RADIUS_M) {
+		return failure('needs-connection');
+	}
+	try {
+		return await load(deps, request);
+	} catch (error) {
+		if (error instanceof OutsideZone) return failure('needs-connection');
+		throw error;
+	}
+}
+
+async function load(
+	deps: SessionDeps,
+	request: StartRequest | ResumeRequest
+): Promise<StartResult> {
 	const { center, difficulty, seed } =
 		request.type === 'start' ? request : { center: request.saved.zone.center, ...request.saved };
 	const { catalog, source } = deps;
@@ -129,16 +146,17 @@ export async function startSession(
 
 	// Widen the area read from the files until the zone is complete for its radius.
 	let raw: RawPlace[] = [];
-	let zone = buildZone([], catalog, center);
-	for (const [step, radius] of RADII_M.entries()) {
+	const radii = request.zone ? OFFLINE_RADII_M : RADII_M;
+	let zone = buildZone([], catalog, center, radii);
+	for (const [step, radius] of radii.entries()) {
 		const [[minLon, minLat], [maxLon, maxLat]] = zoneBounds(
 			{ minLat: center.lat, minLon: center.lon, maxLat: center.lat, maxLon: center.lon },
 			radius + GRAPH_MARGIN_M
 		);
 		raw = await source.places(cellsCovering(manifest.grid, { minLat, minLon, maxLat, maxLon }));
-		zone = buildZone(toPlaces(raw, catalog), catalog, center);
+		zone = buildZone(toPlaces(raw, catalog), catalog, center, radii);
 		if (zone.ok && zone.radiusM <= radius) break;
-		if (step === RADII_M.length - 1) break;
+		if (step === radii.length - 1) break;
 	}
 	if (!zone.ok)
 		return failure(

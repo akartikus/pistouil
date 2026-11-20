@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildZone, neighborCommunes, MAX_PLACES } from './zone';
+import { buildZone, neighborCommunes, MAX_PLACES, OFFLINE_RADII_M } from './zone';
 import { validateCatalog } from '../engine/catalog';
 import { rawStarterCatalog } from '../engine/fixtures';
 import type { Place } from '../engine/types';
@@ -41,6 +41,16 @@ describe('buildZone', () => {
 			ok: true,
 			radiusM: 2000
 		});
+	});
+
+	it('stops at 2 km in offline mode', () => {
+		const places = [...scenes(2, 100), ...scenes(6, 3500, 'far')];
+		expect(buildZone(places, catalog, center)).toMatchObject({ ok: true, radiusM: 4000 });
+		expect(buildZone(places, catalog, center, OFFLINE_RADII_M)).toMatchObject({
+			ok: false,
+			reason: 'not-enough-places'
+		});
+		expect(OFFLINE_RADII_M.at(-1)).toBe(2000);
 	});
 
 	it('needs at least 2 scenes, not only usable places', () => {

@@ -16,8 +16,25 @@ export const texts = {
 		resumeIn: (name: string) => `Enquête en cours à ${name}`,
 		newInvestigation: 'Nouvelle enquête',
 		loading: 'Préparation de l’enquête…',
-		noCommune: 'Aucune commune de ce nom.'
+		noCommune: 'Aucune commune de ce nom.',
+		locateWhy:
+			'Ta position sert seulement à choisir le lieu de l’enquête. Elle reste sur ton téléphone et n’est jamais envoyée.',
+		locateContinue: 'Continuer',
+		offlineOn: 'Mode hors ligne activé',
+		downloadAsk: (name: string) =>
+			`Pour jouer hors ligne à ${name}, télécharge une seule fois sa zone (environ 2 km autour du centre).`,
+		measuring: 'Calcul de la taille…',
+		download: (size: string) => `Télécharger (${size})`,
+		downloading: (percent: number) => `Téléchargement… ${percent} %`,
+		cancel: 'Annuler',
+		downloadFailed: 'Téléchargement impossible. Vérifie ta connexion et réessaie.',
+		outsideZones: (name: string) =>
+			`Ta position n’est dans aucune zone téléchargée. La commune la plus proche est ${name}.`
 	},
+
+	// A size in megabytes, the French way: « 6,2 Mo ».
+	size: (bytes: number, estimated = false) =>
+		`${estimated ? 'environ ' : ''}${(bytes / 1e6).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} Mo`,
 
 	failure: {
 		'not-enough-places':
@@ -28,6 +45,8 @@ export const texts = {
 		'data-missing': 'Les données du jeu sont introuvables. Réessaie plus tard.',
 		'data-changed':
 			'Les données ont changé depuis ta dernière partie : cette enquête ne peut plus être rejouée à l’identique.',
+		'needs-connection':
+			'Cette enquête demande une connexion : elle sort de tes zones téléchargées. Désactive le mode hors ligne dans les Réglages, ou commence une autre enquête.',
 		back: 'Retour'
 	},
 
@@ -128,6 +147,14 @@ export const texts = {
 		seed: 'graine',
 		dataVersion: 'Données',
 		newInvestigation: 'Nouvelle enquête',
+		offline: 'Mode hors ligne',
+		offlineText: 'Télécharge une seule fois la zone d’une commune pour y jouer sans connexion.',
+		on: 'Activé',
+		off: 'Désactivé',
+		zones: 'Zones téléchargées',
+		noZone: 'Aucune zone. Choisis une commune à l’écran de départ pour la télécharger.',
+		remove: 'Supprimer',
+		notKept: 'Ton navigateur peut effacer les zones et la partie en cours s’il manque de place.',
 		about: 'À propos',
 		fictionTitle: 'Fiction',
 		dataTitle: 'Données',

@@ -3,14 +3,16 @@
 	import { resolve } from '$app/paths';
 	import { Geolocation } from '@capacitor/geolocation';
 	import { onMount } from 'svelte';
-	import { loadCommunes } from '#lib/data/files.js';
+	import { zoneContaining, type ZoneEntry, type ZonePlan } from '#lib/data/zones.js';
 	import type { Difficulty } from '#lib/engine/types.js';
 	import { game } from '#lib/game/game.svelte.js';
+	import { locate as locateDevice, needsExplanation } from '#lib/game/locate.js';
+	import { offline } from '#lib/game/offline.svelte.js';
 	import type { SavedGame } from '#lib/game/save.js';
+	import { settings } from '#lib/game/settings.svelte.js';
 	import { texts } from '#lib/game/texts.js';
+	import { neighborCommunes, type Center, type CommuneSummary } from '#lib/game/zone.js';
 	import type { Commune } from '#lib/map/zone.js';
-
-	const base = import.meta.env.VITE_DATA_URL ?? '/dev-data';
 
 	let communes = $state<Commune[]>([]);
 	let query = $state('');
@@ -18,6 +20,12 @@
 	let saved = $state<SavedGame | null>(null);
 	let message = $state('');
 	let locating = $state(false);
+	let explaining = $state(false);
+	// Offline mode: the commune to download first, its plan once measured, the progress.
+	let proposed = $state<CommuneSummary | null>(null);
+	let plan = $state.raw<ZonePlan | null>(null);
+	let progress = $state<number | null>(null);
+	let downloading: AbortController | null = null;
 
 	const plain = (text: string) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 	const matches = $derived(
@@ -27,28 +35,81 @@
 	);
 
 	onMount(async () => {
-		communes = await loadCommunes(base, fetch);
+		communes = await offline.communes();
 		const result = await game.loadSave();
 		saved = result.status === 'ok' ? result.game : null;
 	});
 
-	async function begin(center: { lat: number; lon: number }, name: string, insee?: string) {
-		message = '';
-		await game.start(center, name, insee, difficulty);
+	async function play(center: Center, name: string, insee?: string, zone?: ZoneEntry) {
+		await game.start(center, name, insee, difficulty, zone);
 		if (game.phase === 'playing') await goto(resolve('/play/carte'));
+	}
+
+	// Offline, an investigation is centred on a downloaded commune, downloaded first if needed.
+	async function begin(commune: CommuneSummary) {
+		message = '';
+		if (!settings.offline) return play(commune.center, commune.name, commune.insee);
+		const zone = offline.zones.find((candidate) => candidate.insee === commune.insee);
+		if (zone) return play(zone.center, zone.name, zone.insee, zone);
+		await propose(commune);
+	}
+
+	async function propose(commune: CommuneSummary) {
+		proposed = commune;
+		plan = null;
+		try {
+			plan = await offline.plan(commune);
+		} catch {
+			proposed = null;
+			message = texts.start.downloadFailed;
+		}
+	}
+
+	async function download() {
+		if (!plan) return;
+		downloading = new AbortController();
+		progress = 0;
+		try {
+			await offline.download(plan, (done, total) => (progress = done / total), downloading.signal);
+			const commune = plan.commune;
+			proposed = null;
+			await begin(commune);
+		} catch {
+			if (!downloading.signal.aborted) message = texts.start.downloadFailed;
+		} finally {
+			progress = null;
+			downloading = null;
+		}
+	}
+
+	function cancel() {
+		downloading?.abort();
+		proposed = null;
+		plan = null;
 	}
 
 	async function locate() {
 		message = '';
+		explaining = false;
 		locating = true;
-		try {
-			const { coords } = await Geolocation.getCurrentPosition();
-			await begin({ lat: coords.latitude, lon: coords.longitude }, texts.start.locate);
-		} catch {
+		const point = await locateDevice(Geolocation);
+		locating = false;
+		if (!point) {
 			message = texts.start.locationRefused;
-		} finally {
-			locating = false;
+			return;
 		}
+		if (!settings.offline) return play(point, texts.start.locate);
+		const zone = zoneContaining(offline.zones, point);
+		if (zone) return play(zone.center, zone.name, zone.insee, zone);
+		const [nearest] = neighborCommunes(communes, point, '', 1);
+		if (!nearest) return;
+		await propose(nearest);
+		message = texts.start.outsideZones(nearest.name);
+	}
+
+	async function askLocation() {
+		if (await needsExplanation(Geolocation)) explaining = true;
+		else await locate();
 	}
 
 	async function resume() {
@@ -73,11 +134,11 @@
 		<section class="box pad">
 			<p>{texts.failure[game.failure.reason]}</p>
 			{#each game.failure.neighbors as neighbor (neighbor.insee)}
-				<button class="btn" onclick={() => begin(neighbor.center, neighbor.name, neighbor.insee)}>
+				<button class="btn" onclick={() => begin(neighbor)}>
 					{neighbor.name}
 				</button>
 			{/each}
-			{#if game.failure.reason === 'data-changed'}
+			{#if game.failure.reason === 'data-changed' || game.failure.reason === 'needs-connection'}
 				<button class="btn solid" onclick={startOver}>{texts.start.newInvestigation}</button>
 			{/if}
 			<button class="btn" onclick={() => game.dismiss()}>{texts.failure.back}</button>
@@ -105,14 +166,36 @@
 			</div>
 		</section>
 
+		{#if proposed}
+			<section class="box pad">
+				<p>{texts.start.downloadAsk(proposed.name)}</p>
+				{#if progress !== null}
+					<p class="label">{texts.start.downloading(Math.round(progress * 100))}</p>
+				{:else if plan}
+					<button class="btn solid wide" onclick={download}>
+						{texts.start.download(texts.size(plan.bytes, plan.estimated))}
+					</button>
+				{:else}
+					<p class="label">{texts.start.measuring}</p>
+				{/if}
+				<button class="btn" onclick={cancel}>{texts.start.cancel}</button>
+			</section>
+		{/if}
+
 		<section class="box pad">
-			<button class="btn solid wide" onclick={locate} disabled={locating}>
-				{locating ? texts.start.locating : texts.start.locate}
-			</button>
+			{#if settings.offline}<p class="label">{texts.start.offlineOn}</p>{/if}
+			{#if explaining}
+				<p>{texts.start.locateWhy}</p>
+				<button class="btn solid wide" onclick={locate}>{texts.start.locateContinue}</button>
+			{:else}
+				<button class="btn solid wide" onclick={askLocation} disabled={locating}>
+					{locating ? texts.start.locating : texts.start.locate}
+				</button>
+			{/if}
 			<p class="label">{texts.start.searchCommune}</p>
 			<input bind:value={query} placeholder={texts.start.communePlaceholder} />
 			{#each matches as commune (commune.insee)}
-				<button class="btn wide" onclick={() => begin(commune.center, commune.name, commune.insee)}>
+				<button class="btn wide" onclick={() => begin(commune)}>
 					{commune.name}
 				</button>
 			{/each}

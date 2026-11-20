@@ -13,7 +13,8 @@
 		type StyleSpecification
 	} from 'maplibre-gl';
 	import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
-	import { Protocol } from 'pmtiles';
+	import { Protocol, type Source } from 'pmtiles';
+	import { StoredPMTiles } from '../data/tiles.js';
 	import { onMount } from 'svelte';
 	import type {
 		Feature,
@@ -31,6 +32,8 @@
 	interface Props {
 		// Address of the PMTiles file.
 		tilesUrl: string;
+		// The archive as downloaded for the offline mode; the network address is not used then.
+		source?: Source;
 		theme: Theme;
 		// Limits of the zone: the player cannot pan outside.
 		maxBounds: Bounds;
@@ -50,6 +53,7 @@
 
 	let {
 		tilesUrl,
+		source,
 		theme,
 		maxBounds,
 		focus,
@@ -89,7 +93,7 @@
 		const style = await (await fetch(styleUrl(forTheme))).json();
 		// Plain concatenation: URL() would escape the {fontstack} and {range} tokens.
 		style.glyphs = `${location.origin}${style.glyphs}`;
-		style.sources.protomaps.url = `pmtiles://${absolute(tilesUrl)}`;
+		style.sources.protomaps.url = `pmtiles://${source ? source.getKey() : absolute(tilesUrl)}`;
 		return style;
 	}
 
@@ -294,7 +298,9 @@
 	onMount(() => {
 		// The worker is bundled by Vite, the way MapLibre documents for bundlers.
 		setWorkerUrl(workerUrl);
-		addProtocol('pmtiles', new Protocol().tile);
+		const protocol = new Protocol();
+		if (source) protocol.add(new StoredPMTiles(source));
+		addProtocol('pmtiles', protocol.tile);
 		let disposed = false;
 		(async () => {
 			const style = await loadStyle(theme);

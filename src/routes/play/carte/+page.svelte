@@ -2,7 +2,6 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
-	import { loadCommunes } from '#lib/data/files.js';
 	import { validateCatalog } from '#lib/engine/catalog.js';
 	import { formatTime } from '#lib/engine/render.js';
 	import { rawStarterCatalog } from '#lib/engine/starter-catalog.js';
@@ -10,6 +9,7 @@
 	import { findInconsistencies, measuredKey, positionsAt } from '#lib/game/deduction.js';
 	import { namesById } from '#lib/game/derive.js';
 	import { game } from '#lib/game/game.svelte.js';
+	import { offline } from '#lib/game/offline.svelte.js';
 	import { asPlaces, boxOf, hoursOf } from '#lib/game/mapdata.js';
 	import { settings } from '#lib/game/settings.svelte.js';
 	import { texts } from '#lib/game/texts.js';
@@ -26,7 +26,6 @@
 
 	const catalog = validateCatalog(structuredClone(rawStarterCatalog));
 	const tilesUrl = import.meta.env.VITE_TILES_URL ?? '/dev-data/map/zone.pmtiles';
-	const base = import.meta.env.VITE_DATA_URL ?? '/dev-data';
 
 	const view = $derived(game.view);
 	const investigation = $derived(view?.investigation);
@@ -38,7 +37,7 @@
 
 	onMount(async () => {
 		tour.begin();
-		communes = await loadCommunes(base, fetch);
+		communes = await offline.communes();
 	});
 
 	const retained = $derived<Place[]>(asPlaces(investigation?.places ?? []));
@@ -173,6 +172,7 @@
 	<div class="stage">
 		<GameMap
 			{tilesUrl}
+			source={offline.tiles(game.offline)}
 			theme={settings.theme}
 			{maxBounds}
 			{focus}

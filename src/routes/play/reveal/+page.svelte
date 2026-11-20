@@ -7,6 +7,7 @@
 	import { rawStarterCatalog } from '#lib/engine/starter-catalog.js';
 	import { positionAt } from '#lib/game/evening.js';
 	import { game } from '#lib/game/game.svelte.js';
+	import { offline } from '#lib/game/offline.svelte.js';
 	import { asPlaces, boxOf, hoursOf } from '#lib/game/mapdata.js';
 	import { settings } from '#lib/game/settings.svelte.js';
 	import { texts } from '#lib/game/texts.js';
@@ -94,6 +95,7 @@
 		<section class="stage">
 			<GameMap
 				{tilesUrl}
+				source={offline.tiles(game.offline)}
 				theme={settings.theme}
 				{maxBounds}
 				{focus}

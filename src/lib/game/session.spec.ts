@@ -5,6 +5,7 @@ import { validateCatalog } from '../engine/catalog';
 import { rawStarterCatalog, richSpecs } from '../engine/fixtures';
 import { estimateRoutes } from '../playground/real-places';
 import type { RawPlace } from '../data/places';
+import { OutsideZone } from '../data/files';
 import type { Request } from './protocol';
 
 const catalog = validateCatalog(structuredClone(rawStarterCatalog));
@@ -247,5 +248,48 @@ describe('resume', () => {
 		const result = await startSession(deps(), { type: 'resume', saved });
 		if (!result.ok) throw new Error(result.reply.type);
 		expect(result.view.revelation?.revelationText.length).toBeGreaterThan(0);
+	});
+});
+
+describe('offline mode', () => {
+	const zone = { insee: '13040', cells: [] };
+	const offlineStart = { ...startRequest(), zone } as Extract<Request, { type: 'start' }>;
+
+	it('plays from the downloaded zone like from the network', async () => {
+		const result = await startSession(deps(), offlineStart);
+		expect(result.ok).toBe(true);
+	});
+
+	it('does not widen the zone beyond 2 km', async () => {
+		// Two scenes nearby, the other usable places 3.5 km away.
+		const far = raw.map((place, i) =>
+			i < 2 ? place : { ...place, lat: place.lat + 3500 / 111195 }
+		);
+		const online = await startSession(deps(source(far)), startRequest() as typeof offlineStart);
+		expect(online).toMatchObject({ ok: true, view: { radiusM: 4000 } });
+		const offline = await startSession(deps(source(far)), offlineStart);
+		expect(offline).toMatchObject({ ok: false, reply: { reason: 'not-enough-places' } });
+	});
+
+	it('asks for a connection when a cell is outside the downloaded zone', async () => {
+		const outside = source(raw, {
+			places: async () => Promise.reject(new OutsideZone())
+		});
+		const result = await startSession(deps(outside), offlineStart);
+		expect(result).toMatchObject({ ok: false, reply: { reason: 'needs-connection' } });
+	});
+
+	it('asks for a connection rather than replaying a 4 km investigation with fewer places', async () => {
+		const { view } = await started();
+		const saved = {
+			version: 1,
+			seed: 5,
+			difficulty: 2 as const,
+			zone: { center, radiusM: 4000, name: 'Fuveau' },
+			dataVersion: dataVersionOf(manifest),
+			progress: view.progress
+		};
+		const result = await startSession(deps(), { type: 'resume', saved, zone });
+		expect(result).toMatchObject({ ok: false, reply: { reason: 'needs-connection' } });
 	});
 });
