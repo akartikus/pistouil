@@ -18,6 +18,8 @@
 	let query = $state('');
 	let difficulty = $state<Difficulty>(2);
 	let saved = $state<SavedGame | null>(null);
+	// With a saved investigation, the choices of a new one open on the button.
+	let choosingNew = $state(false);
 	let message = $state('');
 	let locating = $state(false);
 	let explaining = $state(false);
@@ -151,67 +153,74 @@
 				<p class="label">
 					{(isFinished(saved) ? texts.start.finishedIn : texts.start.resumeIn)(saved.zone.name)}
 				</p>
-				<button class="btn solid" onclick={resume}>
-					{isFinished(saved) ? texts.start.seeReveal : texts.start.resume}
-				</button>
+				<div class="row choice">
+					<button class="btn solid" onclick={resume}>
+						{isFinished(saved) ? texts.start.seeReveal : texts.start.resume}
+					</button>
+					<button class="btn" class:on={choosingNew} onclick={() => (choosingNew = true)}>
+						{texts.start.newInvestigation}
+					</button>
+				</div>
 			</section>
 		{/if}
 
-		<section class="box pad">
-			<p class="label">{texts.start.newTitle}</p>
-			{#if saved}<p class="note">{texts.start.replaces}</p>{/if}
-			<p class="label">{texts.start.difficulty}</p>
-			<div class="row">
-				{#each [1, 2, 3] as level (level)}
-					<button
-						class="btn"
-						class:on={difficulty === level}
-						onclick={() => (difficulty = level as Difficulty)}
-					>
-						{level} · {texts.start.difficulties[level]}
+		{#if !saved || choosingNew}
+			<section class="box pad">
+				<p class="label">{texts.start.newTitle}</p>
+				{#if saved}<p class="note">{texts.start.replaces}</p>{/if}
+				<p class="label">{texts.start.difficulty}</p>
+				<div class="row">
+					{#each [1, 2, 3] as level (level)}
+						<button
+							class="btn"
+							class:on={difficulty === level}
+							onclick={() => (difficulty = level as Difficulty)}
+						>
+							{level} · {texts.start.difficulties[level]}
+						</button>
+					{/each}
+				</div>
+			</section>
+
+			{#if proposed}
+				<section class="box pad">
+					<p>{texts.start.downloadAsk(proposed.name)}</p>
+					{#if progress !== null}
+						<p class="label">{texts.start.downloading(Math.round(progress * 100))}</p>
+					{:else if plan}
+						<button class="btn solid wide" onclick={download}>
+							{texts.start.download(texts.size(plan.bytes, plan.estimated))}
+						</button>
+					{:else}
+						<p class="label">{texts.start.measuring}</p>
+					{/if}
+					<button class="btn" onclick={cancel}>{texts.start.cancel}</button>
+				</section>
+			{/if}
+
+			<section class="box pad">
+				{#if settings.offline}<p class="label">{texts.start.offlineOn}</p>{/if}
+				{#if explaining}
+					<p>{texts.start.locateWhy}</p>
+					<button class="btn solid wide" onclick={locate}>{texts.start.locateContinue}</button>
+				{:else}
+					<button class="btn solid wide" onclick={askLocation} disabled={locating}>
+						{locating ? texts.start.locating : texts.start.locate}
+					</button>
+				{/if}
+				<p class="label">{texts.start.searchCommune}</p>
+				<input bind:value={query} placeholder={texts.start.communePlaceholder} />
+				{#each matches as commune (commune.insee)}
+					<button class="btn wide" onclick={() => begin(commune)}>
+						{commune.name}
 					</button>
 				{/each}
-			</div>
-		</section>
-
-		{#if proposed}
-			<section class="box pad">
-				<p>{texts.start.downloadAsk(proposed.name)}</p>
-				{#if progress !== null}
-					<p class="label">{texts.start.downloading(Math.round(progress * 100))}</p>
-				{:else if plan}
-					<button class="btn solid wide" onclick={download}>
-						{texts.start.download(texts.size(plan.bytes, plan.estimated))}
-					</button>
-				{:else}
-					<p class="label">{texts.start.measuring}</p>
+				{#if query.trim().length >= 2 && matches.length === 0 && communes.length > 0}
+					<p class="label">{texts.start.noCommune}</p>
 				{/if}
-				<button class="btn" onclick={cancel}>{texts.start.cancel}</button>
+				{#if message}<p class="error">{message}</p>{/if}
 			</section>
 		{/if}
-
-		<section class="box pad">
-			{#if settings.offline}<p class="label">{texts.start.offlineOn}</p>{/if}
-			{#if explaining}
-				<p>{texts.start.locateWhy}</p>
-				<button class="btn solid wide" onclick={locate}>{texts.start.locateContinue}</button>
-			{:else}
-				<button class="btn solid wide" onclick={askLocation} disabled={locating}>
-					{locating ? texts.start.locating : texts.start.locate}
-				</button>
-			{/if}
-			<p class="label">{texts.start.searchCommune}</p>
-			<input bind:value={query} placeholder={texts.start.communePlaceholder} />
-			{#each matches as commune (commune.insee)}
-				<button class="btn wide" onclick={() => begin(commune)}>
-					{commune.name}
-				</button>
-			{/each}
-			{#if query.trim().length >= 2 && matches.length === 0 && communes.length > 0}
-				<p class="label">{texts.start.noCommune}</p>
-			{/if}
-			{#if message}<p class="error">{message}</p>{/if}
-		</section>
 	{/if}
 </main>
 
@@ -239,6 +248,9 @@
 		display: flex;
 		gap: 0.5rem;
 		flex-wrap: wrap;
+	}
+	.choice .btn {
+		flex: 1 1 8rem;
 	}
 	.wide {
 		width: 100%;

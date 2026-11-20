@@ -54,7 +54,14 @@ export const texts = {
 		back: 'Retour'
 	},
 
-	nav: { map: 'Carte', notebook: 'Carnet', suspects: 'Suspects', settings: 'Réglages' },
+	nav: {
+		map: 'Carte',
+		notebook: 'Carnet',
+		suspects: 'Suspects',
+		settings: 'Réglages',
+		newShort: '+ Nouvelle',
+		newFull: 'Nouvelle enquête'
+	},
 
 	map: {
 		pieces: 'Preuves et témoins',
