@@ -38,7 +38,10 @@
 	<div class="shell">
 		<header>
 			<h1>{title}</h1>
-			<a class="gear" href={resolve('/reglages')} aria-label={texts.nav.settings}>⚙</a>
+			<div class="actions">
+				<a class="new" href={resolve('/')} aria-label={texts.nav.newFull}>{texts.nav.newShort}</a>
+				<a class="gear" href={resolve('/reglages')} aria-label={texts.nav.settings}>⚙</a>
+			</div>
 		</header>
 		<div class="content">{@render children()}</div>
 		<nav>
@@ -71,12 +74,28 @@
 	h1 {
 		font-size: 1.1rem;
 	}
-	.gear {
+	.actions {
+		display: flex;
+		align-items: stretch;
+		gap: 0.4rem;
+	}
+	.gear,
+	.new {
 		background: var(--paper);
 		color: var(--ink);
 		padding: 0 0.5rem;
-		font-size: 1.2rem;
 		text-decoration: none;
+		display: flex;
+		align-items: center;
+	}
+	.gear {
+		font-size: 1.2rem;
+	}
+	.new {
+		font-size: 0.85rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		white-space: nowrap;
 	}
 	.content {
 		flex: 1;
