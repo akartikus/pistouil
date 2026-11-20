@@ -125,9 +125,14 @@
 {/if}
 
 <style>
+	/* The page fills the screen between the header and the tabs: the map takes the space left,
+	   and below its minimum height the page scrolls. */
 	.page {
+		box-sizing: border-box;
+		min-height: 100%;
 		padding: 0.7rem;
 		display: grid;
+		grid-template-rows: auto minmax(16rem, 1fr) auto auto auto;
 		gap: 0.7rem;
 	}
 	.verdict {
@@ -154,7 +159,6 @@
 	}
 	.stage {
 		position: relative;
-		height: 22rem;
 		border: 3px solid var(--ink);
 	}
 	.stage :global(.map) {
