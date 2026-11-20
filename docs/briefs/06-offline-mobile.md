@@ -1,77 +1,82 @@
-# Brief 06 — Mode hors ligne et application mobile
+# Brief 06 — Application mobile hors ligne
 
-**Objectif** : le joueur peut activer un mode hors ligne ; la zone de sa commune (environ 2 km autour de son centre) est alors téléchargée une seule fois, et le jeu fonctionne ensuite sans connexion, sur le web (PWA) comme dans les applications Android et iOS construites avec Capacitor. Sans ce mode, le jeu charge la carte et les données normalement, puisque le joueur est connecté.
+**Objectif** : le jeu se joue sans aucune connexion, sur le web (PWA) comme dans les applications Android et iOS construites avec Capacitor. Pour le moment, seule **Fuveau** est couverte : ses données (environ 12 Mo) sont dans l'application. Il n'y a ni mode hors ligne à choisir ni zone à télécharger.
 **Dépend de** : brief 05.
-**À lire** : `docs/VISION.md` §4 (principe 6) et §6.
+**À lire** : `docs/VISION.md` §4 (principe 6) et §6 ; `guide/ARCHITECTURE.md` ; `guide/ADD-COMMUNE.md`.
+
+> **Historique.** Ce brief décrivait d'abord un mode hors ligne par téléchargement de la zone d'une commune (changement `add-offline-mobile`, archivé). Quand le périmètre est devenu « Fuveau seule », ce mécanisme n'avait plus d'objet : le changement `embed-fuveau-data` (archivé) l'a remplacé par des données embarquées. Le téléchargement par zone se retrouve dans l'historique git (commit `020ed56`) ; `guide/ADD-COMMUNE.md` dit ce qu'il faudrait recréer pour plusieurs communes.
 
 ## Périmètre
 
 **Inclus**
-- **Mode hors ligne** : un réglage que le joueur active ou non (Réglages, rappelé à l’écran de départ). Désactivé par défaut. Quand il est désactivé, rien n’est gardé sur l’appareil et le comportement actuel (lecture par le réseau) ne change pas.
-- **Téléchargement d’une zone, une seule fois** : avec le mode activé, le manifeste, les fichiers de lieux et de graphe et les tuiles du rectangle d’environ 2 km autour du centre de la commune, en une action, avec taille annoncée avant et progression pendant. Une zone déjà téléchargée n’est pas retéléchargée. L’index des communes est gardé une fois, au premier téléchargement, pour chercher une commune sans connexion.
-- **Enquête en mode hors ligne** : centrée sur le centre d’une commune téléchargée (celle qui contient la position pour « Je me localise »), rayon limité à 2 km, pour rester dans la zone téléchargée. Une enquête est reprise à l’identique ou pas du tout.
-- **Source de tuiles** : une source PMTiles personnalisée qui, en mode hors ligne, lit les tuiles de la zone téléchargée sur l’appareil ; sans ce mode, elle lit le réseau comme aujourd’hui.
-- **Stockage** : `@capacitor/filesystem` dans l’application, IndexedDB sur le web, derrière une même interface.
-- Style, polices et icônes embarqués (déjà dans `static/map/`).
-- **PWA** : Service Worker pour l’application elle-même, installation sur l’écran d’accueil.
-- **Capacitor** : plateformes Android et iOS, géolocalisation (`@capacitor/geolocation`) avec permissions et textes d’explication, réglages (`@capacitor/preferences`).
-- Gestion des zones téléchargées : liste, taille, suppression.
+- **Données de Fuveau embarquées** : `static/data/fuveau/` (manifeste, entrée de la commune, cases de lieux, cases de graphe, `fuveau.pmtiles`), couvrant le contour de la commune élargi de 3 km, produites par `tools/embedded-data/build.sh`, de moins de 50 Mo. Aucune adresse de données à fournir à la construction.
+- **Départ à Fuveau** : deux boutons, « Je me localise » (position acceptée seulement dans le contour de Fuveau) et « Fuveau ».
+- **Enquête** : rayon limité à 2 km ; aucune requête réseau pendant la partie.
+- **Source de tuiles** : le fichier de Fuveau lu en entier en mémoire, sans dépendre des requêtes de plages d'octets de l'hôte.
+- **Sauvegarde** de la partie sur l'appareil (`@capacitor/preferences`) ; une enquête est reprise à l'identique ou pas du tout.
+- Style, polices et icônes de la carte embarqués (`static/map/`).
+- **PWA** : manifeste, icônes, Service Worker qui garde les fichiers de l'application, données et tuiles comprises ; installation sur l'écran d'accueil.
+- **Capacitor** : projets Android et iOS (commités), géolocalisation (`@capacitor/geolocation`) avec permissions et textes d'explication.
 
 **Exclu**
-- Téléchargement automatique ou à l’avance sans que le joueur ait activé le mode hors ligne.
-- Cache des tuiles lues au fil de la navigation en mode normal.
-- Publication sur les stores (étape ultérieure).
-- Synchronisation entre appareils.
+- Mode hors ligne à activer, téléchargement et gestion de zones, stockage de zones : retirés (voir l'historique ci-dessus).
+- Autres communes et hébergement de données : voir `guide/ADD-COMMUNE.md`.
+- Construction et test d'iOS : pas de compte Apple Developer pour le moment.
+- Publication sur les stores et synchronisation entre appareils.
 
 ## Exigences
 
-### Choisir le mode hors ligne
-- QUAND le joueur n’a pas activé le mode hors ligne
-- ALORS le jeu charge les données et la carte par le réseau, sans rien garder, comme avant ce brief.
-- QUAND le joueur active le mode hors ligne pour Fuveau
-- ALORS la zone de Fuveau est téléchargée une seule fois, avec sa taille annoncée avant et une progression.
+### Jouer sans connexion
+- QUAND l'application est installée (PWA, Android ou iOS) et que l'appareil est en mode avion
+- ALORS le joueur lance une enquête à Fuveau, la joue et la termine, carte comprise,
+- ET aucune requête réseau n'est faite pendant la partie.
 
-### Jouer hors connexion
-- QUAND le joueur a activé le mode hors ligne, téléchargé Fuveau puis passe en mode avion
-- ALORS il peut lancer une nouvelle enquête à Fuveau, la jouer et la terminer, carte comprise.
-
-### Zone limitée à 2 km
-- QUAND le mode hors ligne est activé
-- ALORS le rayon de l’enquête ne dépasse pas 2 km autour du centre de la commune.
-- QUAND la position du joueur ou la commune choisie est hors des zones téléchargées
-- ALORS le jeu le dit simplement et propose de télécharger la commune ou d’en chercher une autre.
+### Départ à Fuveau
+- QUAND le joueur choisit « Fuveau »
+- ALORS l'enquête est centrée sur le centre de la commune.
+- QUAND le joueur choisit « Je me localise » à l'intérieur du contour de Fuveau
+- ALORS l'enquête est centrée sur sa position.
+- QUAND sa position est hors de Fuveau
+- ALORS le jeu dit simplement que seule Fuveau est disponible pour le moment et ne génère aucune enquête.
 
 ### Pas de fond vide
-- QUAND une tuile manque hors connexion
+- QUAND une tuile manque
 - ALORS la carte affiche le fond uni du style, et le jeu reste utilisable.
 
-### Stockage fiable sur mobile
-- QUAND l’application n’a pas été ouverte depuis plusieurs semaines
-- ALORS les zones téléchargées et les parties en cours sont toujours présentes dans l’application native.
-- Sur le web, le jeu demande un stockage persistant quand le navigateur le permet et prévient que les données peuvent être effacées.
+### Sauvegarde fiable sur mobile
+- QUAND l'application n'a pas été ouverte depuis plusieurs semaines
+- ALORS la partie en cours est toujours présente dans l'application native.
 
 ### Géolocalisation respectueuse
 - QUAND le joueur choisit « Je me localise »
 - ALORS la permission est demandée avec une explication claire,
-- ET la position n’est utilisée que sur l’appareil, jamais envoyée.
+- ET la position n'est utilisée que sur l'appareil, jamais envoyée.
 - QUAND la permission est refusée
-- ALORS la recherche de commune reste disponible.
+- ALORS le bouton « Fuveau » reste disponible.
+
+### Taille bornée
+- QUAND l'application est construite
+- ALORS les données embarquées et l'application font chacune moins de 50 Mo.
 
 ### Une base de code
-- Le même code SvelteKit produit la PWA et les applications natives ; les différences de plateforme sont isolées dans `src/lib/data/`.
+- Le même code SvelteKit produit la PWA et les applications natives.
 
-## Critères d’acceptation
+## Critères d'acceptation
 
-- [ ] Partie complète en mode avion sur Android, sur iOS et en PWA, mode hors ligne activé.
-- [ ] Taille de la zone de Fuveau mesurée et affichée avant téléchargement.
-- [ ] Une zone n’est téléchargée qu’une fois ; sans le mode hors ligne, rien n’est gardé.
-- [ ] Suppression d’une zone libère bien l’espace.
-- [ ] Textes de permission relus (français, clairs, sans jargon).
+- [x] Partie complète sans réseau en PWA : vérifiée sur Chromium, service worker installé, réseau coupé, de l'écran de départ à la révélation, sans aucune requête hors de l'application.
+- [x] Position à Aix-en-Provence refusée avec un message, position dans Fuveau acceptée, permission refusée : le bouton « Fuveau » reste disponible (vérifié sur Chromium).
+- [x] Données de Fuveau de 12 Mo et application web de 15 Mo ; APK debug construit en local de 14,3 Mo.
+- [ ] Partie complète en mode avion sur Android : APK installé, une enquête jouée jusqu'à la révélation. Une erreur 500 au lancement d'une partie reste à diagnostiquer sur appareil.
+- [ ] Partie complète en mode avion sur iOS : reportée, faute de compte Apple Developer.
+- [ ] Textes de permission relus sur appareil (français, clairs, sans jargon).
 
-## Points à trancher pendant la proposition
+## Points restants
 
-- Taille réelle de la zone de 2 km à Fuveau (tuiles au zoom 15 comprises) et limite éventuelle.
+- **Erreur 500 sur Android** : à reproduire sur un téléphone ou un émulateur (l'adresse qui renvoie le 500 donnera la cause), puis à corriger dans un changement nommé d'après son objet. Premier suspect : l'ancien service worker d'une installation précédente.
+- **iOS** : à reprendre quand un compte Apple Developer existera (brief 07, partie C).
+- **Deuxième commune** : quand elle arrivera, les données ne tiendront plus toutes dans l'application ; voir `guide/ADD-COMMUNE.md`.
 
-## Consigne pour OpenSpec
+## Changements OpenSpec de ce brief
 
-> Crée un nouveau changement OpenSpec nommé `add-offline-mobile` à partir de ce brief. Isole toutes les différences web / natif derrière une interface de stockage unique dans `src/lib/data/`. Inclus dans `tasks.md` un test manuel en mode avion sur chaque plateforme.
+- `add-offline-mobile` (archivé) : mode hors ligne par téléchargement de zones, PWA, projets Android et iOS, géolocalisation.
+- `embed-fuveau-data` (archivé) : données de Fuveau embarquées, retrait du téléchargement de zones ; ses tâches 7.4 (test Android) et 7.5 (étape 6 de la feuille de route) sont restées ouvertes.
