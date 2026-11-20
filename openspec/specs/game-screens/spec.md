@@ -5,25 +5,6 @@
 
 ## Requirements
 
-### Requirement: Écran de départ
-L’écran de départ SHALL proposer « Je me localise » ou la recherche d’une commune, le choix de la difficulté (1 à 3) et la mention de fiction : les lieux sont réels, les personnages et les faits sont imaginaires. Quand une enquête est sauvegardée, il SHALL indiquer son état et proposer de la reprendre ou d’en revoir la révélation. Il SHALL toujours proposer une nouvelle enquête, rappeler si le mode hors ligne est activé et, dans ce mode, proposer le téléchargement de la commune choisie quand elle n’est pas téléchargée.
-
-#### Scenario: Reprise proposée
-- **WHEN** une enquête sauvegardée est en cours
-- **THEN** l’écran de départ indique qu’elle est en cours et propose de la reprendre, et propose aussi une nouvelle enquête
-
-#### Scenario: Enquête terminée
-- **WHEN** l’enquête sauvegardée a déjà une accusation
-- **THEN** l’écran de départ indique qu’elle est terminée, propose d’en revoir la révélation et non de la reprendre, et propose aussi une nouvelle enquête
-
-#### Scenario: Nouvelle enquête avec une sauvegarde
-- **WHEN** le joueur commence une nouvelle enquête alors qu’une autre est sauvegardée
-- **THEN** la nouvelle remplace la sauvegarde, et l’écran l’avait annoncé
-
-#### Scenario: Commune à télécharger
-- **WHEN** le mode hors ligne est activé et le joueur choisit une commune non téléchargée
-- **THEN** l’écran lui propose de la télécharger, avec sa taille
-
 ### Requirement: Navigation et réglages
 Pendant une enquête, une barre en bas SHALL donner accès aux écrans Carte, Carnet et Suspects, avec le nombre de faits et de suspects, et une roue crantée de l’en-tête SHALL ouvrir les Réglages.
 
@@ -118,21 +99,6 @@ Le bouton « Accuser » d’une fiche SHALL demander une confirmation qui rappel
 - **WHEN** le joueur touche « Accuser » puis annule
 - **THEN** aucune accusation n’est enregistrée
 
-### Requirement: Réglages et À propos
-L’écran Réglages SHALL permettre de choisir le thème clair ou sombre, d’activer ou non le mode hors ligne, de gérer les zones téléchargées (liste, taille, suppression), rappeler l’enquête (commune, difficulté, graine, version des données, état en cours ou terminée), proposer une nouvelle enquête, et afficher À propos : la mention de fiction, « © OpenStreetMap contributors » (licence ODbL), le fond de carte Protomaps et la police IBM Plex Mono (licence OFL).
-
-#### Scenario: Crédits
-- **WHEN** le joueur ouvre À propos
-- **THEN** il y lit la mention de fiction et les crédits des données, du fond de carte et de la police
-
-#### Scenario: Zones téléchargées
-- **WHEN** le joueur ouvre les Réglages
-- **THEN** il voit le réglage du mode hors ligne et ses zones téléchargées avec leur taille, et peut en supprimer une
-
-#### Scenario: État de l’enquête
-- **WHEN** le joueur ouvre les Réglages après avoir accusé
-- **THEN** le rappel de l’enquête indique qu’elle est terminée
-
 ### Requirement: Textes de l’interface réunis
 Les textes de l’interface (boutons, libellés, messages) SHALL être rédigés en français dans un seul module ; les textes des faits viennent du moteur.
 
@@ -164,3 +130,37 @@ Au premier lancement, un guide en trois bulles SHALL accompagner le joueur : tou
 #### Scenario: Guide rejoué
 - **WHEN** le joueur touche « Revoir le guide » dans les Réglages
 - **THEN** le guide se montre à nouveau à la prochaine ouverture de la carte
+
+### Requirement: Écran de départ à deux boutons
+L’écran de départ SHALL proposer deux boutons, « Je me localise » et « Fuveau » (la seule commune disponible pour le moment), le choix de la difficulté (1 à 3) et la mention de fiction : les lieux sont réels, les personnages et les faits sont imaginaires. Quand une enquête est sauvegardée, il SHALL indiquer son état et proposer de la reprendre ou d’en revoir la révélation. Il SHALL toujours proposer une nouvelle enquête.
+
+#### Scenario: Deux boutons de départ
+- **WHEN** le joueur ouvre l’écran de départ pour une nouvelle enquête
+- **THEN** il voit « Je me localise » et « Fuveau », et aucune recherche de commune
+
+#### Scenario: Reprise proposée
+- **WHEN** une enquête sauvegardée est en cours
+- **THEN** l’écran de départ indique qu’elle est en cours et propose de la reprendre, et propose aussi une nouvelle enquête
+
+#### Scenario: Enquête terminée
+- **WHEN** l’enquête sauvegardée a déjà une accusation
+- **THEN** l’écran de départ indique qu’elle est terminée, propose d’en revoir la révélation et non de la reprendre, et propose aussi une nouvelle enquête
+
+#### Scenario: Nouvelle enquête avec une sauvegarde
+- **WHEN** le joueur commence une nouvelle enquête alors qu’une autre est sauvegardée
+- **THEN** la nouvelle remplace la sauvegarde, et l’écran l’avait annoncé
+
+### Requirement: Réglages sans mode hors ligne et À propos
+L’écran Réglages SHALL permettre de choisir le thème clair ou sombre, rappeler l’enquête (commune, difficulté, graine, version des données, état en cours ou terminée), proposer une nouvelle enquête, et afficher À propos : la mention de fiction, « © OpenStreetMap contributors » (licence ODbL), le fond de carte Protomaps et la police IBM Plex Mono (licence OFL).
+
+#### Scenario: Crédits
+- **WHEN** le joueur ouvre À propos
+- **THEN** il y lit la mention de fiction et les crédits des données, du fond de carte et de la police
+
+#### Scenario: État de l’enquête
+- **WHEN** le joueur ouvre les Réglages après avoir accusé
+- **THEN** le rappel de l’enquête indique qu’elle est terminée
+
+#### Scenario: Pas de mode hors ligne
+- **WHEN** le joueur ouvre les Réglages
+- **THEN** il n’y trouve ni mode hors ligne ni zones téléchargées

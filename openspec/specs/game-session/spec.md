@@ -6,15 +6,15 @@ Session de jeu dans un Worker, frontière de confiance : l'enquête complète y 
 ## Requirements
 
 ### Requirement: Génération dans un Web Worker
-Le jeu SHALL charger la zone, calculer les trajets et générer l’enquête dans un Web Worker, sans bloquer l’interface. Une fois les données téléchargées, l’enquête SHALL être affichée en moins de 3 secondes sur un téléphone moyen.
+Le jeu SHALL charger la zone, calculer les trajets et générer l’enquête dans un Web Worker, sans bloquer l’interface. Les données étant dans l’application, l’enquête SHALL être affichée en moins de 3 secondes sur un téléphone moyen.
 
 #### Scenario: Démarrage à Fuveau
-- **WHEN** le joueur choisit Fuveau et une difficulté, données déjà téléchargées
+- **WHEN** le joueur choisit Fuveau et une difficulté
 - **THEN** une enquête est affichée en moins de 3 secondes et l’interface reste réactive pendant le calcul
 
 #### Scenario: Échec de génération
 - **WHEN** le générateur ne peut pas produire d’enquête pour la zone et la difficulté
-- **THEN** le jeu l’explique et propose une autre difficulté ou une autre commune
+- **THEN** le jeu l’explique et propose une autre difficulté
 
 ### Requirement: L’enquête complète reste dans le Worker
 Le Worker SHALL garder l’enquête complète. L’interface SHALL ne recevoir qu’une projection : situation, heure et jour du mystère, lieu du mystère, lieux retenus et suspects (prénom). Elle n’apprend aucun nombre de faits et ne reçoit jamais l’auteur, un mensonge, un motif, un genre de mensonge, la vraie soirée ni le texte de révélation avant l’accusation.

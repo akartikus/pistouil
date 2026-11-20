@@ -13,11 +13,15 @@ La version web SHALL déclarer un manifeste d’application (nom, icônes, coule
 - **THEN** le navigateur propose d’installer l’application, qui s’ouvre ensuite comme une application
 
 ### Requirement: Application disponible hors connexion
-Un Service Worker SHALL garder les fichiers de l’application elle-même pour qu’elle démarre sans connexion après une première visite. Il SHALL NOT garder les données de zone ni les tuiles, qui relèvent du stockage de zones.
+Un Service Worker SHALL garder les fichiers de l’application elle-même, y compris les données et le fichier de tuiles de Fuveau, pour qu’elle démarre et se joue sans connexion après une première visite.
 
 #### Scenario: Démarrage en mode avion
 - **WHEN** le joueur a déjà ouvert le jeu puis le lance en mode avion
 - **THEN** l’application démarre et affiche l’écran de départ
+
+#### Scenario: Partie en mode avion
+- **WHEN** le joueur a déjà ouvert le jeu puis lance une enquête à Fuveau en mode avion
+- **THEN** il la joue et la termine, carte comprise
 
 ### Requirement: Une base de code
 Le même code SvelteKit SHALL produire la PWA et les applications Android et iOS.
