@@ -19,9 +19,9 @@ La position SHALL être utilisée uniquement sur l’appareil, pour choisir le c
 - **WHEN** le joueur se localise
 - **THEN** aucune requête réseau ne contient sa position
 
-### Requirement: Recherche de commune toujours disponible
-Quand la permission est refusée ou indisponible, la recherche de commune SHALL rester utilisable.
+### Requirement: Bouton Fuveau toujours disponible
+Quand la permission est refusée ou indisponible, le bouton « Fuveau » SHALL rester utilisable.
 
 #### Scenario: Permission refusée
 - **WHEN** le joueur refuse la permission
-- **THEN** le jeu le dit simplement et la recherche de commune reste disponible
+- **THEN** le jeu le dit simplement et le bouton « Fuveau » reste disponible
