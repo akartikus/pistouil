@@ -57,6 +57,20 @@ Le workflow `.github/workflows/build-android.yml` produit un APK **debug** (sans
 - L'APK contient les données de Fuveau (environ 12 Mo : manifeste, lieux, graphe piéton, tuiles de la carte, dans `static/data/fuveau/`) : le jeu se joue sans connexion, aucune variable n'est à fournir au build. Elles se régénèrent avec `tools/embedded-data/build.sh` (voir son README et `guide/ADD-COMMUNE.md`). Données dérivées d'OpenStreetMap (licence ODbL), fond de carte Protomaps : l'attribution est visible dans l'application et reste à conserver.
 - Le workflow ne lit aucun secret. La version de l'application reste `1.0` (`versionCode 1`).
 
+### Construire l'APK en local
+
+```sh
+npm run apk
+```
+
+La commande construit le site, synchronise Capacitor, lance Gradle et affiche le chemin de l'APK (`android/app/build/outputs/apk/debug/app-debug.apk`). Prérequis : un **JDK 21** (`JAVA_HOME`, par défaut `~/.local/jdk21`) et le SDK Android avec la **plateforme 36** (`ANDROID_HOME`, par défaut `~/Android/Sdk`). Si l'un manque, le script le dit et s'arrête. Pour l'installer sur un téléphone branché en USB (débogage activé) :
+
+```sh
+~/Android/Sdk/platform-tools/adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+Si Android refuse la mise à jour (APK signé avec une autre clé de débogage, comme celui de GitHub), désinstaller d'abord : `adb uninstall dev.sitraka.pistouil`.
+
 ## Documents
 
 | Fichier | Rôle |

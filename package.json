@@ -18,7 +18,8 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run"
+		"test": "npm run test:unit -- --run",
+		"apk": "bash tools/android/build-apk.sh"
 	},
 	"devDependencies": {
 		"@capacitor/cli": "^8.6.2",
