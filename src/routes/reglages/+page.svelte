@@ -2,7 +2,6 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { game } from '#lib/game/game.svelte.js';
-	import { offline } from '#lib/game/offline.svelte.js';
 	import { settings } from '#lib/game/settings.svelte.js';
 	import { texts } from '#lib/game/texts.js';
 	import { tour } from '#lib/game/tour.svelte.js';
@@ -39,35 +38,6 @@
 				{texts.settings.dark}
 			</button>
 		</div>
-	</section>
-
-	<section class="box pad">
-		<p class="label">{texts.settings.offline}</p>
-		<p>{texts.settings.offlineText}</p>
-		<div class="row">
-			<button class="btn" class:solid={settings.offline} onclick={() => settings.setOffline(true)}>
-				{texts.settings.on}
-			</button>
-			<button
-				class="btn"
-				class:solid={!settings.offline}
-				onclick={() => settings.setOffline(false)}
-			>
-				{texts.settings.off}
-			</button>
-		</div>
-		<p class="label">{texts.settings.zones}</p>
-		{#each offline.zones as zone (zone.insee)}
-			<div class="row zone">
-				<span>{zone.name} · {texts.size(zone.bytes)}</span>
-				<button class="btn" onclick={() => offline.remove(zone.insee)}
-					>{texts.settings.remove}</button
-				>
-			</div>
-		{:else}
-			<p>{texts.settings.noZone}</p>
-		{/each}
-		{#if !offline.kept}<p class="warning">{texts.settings.notKept}</p>{/if}
 	</section>
 
 	<section class="box pad">
@@ -136,14 +106,6 @@
 	.row {
 		display: flex;
 		gap: 0.5rem;
-	}
-	.zone {
-		justify-content: space-between;
-		align-items: center;
-	}
-	.warning {
-		color: var(--mystery);
-		font-weight: 700;
 	}
 	.about h2 {
 		background: var(--ink);

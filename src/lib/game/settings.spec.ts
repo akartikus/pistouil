@@ -10,18 +10,18 @@ vi.mock('@capacitor/preferences', () => ({
 
 const { settings } = await import('./settings.svelte');
 
-describe('offline mode setting', () => {
+describe('theme setting', () => {
 	beforeEach(() => saved.clear());
 
-	it('is off by default', async () => {
+	it('is light until the player chooses', async () => {
 		await settings.load();
-		expect(settings.offline).toBe(false);
+		expect(settings.theme).toBe('light');
 	});
 
 	it('is kept on the device', async () => {
-		await settings.setOffline(true);
-		settings.offline = false;
+		await settings.setTheme('dark');
+		settings.theme = 'light';
 		await settings.load();
-		expect(settings.offline).toBe(true);
+		expect(settings.theme).toBe('dark');
 	});
 });

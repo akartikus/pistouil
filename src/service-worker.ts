@@ -2,8 +2,8 @@
 /// <reference no-default-lib="true"/>
 /// <reference lib="esnext" />
 /// <reference lib="webworker" />
-// Keeps the files of the application itself, so that it starts without a connection.
-// The game data and the tiles are never cached here: offline zones live in the zone store.
+// Keeps the files of the application itself, so that it starts and plays without a connection:
+// the data and the tiles of Fuveau are static files of the application, so they are kept too.
 import { version } from '$app/env';
 import { assets, immutable, prerendered } from '$app/manifest';
 

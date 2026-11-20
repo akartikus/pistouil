@@ -9,7 +9,7 @@
 	import { findInconsistencies, measuredKey, positionsAt } from '#lib/game/deduction.js';
 	import { namesById } from '#lib/game/derive.js';
 	import { game } from '#lib/game/game.svelte.js';
-	import { offline } from '#lib/game/offline.svelte.js';
+	import { shippedCommune, shippedTiles } from '#lib/game/shipped.js';
 	import { asPlaces, boxOf, hoursOf } from '#lib/game/mapdata.js';
 	import { settings } from '#lib/game/settings.svelte.js';
 	import { texts } from '#lib/game/texts.js';
@@ -23,21 +23,21 @@
 	import { placeFeatures } from '#lib/map/features.js';
 	import { routeFeatures } from '#lib/map/route-line.js';
 	import { communeMask, communeOutline, zoneBounds, type Commune } from '#lib/map/zone.js';
+	import { TILES_URL } from '#lib/data/files.js';
 
 	const catalog = validateCatalog(structuredClone(rawStarterCatalog));
-	const tilesUrl = import.meta.env.VITE_TILES_URL ?? '/dev-data/map/zone.pmtiles';
 
 	const view = $derived(game.view);
 	const investigation = $derived(view?.investigation);
 	const names = $derived(namesById(investigation?.suspects ?? []));
-	let communes = $state<Commune[]>([]);
+	let shipped = $state<Commune | null>(null);
 
 	// Before the slider is bound: binding a null value would set it to the minimum.
 	if (game.view && ui.time === null) ui.time = game.view.investigation.mysteryTime;
 
 	onMount(async () => {
 		tour.begin();
-		communes = await offline.communes();
+		shipped = await shippedCommune();
 	});
 
 	const retained = $derived<Place[]>(asPlaces(investigation?.places ?? []));
@@ -52,7 +52,7 @@
 
 	const focus = $derived(retained.length ? zoneBounds(boxOf(retained), 250) : null);
 	const maxBounds = $derived(decor.length ? zoneBounds(boxOf(decor), 300) : null);
-	const commune = $derived(communes.find((c) => c.name === game.zone.name));
+	const commune = $derived(shipped?.name === game.zone.name ? shipped : null);
 	const mask = $derived(commune ? communeMask(commune.contour) : null);
 	const outline = $derived(commune ? communeOutline(commune.contour) : null);
 
@@ -171,8 +171,8 @@
 {#if view && investigation && maxBounds && focus}
 	<div class="stage">
 		<GameMap
-			{tilesUrl}
-			source={offline.tiles(game.offline)}
+			tilesUrl={TILES_URL}
+			source={shippedTiles()}
 			theme={settings.theme}
 			{maxBounds}
 			{focus}

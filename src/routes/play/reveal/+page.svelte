@@ -7,7 +7,7 @@
 	import { rawStarterCatalog } from '#lib/engine/starter-catalog.js';
 	import { positionAt } from '#lib/game/evening.js';
 	import { game } from '#lib/game/game.svelte.js';
-	import { offline } from '#lib/game/offline.svelte.js';
+	import { shippedTiles } from '#lib/game/shipped.js';
 	import { asPlaces, boxOf, hoursOf } from '#lib/game/mapdata.js';
 	import { settings } from '#lib/game/settings.svelte.js';
 	import { texts } from '#lib/game/texts.js';
@@ -15,9 +15,9 @@
 	import GameMap from '#lib/map/Map.svelte';
 	import { placeFeatures } from '#lib/map/features.js';
 	import { zoneBounds } from '#lib/map/zone.js';
+	import { TILES_URL } from '#lib/data/files.js';
 
 	const catalog = validateCatalog(structuredClone(rawStarterCatalog));
-	const tilesUrl = import.meta.env.VITE_TILES_URL ?? '/dev-data/map/zone.pmtiles';
 
 	const revelation = $derived(game.revelation);
 	const view = $derived(game.view);
@@ -94,8 +94,8 @@
 
 		<section class="stage">
 			<GameMap
-				{tilesUrl}
-				source={offline.tiles(game.offline)}
+				tilesUrl={TILES_URL}
+				source={shippedTiles()}
 				theme={settings.theme}
 				{maxBounds}
 				{focus}

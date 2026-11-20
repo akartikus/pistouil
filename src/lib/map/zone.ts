@@ -65,6 +65,29 @@ export function communeOutline(contour: MultiPolygon): Feature<MultiLineString> 
 	};
 }
 
+// Ray casting on one ring of [lon, lat] points.
+function inRing(point: { lat: number; lon: number }, ring: Position[]): boolean {
+	let inside = false;
+	for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+		const [lonI, latI] = ring[i];
+		const [lonJ, latJ] = ring[j];
+		if (
+			latI > point.lat !== latJ > point.lat &&
+			point.lon < ((lonJ - lonI) * (point.lat - latI)) / (latJ - latI) + lonI
+		) {
+			inside = !inside;
+		}
+	}
+	return inside;
+}
+
+// Whether a position is in the commune: inside a part of it and not in one of its enclaves.
+export function insideContour(point: { lat: number; lon: number }, contour: MultiPolygon): boolean {
+	return contour.coordinates.some(
+		([outer, ...enclaves]) => inRing(point, outer) && !enclaves.some((ring) => inRing(point, ring))
+	);
+}
+
 // The cells of the preparation grid (same integer arithmetic as the script) touching a rectangle.
 export function cellsCovering(
 	grid: { latStepE5: number; lonStepE5: number },

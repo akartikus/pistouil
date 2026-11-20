@@ -3,32 +3,19 @@ import type { Evening } from './evening';
 import type { GameProgress } from './progress';
 import type { PublicFact, PublicInvestigation } from './projection';
 import type { SavedGame } from './save';
-import type { Center, CommuneSummary } from './zone';
+import type { Center } from './zone';
 
 // Messages between the interface and the Worker. Nothing hidden crosses before the accusation.
-
-// In offline mode, the downloaded zone the data is read from (see data/zones.ts).
-export interface OfflineZone {
-	insee: string;
-	cells: string[];
-}
-
-// The Worker cannot reach the device storage: it asks the interface for a file.
-export type FileRequest = { type: 'read'; id: number; path: string };
-export type FileReply = { type: 'file'; id: number; text: string | null };
 
 export type Request =
 	| {
 			type: 'start';
 			center: Center;
 			name: string;
-			// Code of the chosen commune, if any: it is left out of the neighbours to propose.
-			insee?: string;
 			difficulty: Difficulty;
 			seed: number;
-			zone?: OfflineZone;
 	  }
-	| { type: 'resume'; saved: SavedGame; zone?: OfflineZone }
+	| { type: 'resume'; saved: SavedGame }
 	| { type: 'open'; placeId: string }
 	| { type: 'measure'; a: string; b: string }
 	| { type: 'accuse'; suspectId: string };
@@ -70,17 +57,11 @@ export interface SessionView {
 }
 
 export type FailureReason =
-	| 'data-missing'
-	| 'not-enough-places'
-	| 'no-scene'
-	| 'difficulty-unreachable'
-	| 'data-changed'
-	// Offline mode: the investigation needs data outside the downloaded zones.
-	| 'needs-connection';
+	'data-missing' | 'not-enough-places' | 'no-scene' | 'difficulty-unreachable' | 'data-changed';
 
 export type Reply =
 	| { type: 'started'; view: SessionView }
-	| { type: 'failed'; reason: FailureReason; neighbors: CommuneSummary[] }
+	| { type: 'failed'; reason: FailureReason }
 	| { type: 'opened'; placeId: string; facts: PublicFact[] }
 	| { type: 'measured'; route: Route }
 	| { type: 'accused'; revelation: Revelation }
