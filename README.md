@@ -19,6 +19,7 @@ Prérequis : Node.js 20+. Pour préparer les données OSM : Python 3 (et `osmium
 
 - [`guide/OPENSPEC.md`](guide/OPENSPEC.md) : la méthode de travail, pas à pas.
 - [`guide/ENGINE.md`](guide/ENGINE.md) : comment fonctionne le moteur (couches, faits, solveur, règles).
+- [`guide/ARCHITECTURE.md`](guide/ARCHITECTURE.md) : l'architecture et les structures de données (couches, fichiers de données, Worker, sauvegarde, livraison).
 
 ## Travailler avec OpenSpec
 
