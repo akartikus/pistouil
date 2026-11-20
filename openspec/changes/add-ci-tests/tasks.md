@@ -4,7 +4,7 @@
 
 - [x] 1.1 Relever dans la documentation officielle les versions fixes actuelles de `actions/checkout` et `actions/setup-node` (MCP `context7`)
 - [x] 1.2 Créer `.github/workflows/test.yml` (déclencheurs, Node 22 avec cache npm, `permissions: contents: read`, `concurrency` avec annulation, `timeout-minutes`, étapes `npm ci`, `check`, `lint`, `test`, `build`) ; vérifier que `npx prettier --check .github` passe et que les mêmes commandes réussissent en local
-- [ ] 1.3 Pousser une branche avec une pull request de test contenant un test volontairement en échec ; vérifier que le workflow est en échec, puis corriger et vérifier qu'il est au vert
+- [x] 1.3 Pousser une branche avec une pull request de test contenant un test volontairement en échec ; vérifier que le workflow est en échec, puis corriger et vérifier qu'il est au vert
 - [ ] 1.4 Pousser deux commits de suite sur cette pull request ; vérifier que l'exécution obsolète est annulée
 - [ ] 1.5 Vérifier qu'un push sur une branche sans pull request ne lance rien, et noter la durée réelle de l'exécution pour fixer `timeout-minutes`
 
