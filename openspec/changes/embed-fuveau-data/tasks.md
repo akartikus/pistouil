@@ -4,7 +4,7 @@
 
 - [x] 1.1 Mettre à jour `docs/VISION.md` : §1 et §2 (Fuveau seule pour le moment, deux boutons), §3 (moteur pour n'importe quel lieu, première version limitée à Fuveau), principe 6 (aucune requête réseau pendant la partie, toujours), §6 (tuiles et données embarquées, rayon 500 m à 2 km, ligne du mode hors ligne remplacée, ligne CI/CD sans hébergement à décider) ; vérifier par relecture du diff qu'aucune ligne ne parle encore de choix de commune, de zone téléchargée ou de PACA comme données du jeu
 - [x] 1.2 Mettre à jour `AGENTS.md` (règle réseau : « aucune requête réseau pendant une partie, seuls les fichiers de l'application sont lus ») ; vérifier par `grep -n "zone téléchargée" AGENTS.md` sans résultat
-- [ ] 1.3 Reformuler directement la section Purpose de `openspec/specs/commune-index/`, `offline-tiles/` et `device-storage/` (hors delta) ; vérifier avec `openspec validate --specs`
+- [x] 1.3 Reformuler directement la section Purpose de `openspec/specs/commune-index/`, `offline-tiles/` et `device-storage/` (hors delta) ; vérifier avec `openspec validate --specs`
 
 ## 2. Jeu de données de Fuveau
 

@@ -1,7 +1,7 @@
 # device-storage Specification
 
 ## Purpose
-Garder de façon fiable les zones téléchargées sur chaque plateforme, derrière une seule interface qui isole les différences entre web et natif.
+Garder de façon fiable la partie en cours sur l’appareil, même quand l’application n’a pas été ouverte depuis plusieurs semaines.
 
 ## Requirements
 
