@@ -1,5 +1,6 @@
 import type { Feature, FeatureCollection, Point } from 'geojson';
 import type { Catalog, Place } from '../engine/types';
+import { formatOpeningHours } from './opening-hours';
 
 // Icon families of static/map/icons; any other value falls back to the generic icon.
 const ICON_FAMILIES = [
@@ -23,6 +24,7 @@ export interface PlaceProperties {
 	number?: number;
 	icon: string;
 	label: string;
+	// In French, for the player.
 	hours?: string;
 }
 
@@ -59,7 +61,7 @@ export function placeFeatures(
 		};
 		if (role === 'investigation' || role === 'mystery') properties.number = index + 1;
 		const hours = selection.hours?.[place.osmId];
-		if (hours) properties.hours = hours;
+		if (hours) properties.hours = formatOpeningHours(hours);
 		features.push({
 			type: 'Feature',
 			properties,

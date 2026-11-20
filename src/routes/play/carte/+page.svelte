@@ -268,6 +268,7 @@
 							{#if piece}
 								<FactCard fact={piece} {catalog} {names} onfile={toFile} />
 							{/if}
+							<p class="label">{texts.map.routeLabel}</p>
 							<div class="actions">
 								{#if place.osmId !== investigation.sceneId}
 									<button

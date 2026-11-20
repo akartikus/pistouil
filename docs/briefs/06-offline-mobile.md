@@ -73,6 +73,7 @@
 ## Points restants
 
 - **Erreur 500 sur Android** : à reproduire sur un téléphone ou un émulateur (l'adresse qui renvoie le 500 donnera la cause), puis à corriger dans un changement nommé d'après son objet. Premier suspect : l'ancien service worker d'une installation précédente.
+- **« Je me localise » grisé** : repasser `LOCATE_AVAILABLE` à `true` dans `src/lib/game/features.ts` quand la position est validée sur appareil (Android, puis iOS).
 - **iOS** : à reprendre quand un compte Apple Developer existera (brief 07, partie C).
 - **Deuxième commune** : quand elle arrivera, les données ne tiendront plus toutes dans l'application ; voir `guide/ADD-COMMUNE.md`.
 
