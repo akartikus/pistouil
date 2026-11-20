@@ -43,6 +43,18 @@ Le workflow `.github/workflows/test.yml` s'exécute sur chaque pull request (ouv
 - Le workflow ne lit aucun secret et n'a que le droit de lire le dépôt.
 - Protection de `master` (fusion par pull request, workflow au vert) : à activer dans les réglages GitHub (*Settings → Branches*) si le plan le permet ; sinon, vérifier que le statut est vert avant de fusionner.
 
+## Build Android
+
+Le workflow `.github/workflows/build-android.yml` produit un APK **debug** (sans clé de signature). Il se lance uniquement à la main, jamais sur un push ni une pull request.
+
+1. Onglet *Actions* de GitHub, workflow « Build Android », bouton *Run workflow*, branche `master`. Depuis une autre branche, il échoue tout de suite (« Only master can be built »).
+2. Il lance `npm run test`, puis `npm run build`, `npx cap sync android` et `./gradlew assembleDebug`. Si un test échoue, rien n'est construit.
+3. À la fin, l'APK est dans les *Artifacts* de l'exécution (`pistouil-debug-apk`), conservé 7 jours. Le télécharger, le décompresser et l'installer sur le téléphone.
+
+- Durée mesurée : environ 2 minutes (runner Linux, donc environ 2 minutes facturées par build). Un seul build à la fois ; durée maximale : 10 minutes.
+- Limite actuelle : l'APK ne contient aucune donnée. Le jeu lit l'index des communes, les lieux et les tuiles de la carte depuis `VITE_DATA_URL` et `VITE_TILES_URL` (fixés à la construction, défaut `/dev-data`) ; tant que ces données ne sont pas hébergées et que ces adresses ne sont pas fournies au build, la recherche d'une commune ne charge rien et la carte reste vide. L'hébergement des données est hors du brief 07.
+- Le workflow ne lit aucun secret. La version de l'application reste `1.0` (`versionCode 1`).
+
 ## Documents
 
 | Fichier | Rôle |
