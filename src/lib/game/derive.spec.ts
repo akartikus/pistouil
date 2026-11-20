@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { chronological, namesById, versionsOf } from './derive';
+import { chronological, explainedFacts, namesById, versionsOf } from './derive';
 import type { PublicFact } from './projection';
 
 const fact = (
@@ -49,5 +49,29 @@ describe('chronological and namesById', () => {
 
 	it('maps suspect ids to first names', () => {
 		expect(namesById([{ id: 'c1', firstName: 'Léa' }])).toEqual({ c1: 'Léa' });
+	});
+});
+
+describe('explainedFacts', () => {
+	const clue: PublicFact['source'] = { kind: 'clue', clueTypeId: 'receipt' };
+	const all = [
+		fact('late', 'mael', 200, clue),
+		fact('seen', 'lea', 100, clue),
+		fact('missed', 'lea', 150, clue)
+	];
+
+	it('keeps every fact of the investigation in time order and marks those the player never read', () => {
+		const read = [all[1]];
+		expect(explainedFacts(read, all).map((item) => [item.fact.id, item.seen])).toEqual([
+			['seen', true],
+			['missed', false],
+			['late', false]
+		]);
+	});
+
+	it('has nothing to add when the game is not over', () => {
+		const read = [all[1]];
+		expect(explainedFacts(read, null).map((item) => item.fact.id)).toEqual(['seen']);
+		expect(explainedFacts(read, null).every((item) => item.seen)).toBe(true);
 	});
 });

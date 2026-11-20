@@ -14,6 +14,10 @@ export const texts = {
 		difficulties: { 1: 'Facile', 2: 'Moyenne', 3: 'Difficile' } as Record<number, string>,
 		resume: 'Reprendre l’enquête',
 		resumeIn: (name: string) => `Enquête en cours à ${name}`,
+		finishedIn: (name: string) => `Enquête terminée à ${name}`,
+		seeReveal: 'Revoir la révélation',
+		newTitle: 'Nouvelle enquête',
+		replaces: 'Elle remplace l’enquête enregistrée.',
 		newInvestigation: 'Nouvelle enquête',
 		loading: 'Préparation de l’enquête…',
 		noCommune: 'Aucune commune de ce nom.',
@@ -92,6 +96,7 @@ export const texts = {
 		measured: 'Trajets mesurés',
 		annotations: 'Annotations de lieux',
 		inconsistency: 'Incohérence',
+		unseen: 'Non vu pendant la partie',
 		facts: (count: number) => `${count} fait${count > 1 ? 's' : ''}`
 	},
 
@@ -145,6 +150,9 @@ export const texts = {
 		dark: 'Sombre',
 		investigation: 'Enquête',
 		seed: 'graine',
+		status: 'État',
+		ongoing: 'En cours',
+		finished: 'Terminée',
 		dataVersion: 'Données',
 		newInvestigation: 'Nouvelle enquête',
 		offline: 'Mode hors ligne',

@@ -73,6 +73,7 @@ function revelation(session: Session, suspectId: string): Revelation {
 		authorName,
 		revelationText: session.investigation.revelationText,
 		evening: evening(session),
+		facts: factsOfPlaces(session.investigation, session.investigation.placeIds),
 		trips: session.routes.filter(
 			(route) =>
 				session.investigation.placeIds.includes(route.placeA) &&

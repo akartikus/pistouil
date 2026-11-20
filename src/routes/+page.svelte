@@ -8,7 +8,7 @@
 	import { game } from '#lib/game/game.svelte.js';
 	import { locate as locateDevice, needsExplanation } from '#lib/game/locate.js';
 	import { offline } from '#lib/game/offline.svelte.js';
-	import type { SavedGame } from '#lib/game/save.js';
+	import { isFinished, type SavedGame } from '#lib/game/save.js';
 	import { settings } from '#lib/game/settings.svelte.js';
 	import { texts } from '#lib/game/texts.js';
 	import { neighborCommunes, type Center, type CommuneSummary } from '#lib/game/zone.js';
@@ -112,10 +112,12 @@
 		else await locate();
 	}
 
+	// A finished investigation opens on its revelation, an ongoing one on the map.
 	async function resume() {
 		if (!saved) return;
+		const finished = isFinished(saved);
 		await game.resume(saved);
-		if (game.phase === 'playing') await goto(resolve('/play/carte'));
+		if (game.phase === 'playing') await goto(resolve(finished ? '/play/reveal' : '/play/carte'));
 	}
 
 	async function startOver() {
@@ -146,12 +148,18 @@
 	{:else}
 		{#if saved}
 			<section class="box pad">
-				<p class="label">{texts.start.resumeIn(saved.zone.name)}</p>
-				<button class="btn solid" onclick={resume}>{texts.start.resume}</button>
+				<p class="label">
+					{(isFinished(saved) ? texts.start.finishedIn : texts.start.resumeIn)(saved.zone.name)}
+				</p>
+				<button class="btn solid" onclick={resume}>
+					{isFinished(saved) ? texts.start.seeReveal : texts.start.resume}
+				</button>
 			</section>
 		{/if}
 
 		<section class="box pad">
+			<p class="label">{texts.start.newTitle}</p>
+			{#if saved}<p class="note">{texts.start.replaces}</p>{/if}
 			<p class="label">{texts.start.difficulty}</p>
 			<div class="row">
 				{#each [1, 2, 3] as level (level)}
@@ -240,6 +248,9 @@
 		padding: 0.5rem;
 		border: 3px solid var(--ink);
 		background: var(--paper);
+	}
+	.note {
+		margin: 0;
 	}
 	.error {
 		color: var(--mystery);

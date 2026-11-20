@@ -50,6 +50,8 @@ export interface Revelation {
 	evening: Evening;
 	// Every trip between the places of the investigation, to explain the game at the end.
 	trips: Route[];
+	// Every fact of the investigation, those of the places never opened included.
+	facts: PublicFact[];
 }
 
 // The session as the interface first sees it, at the start or after a resume.

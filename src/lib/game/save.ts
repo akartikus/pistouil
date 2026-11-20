@@ -42,6 +42,9 @@ export async function loadGame(port: StoragePort): Promise<LoadResult> {
 	}
 }
 
+// The accusation is final: a game with one is over, whatever else is in the save.
+export const isFinished = (game: SavedGame) => game.progress.accusation !== null;
+
 export const dataVersionOf = (manifest: { source: string; extractDate: string | null }) =>
 	manifest.extractDate ? `${manifest.source}@${manifest.extractDate}` : manifest.source;
 

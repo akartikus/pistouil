@@ -3,12 +3,13 @@ import {
 	SAVE_VERSION,
 	dataChanged,
 	dataVersionOf,
+	isFinished,
 	loadGame,
 	saveGame,
 	type SavedGame,
 	type StoragePort
 } from './save';
-import { initialProgress, openPlace } from './progress';
+import { accuse, initialProgress, openPlace } from './progress';
 
 const memory = (): StoragePort & { values: Map<string, string> } => {
 	const values = new Map<string, string>();
@@ -72,5 +73,14 @@ describe('data version', () => {
 	it('tells when the data changed since the save', () => {
 		expect(dataChanged(game(), game().dataVersion)).toBe(false);
 		expect(dataChanged(game(), 'provence.osm.pbf@2026-12-01T00:00:00Z')).toBe(true);
+	});
+});
+
+describe('isFinished', () => {
+	it('is true once the player has accused, whatever else was done', () => {
+		const ongoing = game();
+		expect(isFinished(ongoing)).toBe(false);
+		const finished = { ...ongoing, progress: accuse(ongoing.progress, 'mael') };
+		expect(isFinished(finished)).toBe(true);
 	});
 });

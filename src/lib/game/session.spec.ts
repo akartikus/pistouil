@@ -169,6 +169,17 @@ describe('accuse', () => {
 		);
 	});
 
+	it('reveals the facts of every place, those the player never opened included', async () => {
+		const { session, view } = await started();
+		expect(view.facts).toEqual([]);
+		const suspect = view.investigation.suspects[0].id;
+		const { reply } = handle(session, { type: 'accuse', suspectId: suspect });
+		if (reply.type !== 'accused') throw new Error('expected accused');
+		const everything = session.investigation.facts.map((fact) => fact.id).sort();
+		expect(reply.revelation.facts.map((fact) => fact.id).sort()).toEqual(everything);
+		expect(everything.length).toBeGreaterThan(0);
+	});
+
 	it('refuses an accusation of someone who is not a suspect', async () => {
 		const { session } = await started();
 		expect(handle(session, { type: 'accuse', suspectId: 'nobody' }).reply.type).toBe('refused');

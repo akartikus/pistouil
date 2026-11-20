@@ -3,7 +3,7 @@
 	import { validateCatalog } from '#lib/engine/catalog.js';
 	import { rawStarterCatalog } from '#lib/engine/starter-catalog.js';
 	import { findInconsistencies, findSufficientAlibis } from '#lib/game/deduction.js';
-	import { chronological, namesById } from '#lib/game/derive.js';
+	import { explainedFacts, namesById } from '#lib/game/derive.js';
 	import { game } from '#lib/game/game.svelte.js';
 	import { texts } from '#lib/game/texts.js';
 	import FactCard from '#lib/game/ui/FactCard.svelte';
@@ -17,14 +17,16 @@
 	const investigation = $derived(game.view?.investigation);
 	const names = $derived(namesById(investigation?.suspects ?? []));
 	const placeName = (id: string) => investigation?.places.find((p) => p.osmId === id)?.name ?? id;
-	const facts = $derived(chronological(game.readFacts));
-	// Incoherences and alibis are explained only once the game is over.
-	const inconsistencies = $derived(findInconsistencies(game.readFacts, game.conclusionMinutes));
+	// Once the game is over, every fact is explained, those the player never read included.
+	const items = $derived(explainedFacts(game.readFacts, game.revelation?.facts ?? null));
+	const facts = $derived(items.map((item) => item.fact));
+	const unseen = $derived(new Set(items.filter((item) => !item.seen).map((item) => item.fact.id)));
+	const inconsistencies = $derived(findInconsistencies(facts, game.conclusionMinutes));
 	const hatched = (id: string) => inconsistencies.some((item) => item.factIds.includes(id));
 	const verdicts = $derived(
 		investigation
 			? findSufficientAlibis(
-					game.readFacts,
+					facts,
 					investigation.sceneId,
 					investigation.mysteryTime,
 					game.conclusionMinutes
@@ -62,6 +64,7 @@
 					<span class="at">{formatTime(fact.from)}</span>
 					<div>
 						<FactCard {fact} {catalog} {names} hatched={hatched(fact.id)} />
+						{#if unseen.has(fact.id)}<p class="tag link">{texts.notebook.unseen}</p>{/if}
 						{#each inconsistencies.filter((item) => item.factIds[1] === fact.id) as item (item.factIds.join())}
 							<p class="tag link">
 								≠ {texts.notebook.inconsistency} ·

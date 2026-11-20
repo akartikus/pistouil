@@ -47,3 +47,25 @@ Les positions des suspects à une heure donnée SHALL être calculées par une f
 #### Scenario: Mêmes entrées, mêmes positions
 - **WHEN** on calcule deux fois la position d’un suspect à la même heure
 - **THEN** les résultats sont identiques
+
+### Requirement: Révélation à la hauteur de l’écran
+L’écran de révélation SHALL occuper toute la hauteur entre l’en-tête et les onglets : la carte SHALL prendre la place que laissent le verdict, le curseur et les boutons, sans espace vide sous eux. Sur un petit écran, la carte SHALL garder une hauteur minimale et la page défiler, sans débordement horizontal.
+
+#### Scenario: Écran haut
+- **WHEN** la révélation s’affiche sur un écran de 790 × 968 ou de 390 × 844
+- **THEN** le dernier bouton touche presque les onglets et la carte s’agrandit d’autant
+
+#### Scenario: Petit écran
+- **WHEN** la révélation s’affiche sur un écran de 375 × 667
+- **THEN** la carte garde sa hauteur minimale, la page défile jusqu’aux boutons et rien ne déborde en largeur
+
+### Requirement: Tous les faits à la révélation
+La révélation SHALL fournir tous les faits de l’enquête, y compris ceux des lieux que le joueur n’a pas ouverts, pour que le Carnet explique toute la partie. Ces faits n’existent côté interface qu’à partir de l’accusation.
+
+#### Scenario: Faits de lieux jamais ouverts
+- **WHEN** le joueur accuse sans avoir ouvert tous les lieux
+- **THEN** la révélation contient aussi les faits des lieux non ouverts
+
+#### Scenario: Avant l’accusation
+- **WHEN** le joueur n’a pas accusé
+- **THEN** l’interface ne reçoit aucun fait d’un lieu non ouvert

@@ -83,6 +83,11 @@
 				{game.view.investigation.seed}
 			</p>
 			<p>{texts.settings.dataVersion} : {game.view.dataVersion}</p>
+			<p>
+				{texts.settings.status} : {game.revelation
+					? texts.settings.finished
+					: texts.settings.ongoing}
+			</p>
 			<button class="btn solid" onclick={newInvestigation}>{texts.settings.newInvestigation}</button
 			>
 		</section>
