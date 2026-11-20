@@ -74,7 +74,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 | Le lieu d’un indice est celui du fait qu’il prouve | Évite une donnée en double |
 | SvelteKit (statique) + TypeScript + Vitest + Capacitor | Un seul code pour web et mobile |
 | Suivi du projet avec OpenSpec, un brief par grande étape | Garder le fil et des décisions traçables |
-| CI/CD GitHub Actions : tests sur chaque changement, builds mobiles à la demande et sur `master` seulement | Valider chaque changement sans consommer le cloud (dépôt privé, runner macOS coûteux) |
+| CI/CD GitHub Actions : tests sur chaque changement ; un workflow manuel par plateforme (Android, puis iOS), sur `master` seulement, APK debug d’abord ; iOS reporté jusqu’à l’obtention d’un compte Apple Developer | Valider chaque changement sans consommer le cloud (dépôt privé, runner macOS coûteux qui ne doit pas se lancer par erreur) ; un build iOS non signé ne s’installerait pas |
 | Textes rendus par le moteur à la génération (indices et témoignages), gabarits dans le catalogue, sans accord de genre | Moteur pur et déterministe, interface qui n’affiche que du texte, point d’entrée unique pour une réécriture par IA ultérieure |
 | Générateur pseudo-aléatoire mulberry32 ; génération retournée en `{ ok, investigation }` ou `{ ok: false, reason }` ; texte de révélation rendu à la génération (`revelationText`, caché jusqu’à l’accusation) | Quelques lignes sans dépendance, reproductible ; l’échec (difficulté inatteignable) est un cas normal, pas une exception ; même principe que les autres textes rendus |
 | Genres de mensonge selon la difficulté : faux alibi (facile), accusation d’un autre suspect (dès la difficulté 2), alibi dans un lieu fermé (difficulté 3) ; preuves vraies mais lointaines ; horaires de semaine et de week-end et jour de l’enquête | Les cas évidents restent à la difficulté facile ; la première contradiction ne désigne plus toujours le coupable ; les horaires, écrits en dur pour tester, seront remplacés par de vrais horaires plus tard |
@@ -93,7 +93,7 @@ Aucun jeu connu ne réunit les trois à la fois :
 | 4. Carte et identité visuelle | `briefs/04-map.md` | ☑ |
 | 5. Boucle de jeu complète | `briefs/05-game-loop.md` | ☑ |
 | 6. Hors-ligne et application mobile | `briefs/06-offline-mobile.md` | ☐ |
-| 7. CI/CD : tests (partie A, dès maintenant), builds mobiles (partie B, après l’étape 6) | `briefs/07-ci-cd.md` | ☐ |
+| 7. CI/CD : tests (partie A, faite), build Android (partie B), build iOS (partie C, reportée : pas de compte Apple Developer) | `briefs/07-ci-cd.md` | ☐ |
 | 8. Design restant et finitions (brief à rédiger à la fin des autres) | — | ☐ |
 
 **Reporté à l’étape 8** (le design reste tel quel pendant les briefs 05 à 07) : orange de l’enquête jugé trop vif (variantes A à D comparées, couleur du thème sombre comprise) ; vraies illustrations pour les têtes des suspects ; chargement de la police IBM Plex Mono pour le texte HTML de l’interface (aujourd’hui seulement dans les glyphes de la carte) ; écrans manquants (confirmation de l’accusation, démarrage, rejeu de la révélation) ; contraste des bâtiments de décor, revue du jeu d’icônes et finition du thème sombre sur la carte ; régénération des maquettes pour qu’elles redeviennent la référence ; icônes et écran de lancement des applications Android et iOS (aujourd’hui ceux de Capacitor par défaut).
