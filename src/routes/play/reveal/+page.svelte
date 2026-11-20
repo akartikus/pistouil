@@ -96,6 +96,7 @@
 			<GameMap
 				tilesUrl={TILES_URL}
 				source={shippedTiles()}
+				attribution={false}
 				theme={settings.theme}
 				{maxBounds}
 				{focus}

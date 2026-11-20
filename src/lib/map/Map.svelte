@@ -33,6 +33,8 @@
 		tilesUrl: string;
 		// The archive read by the app itself; the network address is not used then.
 		source?: Source;
+		// The built-in credit of MapLibre; the game shows its own, in the header.
+		attribution?: boolean;
 		theme: Theme;
 		// Limits of the zone: the player cannot pan outside.
 		maxBounds: Bounds;
@@ -53,6 +55,7 @@
 	let {
 		tilesUrl,
 		source,
+		attribution = true,
 		theme,
 		maxBounds,
 		focus,
@@ -317,10 +320,11 @@
 				pitchWithRotate: false,
 				touchPitch: false,
 				// A button « i »: open when the map appears, folded after a few seconds or on the first drag.
-				attributionControl: { compact: true }
+				attributionControl: attribution ? { compact: true } : false
 			});
 			map = m;
-			m.once('load', () => setTimeout(foldAttribution, ATTRIBUTION_SECONDS * 1000));
+			if (attribution)
+				m.once('load', () => setTimeout(foldAttribution, ATTRIBUTION_SECONDS * 1000));
 			m.on('styledata', () => addGameLayers(m));
 			m.setMissingStyleImageResolver((id) => loadIcon(m, id));
 			m.on('idle', updateBuildings);
@@ -391,11 +395,11 @@
 	style:--mystery-ink={colors.mysteryNumberInk}
 	style:--route={colors.route}
 	style:--ink={colors.ink}
+	style:--frame={colors.frame}
 	style:--paper={colors.paper}
 	style:--shadow={colors.shadow}
 	style:--number={colors.numberFill}
 	style:--number-ink={colors.numberInk}
-	style:--frame={colors.frame}
 	style:--icon-filter={theme === 'dark' ? 'invert(1)' : 'none'}
 >
 	{#if error}<p class="error">{error}</p>{/if}

@@ -96,4 +96,4 @@ Un guide en trois bulles accompagne la première partie (toucher un lieu numéro
 
 ## Garde-fous
 
-Attribution « © OpenStreetMap contributors » et schéma de tuiles (Protomaps) : sur la carte, un bouton « i » toujours présent (texte déplié quelques secondes à l’affichage de la carte, puis replié), et le texte complet dans À propos, comme l’autorisent les règles d’attribution d’OpenStreetMap. Mention de fiction visible sur l’écran de départ et dans À propos. Aucune photo de bâtiment, aucun logo.
+Attribution « © OpenStreetMap contributors » et schéma de tuiles (Protomaps) : dans l’en-tête des écrans qui montrent la carte, à côté du titre, un bouton « i » toujours présent (texte déplié quelques secondes à l’affichage de l’écran, puis replié), et le texte complet dans À propos, comme l’autorisent les règles d’attribution d’OpenStreetMap. Mention de fiction visible sur l’écran de départ et dans À propos. Aucune photo de bâtiment, aucun logo.

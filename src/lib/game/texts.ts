@@ -74,7 +74,9 @@ export const texts = {
 		unknown: 'inconnu',
 		notAnywhere: 'On ne sait pas où se trouve cette personne à cette heure-là.',
 		openFile: (name: string) => `Fiche de ${name} ▸`,
-		close: 'Fermer'
+		close: 'Fermer',
+		attribution: '© OpenStreetMap contributors · Protomaps',
+		attributionLabel: 'Crédits de la carte'
 	},
 
 	piece: {
